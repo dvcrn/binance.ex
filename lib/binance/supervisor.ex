@@ -1,4 +1,8 @@
 defmodule Binance.Supervisor do
+  @moduledoc """
+  Supervisor for cache and other required persistence layers
+  """
+
   use Supervisor
 
   def start_link(opts \\ []) do
@@ -9,13 +13,6 @@ defmodule Binance.Supervisor do
     children = [
       Binance.SymbolCache
     ]
-
-    # children = Enum.map(config, fn(c) ->
-    #   {c.strategy, [exchange: c.exchange,
-    #                 trade_pair: c.trade_pair,
-    #                 interval: c.interval,
-    #                 config: c.config]}
-    # end)
 
     Supervisor.init(children, strategy: :one_for_one)
   end

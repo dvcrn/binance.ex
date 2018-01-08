@@ -1,4 +1,10 @@
 defmodule Binance.SymbolCache do
+  @moduledoc """
+  Cache for storing symbol names
+
+  Normalization is done by calling the Binance API and retrieving all available symbols. To avoid that this request is done more than once, results are cache inside this module.
+  """
+
   use Agent
 
   @id :binance_symbol_cache
