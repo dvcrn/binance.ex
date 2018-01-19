@@ -18,7 +18,7 @@ end
 
 ```
 def application do
-  [applications: [:itunes]]
+  [applications: [:binance]]
 end
 ```
 
