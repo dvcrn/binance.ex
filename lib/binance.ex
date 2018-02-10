@@ -1,8 +1,8 @@
 defmodule Binance do
   @endpoint "https://api.binance.com"
 
-  defp get_binance(url) do
-    case HTTPoison.get("#{@endpoint}#{url}") do
+  defp get_binance(url, headers \\ []) do
+    case HTTPoison.get("#{@endpoint}#{url}", headers) do
       {:error, err} ->
         {:error, {:http_error, err}}
 
@@ -12,6 +12,39 @@ defmodule Binance do
           {:error, err} -> {:error, {:poison_decode_error, err}}
         end
     end
+  end
+
+  defp get_binance(_url, _params, nil, nil),
+    do: {:error, {:config_missing, "Secret and API key missing"}}
+
+  defp get_binance(_url, _params, nil, _api_key),
+    do: {:error, {:config_missing, "Secret key missing"}}
+
+  defp get_binance(_url, _params, _secret_key, nil),
+    do: {:error, {:config_missing, "API key missing"}}
+
+  defp get_binance(url, params, secret_key, api_key) do
+    headers = [{"X-MBX-APIKEY", api_key}]
+    receive_window = 5000
+    ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+    params =
+      Map.merge(params, %{
+        timestamp: ts,
+        recvWindow: receive_window
+      })
+
+    argument_string = URI.encode_query(params)
+
+    signature =
+      :crypto.hmac(
+        :sha256,
+        secret_key,
+        argument_string
+      )
+      |> Base.encode16()
+
+    get_binance("#{url}?#{argument_string}&signature=#{signature}", headers)
   end
 
   defp post_binance(url, params) do
@@ -132,6 +165,28 @@ defmodule Binance do
     case get_binance("/api/v1/ticker/24hr?symbol=#{symbol}") do
       {:ok, data} -> {:ok, Binance.Ticker.new(data)}
       err -> err
+    end
+  end
+
+  # Account
+
+  @doc """
+  Fetches user account from binance
+
+  Returns `{:ok, %Binance.Account{}}` or `{:error, reason}`.
+
+  In the case of a error on binance, for example with invalid parameters, `{:error, {:binance_error, %{code: code, msg: msg}}}` will be returned.
+
+  Please read https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md#account-information-user_data to understand API
+  """
+
+  def get_account() do
+    api_key = Application.get_env(:binance, :api_key)
+    secret_key = Application.get_env(:binance, :secret_key)
+
+    case get_binance("/api/v3/account", %{}, secret_key, api_key) do
+      {:ok, data} -> {:ok, Binance.Account.new(data)}
+      error -> error
     end
   end
 
