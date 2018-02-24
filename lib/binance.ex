@@ -50,6 +50,10 @@ defmodule Binance do
 
   @doc """
   Pings binance API. Returns `{:ok, %{}}` if successful, `{:error, reason}` otherwise
+
+  ## Example
+    iex> Binance.ping()
+    {:ok, %{}}
   """
   def ping() do
     get_binance("/api/v1/ping")
