@@ -71,6 +71,24 @@ Binance.find_symbol(%Binance.TradePair{from: "ETH", to: "REQ"})
 {:ok, "REQETH"}
 ```
 
+## WebSocket API
+
+Binance provides a WebSocket API if you want to process events in real time: https://github.com/binance-exchange/binance-official-api-docs/blob/master/web-socket-streams.md#individual-symbol-ticker-streams
+
+If you want to handle events for ticker, use the example below:
+
+```elixir
+defmodule MyTickerHandler do
+  @behaviour Binance.WebSocket.TickerHandler
+
+  def handle_event(%Binance.WebSocket.TickerEvent{} = event) do
+    IO.puts("event: trades=#{event.trades} open_price=#{event.open_price}")
+  end
+end
+
+Binance.WebSocket.TickerWebSocket.start("neoeth", [handler: MyTickerHandler])
+```
+
 ## License
 
 MIT
