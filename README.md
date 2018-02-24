@@ -1,6 +1,6 @@
 # binance.ex
 
-Elixir wrapper for interacting with the [Binance API](https://www.binance.com/restapipub.html).
+Elixir wrapper for interacting with the [Binance API](https://github.com/binance-exchange/binance-official-api-docs).
 
 ## Installation
 
@@ -70,7 +70,6 @@ Binance.find_symbol(%Binance.TradePair{from: "ReQ", to: "eTH"})
 Binance.find_symbol(%Binance.TradePair{from: "ETH", to: "REQ"})
 {:ok, "REQETH"}
 ```
-
 
 ## License
 
