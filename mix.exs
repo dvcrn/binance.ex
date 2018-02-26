@@ -25,10 +25,11 @@ defmodule Binance.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:exconstructor, "~> 1.1.0"},
+      {:ex_doc, ">= 0.0.0", only: :dev},
       {:httpoison, "~> 0.13"},
       {:poison, "~> 3.1"},
-      {:exconstructor, "~> 1.1.0"},
-      {:ex_doc, ">= 0.0.0", only: :dev}
+      {:websockex, "~> 0.4"}
     ]
   end
 

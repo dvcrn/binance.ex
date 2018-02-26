@@ -2,7 +2,8 @@ defmodule BinanceTest do
   use ExUnit.Case
   doctest Binance
 
-  test "greets the world" do
-    assert Binance.hello() == :world
+  test "get_server_time returns the server time" do
+    {:ok, time} = Binance.get_server_time()
+    assert is_number(time)
   end
 end
