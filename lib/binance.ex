@@ -2,16 +2,8 @@ defmodule Binance do
   @endpoint "https://api.binance.com"
 
   defp get_binance(url, headers \\ []) do
-    case HTTPoison.get("#{@endpoint}#{url}", headers) do
-      {:error, err} ->
-        {:error, {:http_error, err}}
-
-      {:ok, response} ->
-        case Poison.decode(response.body) do
-          {:ok, data} -> {:ok, data}
-          {:error, err} -> {:error, {:poison_decode_error, err}}
-        end
-    end
+    HTTPoison.get("#{@endpoint}#{url}", headers)
+    |> parse_get_response
   end
 
   defp get_binance(_url, _params, nil, nil),
@@ -77,6 +69,27 @@ defmodule Binance do
           {:error, err} -> {:error, {:poison_decode_error, err}}
         end
     end
+  end
+
+  defp parse_get_response({:ok, response}) do
+    response.body
+    |> Poison.decode
+    |> parse_response_body
+  end
+
+  defp parse_get_response({:error, err}) do
+    {:error, {:http_error, err}}
+  end
+
+  defp parse_response_body({:ok, data}) do
+    case data do
+      %{"code" => _c, "msg" => _m} = error -> {:error, error}
+      _ -> {:ok, data}
+    end
+  end
+
+  defp parse_response_body({:error, err}) do
+    {:error, {:poison_decode_error, err}}
   end
 
   # Server
@@ -164,6 +177,41 @@ defmodule Binance do
   def get_ticker(symbol) when is_binary(symbol) do
     case get_binance("/api/v1/ticker/24hr?symbol=#{symbol}") do
       {:ok, data} -> {:ok, Binance.Ticker.new(data)}
+      err -> err
+    end
+  end
+
+  @doc """
+  Retrieves the bids & asks of the order book up to the depth for the given symbol
+
+  Returns `{:ok, %{bids: [...], asks: [...], lastUpdateId: 12345}}` or `{:error, reason}`
+
+  ## Example
+  ```
+  {:ok,
+    %Binance.OrderBook{
+      asks: [
+        ["8400.00000000", "2.04078100", []],
+        ["8405.35000000", "0.50354700", []],
+        ["8406.00000000", "0.32769800", []],
+        ["8406.33000000", "0.00239000", []],
+        ["8406.51000000", "0.03241000", []]
+      ],
+      bids: [
+        ["8393.00000000", "0.20453200", []],
+        ["8392.57000000", "0.02639000", []],
+        ["8392.00000000", "1.40893300", []],
+        ["8390.09000000", "0.07047100", []],
+        ["8388.72000000", "0.04577400", []]
+      ],
+      last_update_id: 113634395
+    }
+  }
+  ```
+  """
+  def get_depth(symbol, limit) do
+    case get_binance("/api/v1/depth?symbol=#{symbol}&limit=#{limit}") do
+      {:ok, data} -> {:ok, Binance.OrderBook.new(data)}
       err -> err
     end
   end
