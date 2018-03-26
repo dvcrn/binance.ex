@@ -1,0 +1,36 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": [],
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.binance.com/api/v1/ticker/24hr?symbol=LTCBTC"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"symbol\":\"LTCBTC\",\"priceChange\":\"-0.00016000\",\"priceChangePercent\":\"-0.846\",\"weightedAvgPrice\":\"0.01882262\",\"prevClosePrice\":\"0.01892700\",\"lastPrice\":\"0.01876100\",\"lastQty\":\"5.90000000\",\"bidPrice\":\"0.01875200\",\"bidQty\":\"1.22000000\",\"askPrice\":\"0.01876000\",\"askQty\":\"16.76000000\",\"openPrice\":\"0.01892100\",\"highPrice\":\"0.01897600\",\"lowPrice\":\"0.01870000\",\"volume\":\"92105.72000000\",\"quoteVolume\":\"1733.67136150\",\"openTime\":1521739938547,\"closeTime\":1521826338547,\"firstId\":9749445,\"lastId\":9780056,\"count\":30612}",
+      "headers": {
+        "Date": "Fri, 23 Mar 2018 17:32:18 GMT",
+        "Content-Type": "application/json",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Server": "nginx",
+        "Vary": "Accept-Encoding",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'self'",
+        "X-Content-Security-Policy": "default-src 'self'",
+        "X-WebKit-CSP": "default-src 'self'",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
