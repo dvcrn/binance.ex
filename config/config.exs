@@ -3,8 +3,16 @@
 use Mix.Config
 
 config :binance,
-  api_key: "",
-  secret_key: ""
+  api_key: System.get_env("BINANCE_API_KEY"),
+  secret_key: System.get_env("BINANCE_API_SECRET")
+
+config :exvcr,
+  filter_request_headers: [
+    "X-MBX-APIKEY"
+  ],
+  filter_sensitive_data: [
+    [pattern: "signature=[A-Z0-9]+", placeholder: "signature=***"]
+  ]
 
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this

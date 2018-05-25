@@ -87,4 +87,46 @@ defmodule BinanceTest do
       end
     end
   end
+
+  describe ".order_limit_buy" do
+    test "creates an order with a duration of good til cancel by default" do
+      use_cassette "order_limit_buy_good_til_cancel_default_duration_success" do
+        assert {:ok, %Binance.OrderResponse{} = response} =
+                 Binance.order_limit_buy("LTCBTC", 0.1, 0.01)
+
+        assert response.client_order_id == "9kITBshSwrClye1HJcLM3j"
+        assert response.executed_qty == "0.00000000"
+        assert response.order_id == 47_511_548
+        assert response.orig_qty == "0.10000000"
+        assert response.price == "0.01000000"
+        assert response.side == "BUY"
+        assert response.status == "NEW"
+        assert response.symbol == "LTCBTC"
+        assert response.time_in_force == "GTC"
+        assert response.transact_time == 1_527_278_150_709
+        assert response.type == "LIMIT"
+      end
+    end
+  end
+
+  describe ".order_limit_sell" do
+    test "creates an order with a duration of good til cancel by default" do
+      use_cassette "order_limit_sell_good_til_cancel_default_duration_success" do
+        assert {:ok, %Binance.OrderResponse{} = response} =
+                 Binance.order_limit_sell("BTCUSDT", 0.001, 50_000)
+
+        assert response.client_order_id == "9UFMPloZsQ3eshCx66PVqD"
+        assert response.executed_qty == "0.00000000"
+        assert response.order_id == 108_212_133
+        assert response.orig_qty == "0.00100000"
+        assert response.price == "50000.00000000"
+        assert response.side == "SELL"
+        assert response.status == "NEW"
+        assert response.symbol == "BTCUSDT"
+        assert response.time_in_force == "GTC"
+        assert response.transact_time == 1_527_279_796_770
+        assert response.type == "LIMIT"
+      end
+    end
+  end
 end

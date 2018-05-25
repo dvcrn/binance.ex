@@ -327,6 +327,7 @@ defmodule Binance do
       when is_number(quantity)
       when is_number(price) do
     create_order(symbol, "BUY", "LIMIT", quantity, price, "GTC")
+    |> parse_order_response
   end
 
   @doc """
@@ -352,6 +353,7 @@ defmodule Binance do
       when is_number(quantity)
       when is_number(price) do
     create_order(symbol, "SELL", "LIMIT", quantity, price, "GTC")
+    |> parse_order_response
   end
 
   @doc """
@@ -398,6 +400,40 @@ defmodule Binance do
       when is_binary(symbol)
       when is_number(quantity) do
     create_order(symbol, "SELL", "MARKET", quantity)
+  end
+
+  defp parse_order_response({
+         :ok,
+         %{
+           "clientOrderId" => client_order_id,
+           "executedQty" => executed_qty,
+           "orderId" => order_id,
+           "origQty" => orig_qty,
+           "price" => price,
+           "side" => side,
+           "status" => status,
+           "symbol" => symbol,
+           "timeInForce" => time_in_force,
+           "transactTime" => transact_time,
+           "type" => type
+         }
+       }) do
+    {
+      :ok,
+      %Binance.OrderResponse{
+        client_order_id: client_order_id,
+        executed_qty: executed_qty,
+        order_id: order_id,
+        orig_qty: orig_qty,
+        price: price,
+        side: side,
+        status: status,
+        symbol: symbol,
+        time_in_force: time_in_force,
+        transact_time: transact_time,
+        type: type
+      }
+    }
   end
 
   # Misc
