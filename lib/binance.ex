@@ -73,7 +73,7 @@ defmodule Binance do
 
   defp parse_get_response({:ok, response}) do
     response.body
-    |> Poison.decode
+    |> Poison.decode()
     |> parse_response_body
   end
 
