@@ -311,22 +311,29 @@ defmodule Binance do
 
   Returns `{:ok, %{}}` or `{:error, reason}`
   """
-  def order_limit_buy(%Binance.TradePair{from: from, to: to} = symbol, quantity, price)
+  def order_limit_buy(symbol, quantity, price, time_in_force \\ "GTC")
+
+  def order_limit_buy(
+        %Binance.TradePair{from: from, to: to} = symbol,
+        quantity,
+        price,
+        time_in_force
+      )
       when is_number(quantity)
       when is_number(price)
       when is_binary(from)
       when is_binary(to) do
     case find_symbol(symbol) do
-      {:ok, binance_symbol} -> order_limit_buy(binance_symbol, quantity, price)
+      {:ok, binance_symbol} -> order_limit_buy(binance_symbol, quantity, price, time_in_force)
       e -> e
     end
   end
 
-  def order_limit_buy(symbol, quantity, price)
+  def order_limit_buy(symbol, quantity, price, time_in_force)
       when is_binary(symbol)
       when is_number(quantity)
       when is_number(price) do
-    create_order(symbol, "BUY", "LIMIT", quantity, price, "GTC")
+    create_order(symbol, "BUY", "LIMIT", quantity, price, time_in_force)
     |> parse_order_response
   end
 
@@ -337,22 +344,29 @@ defmodule Binance do
 
   Returns `{:ok, %{}}` or `{:error, reason}`
   """
-  def order_limit_sell(%Binance.TradePair{from: from, to: to} = symbol, quantity, price)
+  def order_limit_sell(symbol, quantity, price, time_in_force \\ "GTC")
+
+  def order_limit_sell(
+        %Binance.TradePair{from: from, to: to} = symbol,
+        quantity,
+        price,
+        time_in_force
+      )
       when is_number(quantity)
       when is_number(price)
       when is_binary(from)
       when is_binary(to) do
     case find_symbol(symbol) do
-      {:ok, binance_symbol} -> order_limit_sell(binance_symbol, quantity, price)
+      {:ok, binance_symbol} -> order_limit_sell(binance_symbol, quantity, price, time_in_force)
       e -> e
     end
   end
 
-  def order_limit_sell(symbol, quantity, price)
+  def order_limit_sell(symbol, quantity, price, time_in_force)
       when is_binary(symbol)
       when is_number(quantity)
       when is_number(price) do
-    create_order(symbol, "SELL", "LIMIT", quantity, price, "GTC")
+    create_order(symbol, "SELL", "LIMIT", quantity, price, time_in_force)
     |> parse_order_response
   end
 
