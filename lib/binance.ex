@@ -402,38 +402,8 @@ defmodule Binance do
     create_order(symbol, "SELL", "MARKET", quantity)
   end
 
-  defp parse_order_response({
-         :ok,
-         %{
-           "clientOrderId" => client_order_id,
-           "executedQty" => executed_qty,
-           "orderId" => order_id,
-           "origQty" => orig_qty,
-           "price" => price,
-           "side" => side,
-           "status" => status,
-           "symbol" => symbol,
-           "timeInForce" => time_in_force,
-           "transactTime" => transact_time,
-           "type" => type
-         }
-       }) do
-    {
-      :ok,
-      %Binance.OrderResponse{
-        client_order_id: client_order_id,
-        executed_qty: executed_qty,
-        order_id: order_id,
-        orig_qty: orig_qty,
-        price: price,
-        side: side,
-        status: status,
-        symbol: symbol,
-        time_in_force: time_in_force,
-        transact_time: transact_time,
-        type: type
-      }
-    }
+  defp parse_order_response({:ok, response}) do
+    {:ok, Binance.OrderResponse.new(response)}
   end
 
   # Misc
