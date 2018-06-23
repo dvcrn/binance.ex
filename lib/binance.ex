@@ -327,6 +327,7 @@ defmodule Binance do
       when is_number(quantity)
       when is_number(price) do
     create_order(symbol, "BUY", "LIMIT", quantity, price, "GTC")
+    |> parse_order_response
   end
 
   @doc """
@@ -352,6 +353,7 @@ defmodule Binance do
       when is_number(quantity)
       when is_number(price) do
     create_order(symbol, "SELL", "LIMIT", quantity, price, "GTC")
+    |> parse_order_response
   end
 
   @doc """
@@ -398,6 +400,10 @@ defmodule Binance do
       when is_binary(symbol)
       when is_number(quantity) do
     create_order(symbol, "SELL", "MARKET", quantity)
+  end
+
+  defp parse_order_response({:ok, response}) do
+    {:ok, Binance.OrderResponse.new(response)}
   end
 
   # Misc
