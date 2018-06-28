@@ -107,6 +107,44 @@ defmodule BinanceTest do
         assert response.type == "LIMIT"
       end
     end
+
+    test "can create an order with a fill or kill duration" do
+      use_cassette "order_limit_buy_fill_or_kill_success" do
+        assert {:ok, %Binance.OrderResponse{} = response} =
+                 Binance.order_limit_buy("LTCBTC", 0.1, 0.01, "FOK")
+
+        assert response.client_order_id == "dY67P33S4IxPnJGx5EtuSf"
+        assert response.executed_qty == "0.00000000"
+        assert response.order_id == 47_527_179
+        assert response.orig_qty == "0.10000000"
+        assert response.price == "0.01000000"
+        assert response.side == "BUY"
+        assert response.status == "EXPIRED"
+        assert response.symbol == "LTCBTC"
+        assert response.time_in_force == "FOK"
+        assert response.transact_time == 1_527_290_557_607
+        assert response.type == "LIMIT"
+      end
+    end
+
+    test "can create an order with am immediate or cancel duration" do
+      use_cassette "order_limit_buy_immediate_or_cancel_success" do
+        assert {:ok, %Binance.OrderResponse{} = response} =
+                 Binance.order_limit_buy("LTCBTC", 0.1, 0.01, "IOC")
+
+        assert response.client_order_id == "zyMyhtRENlvFHrl4CitDe0"
+        assert response.executed_qty == "0.00000000"
+        assert response.order_id == 47_528_830
+        assert response.orig_qty == "0.10000000"
+        assert response.price == "0.01000000"
+        assert response.side == "BUY"
+        assert response.status == "EXPIRED"
+        assert response.symbol == "LTCBTC"
+        assert response.time_in_force == "IOC"
+        assert response.transact_time == 1_527_291_300_912
+        assert response.type == "LIMIT"
+      end
+    end
   end
 
   describe ".order_limit_sell" do
@@ -125,6 +163,44 @@ defmodule BinanceTest do
         assert response.symbol == "BTCUSDT"
         assert response.time_in_force == "GTC"
         assert response.transact_time == 1_527_279_796_770
+        assert response.type == "LIMIT"
+      end
+    end
+
+    test "can create an order with a fill or kill duration" do
+      use_cassette "order_limit_sell_fill_or_kill_success" do
+        assert {:ok, %Binance.OrderResponse{} = response} =
+                 Binance.order_limit_sell("BTCUSDT", 0.001, 50_000, "FOK")
+
+        assert response.client_order_id == "lKYECwEPSTPzurwx6emuN2"
+        assert response.executed_qty == "0.00000000"
+        assert response.order_id == 108_277_184
+        assert response.orig_qty == "0.00100000"
+        assert response.price == "50000.00000000"
+        assert response.side == "SELL"
+        assert response.status == "EXPIRED"
+        assert response.symbol == "BTCUSDT"
+        assert response.time_in_force == "FOK"
+        assert response.transact_time == 1_527_290_985_305
+        assert response.type == "LIMIT"
+      end
+    end
+
+    test "can create an order with am immediate or cancel duration" do
+      use_cassette "order_limit_sell_immediate_or_cancel_success" do
+        assert {:ok, %Binance.OrderResponse{} = response} =
+                 Binance.order_limit_sell("BTCUSDT", 0.001, 50_000, "IOC")
+
+        assert response.client_order_id == "roSkLhwX9KCgYqr4yFPx1V"
+        assert response.executed_qty == "0.00000000"
+        assert response.order_id == 108_279_070
+        assert response.orig_qty == "0.00100000"
+        assert response.price == "50000.00000000"
+        assert response.side == "SELL"
+        assert response.status == "EXPIRED"
+        assert response.symbol == "BTCUSDT"
+        assert response.time_in_force == "IOC"
+        assert response.transact_time == 1_527_291_411_088
         assert response.type == "LIMIT"
       end
     end

@@ -1,0 +1,41 @@
+[
+  {
+    "request": {
+      "body": "price=50000&quantity=0.001&recvWindow=1000&side=SELL&symbol=BTCUSDT&timeInForce=IOC&timestamp=1527291410866&type=LIMIT&signature=***",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.binance.com/api/v3/order"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"symbol\":\"BTCUSDT\",\"orderId\":108279070,\"clientOrderId\":\"roSkLhwX9KCgYqr4yFPx1V\",\"transactTime\":1527291411088,\"price\":\"50000.00000000\",\"origQty\":\"0.00100000\",\"executedQty\":\"0.00000000\",\"status\":\"EXPIRED\",\"timeInForce\":\"IOC\",\"type\":\"LIMIT\",\"side\":\"SELL\"}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Date": "Fri, 25 May 2018 23:36:51 GMT",
+        "Server": "nginx",
+        "Vary": "Accept-Encoding",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'self'",
+        "X-Content-Security-Policy": "default-src 'self'",
+        "X-WebKit-CSP": "default-src 'self'",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 51f2e50a0d2a5ee1d9c830bf417b2713.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Id": "BX8-X-VXYRrjfwPJ8H-Gx4sgVhcoBDZ7WlOiWn-u0SWuW2h0e5Rhpw=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
