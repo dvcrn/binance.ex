@@ -145,6 +145,19 @@ defmodule BinanceTest do
         assert response.type == "LIMIT"
       end
     end
+
+    test "returns an insufficient balance error tuple" do
+      use_cassette "order_limit_buy_error_insufficient_balance" do
+        assert {:error, reason} = Binance.order_limit_buy("LTCBTC", 10_000, 0.001, "FOK")
+
+        assert reason == %Binance.InsufficientBalanceError{
+                 reason: %{
+                   code: -2010,
+                   msg: "Account has insufficient balance for requested action."
+                 }
+               }
+      end
+    end
   end
 
   describe ".order_limit_sell" do
