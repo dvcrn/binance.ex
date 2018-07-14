@@ -19,6 +19,55 @@ defmodule BinanceTest do
     end
   end
 
+  test "get_exchange_info success returns the trading rules and symbol information" do
+    use_cassette "get_exchange_info_ok" do
+      assert {:ok, %Binance.ExchangeInfo{} = info} = Binance.get_exchange_info()
+      assert info.timezone == "UTC"
+      assert info.server_time != nil
+
+      assert info.rate_limits == [
+               %{"interval" => "MINUTE", "limit" => 1200, "rateLimitType" => "REQUESTS"},
+               %{"interval" => "SECOND", "limit" => 10, "rateLimitType" => "ORDERS"},
+               %{"interval" => "DAY", "limit" => 100_000, "rateLimitType" => "ORDERS"}
+             ]
+
+      assert info.exchange_filters == []
+      assert [symbol | _] = info.symbols
+
+      assert symbol == %{
+               "baseAsset" => "ETH",
+               "baseAssetPrecision" => 8,
+               "filters" => [
+                 %{
+                   "filterType" => "PRICE_FILTER",
+                   "maxPrice" => "100000.00000000",
+                   "minPrice" => "0.00000100",
+                   "tickSize" => "0.00000100"
+                 },
+                 %{
+                   "filterType" => "LOT_SIZE",
+                   "maxQty" => "100000.00000000",
+                   "minQty" => "0.00100000",
+                   "stepSize" => "0.00100000"
+                 },
+                 %{"filterType" => "MIN_NOTIONAL", "minNotional" => "0.00100000"}
+               ],
+               "icebergAllowed" => false,
+               "orderTypes" => [
+                 "LIMIT",
+                 "LIMIT_MAKER",
+                 "MARKET",
+                 "STOP_LOSS_LIMIT",
+                 "TAKE_PROFIT_LIMIT"
+               ],
+               "quoteAsset" => "BTC",
+               "quotePrecision" => 8,
+               "status" => "TRADING",
+               "symbol" => "ETHBTC"
+             }
+    end
+  end
+
   test "get_all_prices returns a list of prices for every symbol" do
     use_cassette "get_all_prices_ok" do
       assert {:ok, symbol_prices} = Binance.get_all_prices()
