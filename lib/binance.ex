@@ -119,6 +119,13 @@ defmodule Binance do
     end
   end
 
+  def get_exchange_info() do
+    case get_binance("/api/v1/exchangeInfo") do
+      {:ok, data} -> {:ok, Binance.ExchangeInfo.new(data)}
+      err -> err
+    end
+  end
+
   # Ticker
 
   @doc """
