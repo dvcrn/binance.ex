@@ -283,13 +283,14 @@ defmodule Binance do
 
     ## Examples
 
+        iex> Binance.get_order "ADABTC", 44730730
         {:ok,
         %Binance.OrderResponse{
-          client_order_id: "web_0319daab853b4e129edfea4345cbda17",
+          client_order_id: "web_0019daab853b4e129edfea4345cbda17",
           executed_qty: "0.00000000",
           iceberg_qty: "0.00000000",
           is_working: true,
-          order_id: 44730734,
+          order_id: 44730730,
           orig_qty: "3893.00000000",
           price: "0.00003249",
           side: "SELL",
