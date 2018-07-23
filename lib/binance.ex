@@ -1,6 +1,9 @@
 defmodule Binance do
   @endpoint "https://api.binance.com"
 
+  @api_key  Application.get_env(:binance, :api_key)
+  @secret_key  Application.get_env(:binance, :secret_key)
+
   defp get_binance(url, headers \\ []) do
     HTTPoison.get("#{@endpoint}#{url}", headers)
     |> parse_get_response
@@ -50,7 +53,7 @@ defmodule Binance do
     signature =
       :crypto.hmac(
         :sha256,
-        Application.get_env(:binance, :secret_key),
+        @secret_key,
         argument_string
       )
       |> Base.encode16()
@@ -58,7 +61,7 @@ defmodule Binance do
     body = "#{argument_string}&signature=#{signature}"
 
     case HTTPoison.post("#{@endpoint}#{url}", body, [
-           {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
+           {"X-MBX-APIKEY", @api_key}
          ]) do
       {:error, err} ->
         {:error, {:http_error, err}}
@@ -69,6 +72,35 @@ defmodule Binance do
           {:error, err} -> {:error, {:poison_decode_error, err}}
         end
     end
+  end
+
+  defp delete_binance(url, headers \\ []) do
+    HTTPoison.delete("#{@endpoint}#{url}", headers)
+    |> parse_get_response
+  end
+
+  defp delete_binance(url, params, secret_key, api_key) do
+    headers = [{"X-MBX-APIKEY", api_key}]
+    receive_window = 5000
+    ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+    params =
+      Map.merge(params, %{
+        timestamp: ts,
+        recvWindow: receive_window
+      })
+
+    argument_string = URI.encode_query(params)
+
+    signature =
+      :crypto.hmac(
+        :sha256,
+        secret_key,
+        argument_string
+      )
+      |> Base.encode16()
+
+    delete_binance("#{url}?#{argument_string}&signature=#{signature}", headers)
   end
 
   defp parse_get_response({:ok, response}) do
@@ -236,16 +268,180 @@ defmodule Binance do
   """
 
   def get_account() do
-    api_key = Application.get_env(:binance, :api_key)
-    secret_key = Application.get_env(:binance, :secret_key)
-
-    case get_binance("/api/v3/account", %{}, secret_key, api_key) do
+    case get_binance("/api/v3/account", %{}, @secret_key, @api_key) do
       {:ok, data} -> {:ok, Binance.Account.new(data)}
       error -> error
     end
   end
 
   # Order
+
+  @doc """
+    Check an order's status.
+
+    Returns `{:ok, %Binance.OrderResponse{}}` or `{:error, reason}`
+
+    ## Examples
+
+        {:ok,
+        %Binance.OrderResponse{
+          client_order_id: "web_0319daab853b4e129edfea4345cbda17",
+          executed_qty: "0.00000000",
+          iceberg_qty: "0.00000000",
+          is_working: true,
+          order_id: 44730734,
+          orig_qty: "3893.00000000",
+          price: "0.00003249",
+          side: "SELL",
+          status: "NEW",
+          stop_price: "0.00000000",
+          symbol: "ADABTC",
+          time: 1531958591439,
+          time_in_force: "GTC",
+          transact_time: nil,
+          type: "LIMIT"
+        }}
+  """
+  def get_order(symbol, orderId) when is_binary(symbol) do
+    case get_binance("/api/v3/order", %{symbol: symbol, orderId: orderId}, @secret_key, @api_key) do
+      {:ok, data} -> {:ok, Binance.OrderResponse.new(data)}
+      err -> err
+    end
+  end
+
+  @doc"""
+
+  Cancel an active order.
+
+  Returns `{:ok, %Binance.OrderResponse{}}` or `{:error, reason}`
+
+  ## Examples
+
+      iex> Binance.cancel_order "ADABTC", 18845701
+      {:ok,
+       %Binance.OrderResponse{
+         client_order_id: "gO3U4DaFxcAgolV0nunw2U",
+         executed_qty: nil,
+         iceberg_qty: nil,
+         is_working: nil,
+         order_id: 18845701,
+         orig_qty: nil,
+         price: nil,
+         side: nil,
+         status: nil,
+         stop_price: nil,
+         symbol: "ADABTC",
+         time: nil,
+         time_in_force: nil,
+         transact_time: nil,
+         type: nil
+       }}
+
+  """
+  def cancel_order(symbol, orderId) when is_binary(symbol) do
+    case delete_binance("/api/v3/order", %{symbol: symbol, orderId: orderId}, @secret_key, @api_key) do
+      {:ok, data} -> {:ok, Binance.OrderResponse.new(data)}
+      err -> err
+    end
+  end
+
+
+  @doc """
+  Get all open orders on a symbol. Careful when accessing this with no symbol.
+
+  Returns `{:ok, %Binance.OrderResponse{}}` or `{:error, reason}`
+
+  ## Examples
+
+      iex(52)> Binance.open_orders "ADABTC"
+      {:ok,
+      [
+        %Binance.OrderResponse{
+          client_order_id: "web_0319daab853b4e129edfea4345cbda17",
+          executed_qty: "0.00000000",
+          iceberg_qty: "0.00000000",
+          is_working: true,
+          order_id: 44730734,
+          orig_qty: "3893.00000000",
+          price: "0.00003249",
+          side: "SELL",
+          status: "NEW",
+          stop_price: "0.00000000",
+          symbol: "ADABTC",
+          time: 1531958591439,
+          time_in_force: "GTC",
+          transact_time: nil,
+          type: "LIMIT"
+        }
+      ]}
+  """
+  def open_orders(), do: execute_open_orders(%{})
+  def open_orders(symbol) when is_binary(symbol), do: execute_open_orders(%{symbol: symbol})
+
+  defp execute_open_orders(params) when is_map(params) do
+    case get_binance("/api/v3/openOrders", params, @secret_key, @api_key) do
+      {:ok, data} -> {:ok, Enum.map(data, &(Binance.OrderResponse.new(&1)))}
+      err -> err
+    end
+  end
+
+  @doc """
+    Get all account orders; active, canceled, or filled.
+
+    Returns `{:ok, %Binance.OrderResponse{}}` or `{:error, reason}`
+
+    ## Examples
+
+        iex> Binance.all_orders "ADBTC"
+        {:ok,
+        [
+          %Binance.OrderResponse{
+            client_order_id: "web_a26a41e71ca641e8812a444436e7b7cb",
+            executed_qty: "3897.00000000",
+            iceberg_qty: "0.00000000",
+            is_working: true,
+            order_id: 31501417,
+            orig_qty: "3897.00000000",
+            price: "0.00002606",
+            side: "BUY",
+            status: "FILLED",
+            stop_price: "0.00000000",
+            symbol: "ADABTC",
+            time: 1526363552351,
+            time_in_force: "GTC",
+            transact_time: nil,
+            type: "LIMIT"
+          },
+          %Binance.OrderResponse{
+            client_order_id: "web_0119daab853b4e129edfea4345cbda17",
+            executed_qty: "0.00000000",
+            iceberg_qty: "0.00000000",
+            is_working: true,
+            order_id: 44700734,
+            orig_qty: "3893.00000000",
+            price: "0.00003249",
+            side: "SELL",
+            status: "NEW",
+            stop_price: "0.00000000",
+            symbol: "ADABTC",
+            time: 1531958591439,
+            time_in_force: "GTC",
+            transact_time: nil,
+            type: "LIMIT"
+          }
+        ]}
+  """
+  def all_orders(symbol) when is_binary(symbol), do: execute_all_orders(%{symbol: symbol})
+  def all_orders(symbol, timestamp) when is_binary(symbol) and is_integer(timestamp),
+    do: execute_all_orders(%{symbol: symbol, timestamp: timestamp})
+
+  defp execute_all_orders(params) when is_map(params) do
+    case get_binance("/api/v3/allOrders", params, @secret_key, @api_key) do
+      {:ok, data} -> {:ok, Enum.map(data, &(Binance.OrderResponse.new(&1)))}
+      err -> err
+    end
+  end
+
 
   @doc """
   Creates a new order on binance
