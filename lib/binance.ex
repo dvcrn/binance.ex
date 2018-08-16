@@ -295,7 +295,7 @@ defmodule Binance do
           else: %{}
         )
       )
-      |> Map.merge(unless(is_nil(new_client_order_id), do: %{stopPrice: stop_price}, else: %{}))
+      |> Map.merge(unless(is_nil(stop_price), do: %{stopPrice: stop_price}, else: %{}))
       |> Map.merge(
         unless(is_nil(new_client_order_id), do: %{icebergQty: iceberg_quantity}, else: %{})
       )
