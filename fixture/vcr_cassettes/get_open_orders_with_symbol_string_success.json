@@ -1,0 +1,42 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.binance.com/api/v3/openOrders?recvWindow=5000&symbol=WABIBTC&timestamp=1556711689476&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "[{\"symbol\":\"WABIBTC\",\"orderId\":42240233,\"clientOrderId\":\"web_db04d8a507f14135a9a9d4467bc541a1\",\"price\":\"0.00064200\",\"origQty\":\"215.00000000\",\"executedQty\":\"0.00000000\",\"cummulativeQuoteQty\":\"0.00000000\",\"status\":\"NEW\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"side\":\"SELL\",\"stopPrice\":\"0.00000000\",\"icebergQty\":\"0.00000000\",\"time\":1556710717616,\"updateTime\":1556710717616,\"isWorking\":true}]",
+      "headers": {
+        "Content-Type": "application/json;charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Date": "Wed, 01 May 2019 11:54:49 GMT",
+        "Server": "nginx",
+        "Vary": "Accept-Encoding",
+        "X-MBX-USED-WEIGHT": "18",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'self'",
+        "X-Content-Security-Policy": "default-src 'self'",
+        "X-WebKit-CSP": "default-src 'self'",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 a59248a3f35122c2ec3af07e422e20d5.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Id": "XBh0PYJEiOA9SEdqhKZDJ7FpMZsYSI5bKHbYq3eJEvhMC7FSv1bsEQ=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
