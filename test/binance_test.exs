@@ -267,4 +267,98 @@ defmodule BinanceTest do
       end
     end
   end
+
+  describe ".get_open_orders" do
+    test "when called without symbol returns all open orders for all symbols" do
+      use_cassette "get_open_orders_without_symbol_success" do
+        assert {:ok, [%Binance.Order{} = order_1, %Binance.Order{} = order_2]} =
+                 Binance.get_open_orders()
+
+        # open order 1
+
+        assert order_1.client_order_id == "web_6b6a916821d342fd861faa5139b229d2"
+        assert order_1.cummulative_quote_qty == "0.00000000"
+        assert order_1.executed_qty == "0.00000000"
+        assert order_1.iceberg_qty == "0.00000000"
+        assert order_1.is_working == true
+        assert order_1.order_id == 148_740_811
+        assert order_1.orig_qty == "177.00000000"
+        assert order_1.price == "0.00050000"
+        assert order_1.side == "SELL"
+        assert order_1.status == "NEW"
+        assert order_1.stop_price == "0.00000000"
+        assert order_1.symbol == "XRPBTC"
+        assert order_1.time == 1_556_710_572_734
+        assert order_1.time_in_force == "GTC"
+        assert order_1.type == "LIMIT"
+        assert order_1.update_time == 1_556_710_572_734
+
+        # open order 2
+
+        assert order_2.client_order_id == "web_db04d8a507f14135a9a9d4467bc541a1"
+        assert order_2.cummulative_quote_qty == "0.00000000"
+        assert order_2.executed_qty == "0.00000000"
+        assert order_2.iceberg_qty == "0.00000000"
+        assert order_2.is_working == true
+        assert order_2.order_id == 42_240_233
+        assert order_2.orig_qty == "215.00000000"
+        assert order_2.price == "0.00064200"
+        assert order_2.side == "SELL"
+        assert order_2.status == "NEW"
+        assert order_2.stop_price == "0.00000000"
+        assert order_2.symbol == "WABIBTC"
+        assert order_2.time == 1_556_710_717_616
+        assert order_2.time_in_force == "GTC"
+        assert order_2.type == "LIMIT"
+        assert order_2.update_time == 1_556_710_717_616
+      end
+    end
+
+    test "when called with symbol returns all open orders for that symbols(string)" do
+      use_cassette "get_open_orders_with_symbol_string_success" do
+        assert {:ok, [%Binance.Order{} = result]} = Binance.get_open_orders("WABIBTC")
+
+        assert result.client_order_id == "web_db04d8a507f14135a9a9d4467bc541a1"
+        assert result.cummulative_quote_qty == "0.00000000"
+        assert result.executed_qty == "0.00000000"
+        assert result.iceberg_qty == "0.00000000"
+        assert result.is_working == true
+        assert result.order_id == 42_240_233
+        assert result.orig_qty == "215.00000000"
+        assert result.price == "0.00064200"
+        assert result.side == "SELL"
+        assert result.status == "NEW"
+        assert result.stop_price == "0.00000000"
+        assert result.symbol == "WABIBTC"
+        assert result.time == 1_556_710_717_616
+        assert result.time_in_force == "GTC"
+        assert result.type == "LIMIT"
+        assert result.update_time == 1_556_710_717_616
+      end
+    end
+
+    test "when called with symbol returns all open orders for that symbols(TradePair struct)" do
+      use_cassette "get_open_orders_with_trade_pair_struct_string_success" do
+        assert {:ok, [%Binance.Order{} = result]} =
+                 Binance.get_open_orders(%Binance.TradePair{:from => "WABI", :to => "BTC"})
+
+        assert result.client_order_id == "web_db04d8a507f14135a9a9d4467bc541a1"
+        assert result.cummulative_quote_qty == "0.00000000"
+        assert result.executed_qty == "0.00000000"
+        assert result.iceberg_qty == "0.00000000"
+        assert result.is_working == true
+        assert result.order_id == 42_240_233
+        assert result.orig_qty == "215.00000000"
+        assert result.price == "0.00064200"
+        assert result.side == "SELL"
+        assert result.status == "NEW"
+        assert result.stop_price == "0.00000000"
+        assert result.symbol == "WABIBTC"
+        assert result.time == 1_556_710_717_616
+        assert result.time_in_force == "GTC"
+        assert result.type == "LIMIT"
+        assert result.update_time == 1_556_710_717_616
+      end
+    end
+  end
 end

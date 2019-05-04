@@ -406,4 +406,52 @@ defmodule Binance do
         err
     end
   end
+
+  # Open orders
+
+  @doc """
+  Get all open orders, alternatively open orders by symbol
+
+  Returns `{:ok, [%Binance.Order{}]}` or `{:error, reason}`.
+
+  Weight: 1 for a single symbol; 40 when the symbol parameter is omitted
+
+  ## Example
+  ```
+  {:ok,
+    [%Binance.Order{price: "0.1", origQty: "1.0", executedQty: "0.0", ...},
+     %Binance.Order{...},
+     %Binance.Order{...},
+     %Binance.Order{...},
+     %Binance.Order{...},
+     %Binance.Order{...},
+     ...]}
+  ```
+  """
+  def get_open_orders() do
+    api_key = Application.get_env(:binance, :api_key)
+    secret_key = Application.get_env(:binance, :secret_key)
+
+    case HTTPClient.get_binance("/api/v3/openOrders", %{}, secret_key, api_key) do
+      {:ok, data} -> {:ok, Enum.map(data, &Binance.Order.new(&1))}
+      err -> err
+    end
+  end
+
+  def get_open_orders(%Binance.TradePair{} = symbol) do
+    case find_symbol(symbol) do
+      {:ok, binance_symbol} -> get_open_orders(binance_symbol)
+      e -> e
+    end
+  end
+
+  def get_open_orders(symbol) when is_binary(symbol) do
+    api_key = Application.get_env(:binance, :api_key)
+    secret_key = Application.get_env(:binance, :secret_key)
+
+    case HTTPClient.get_binance("/api/v3/openOrders", %{:symbol => symbol}, secret_key, api_key) do
+      {:ok, data} -> {:ok, Enum.map(data, &Binance.Order.new(&1))}
+      err -> err
+    end
+  end
 end
