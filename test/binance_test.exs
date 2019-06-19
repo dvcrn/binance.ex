@@ -361,4 +361,111 @@ defmodule BinanceTest do
       end
     end
   end
+
+  describe ".get_order" do
+    test "when called with symbol(struct) and orderId returns expected order information" do
+      use_cassette "get_order_by_struct_symbol_and_orderId_success" do
+        assert {:ok, %Binance.Order{} = order} =
+                 Binance.get_order(
+                   %Binance.TradePair{:from => "XRP", :to => "USDT"},
+                   1_560_949_366_308,
+                   171_162_296
+                 )
+
+        assert order.client_order_id == "1fQlUBLbCuFrRAIbgx3lvy"
+        assert order.cummulative_quote_qty == "0.00000000"
+        assert order.executed_qty == "0.00000000"
+        assert order.iceberg_qty == "0.00000000"
+        assert order.is_working == true
+        assert order.order_id == 171_162_296
+        assert order.orig_qty == "36.50000000"
+        assert order.price == "0.41023000"
+        assert order.side == "BUY"
+        assert order.status == "NEW"
+        assert order.stop_price == "0.00000000"
+        assert order.symbol == "XRPUSDT"
+        assert order.time == 1_560_949_366_308
+        assert order.time_in_force == "GTC"
+        assert order.type == "LIMIT"
+        assert order.update_time == 1_560_949_366_308
+      end
+    end
+
+    test "when called with symbol(string) and orderId returns expected order information" do
+      use_cassette "get_order_by_string_symbol_and_orderId_success" do
+        assert {:ok, %Binance.Order{} = order} =
+                 Binance.get_order("XRPUSDT", 1_560_949_366_308, 171_162_296)
+
+        assert order.client_order_id == "1fQlUBLbCuFrRAIbgx3lvy"
+        assert order.cummulative_quote_qty == "0.00000000"
+        assert order.executed_qty == "0.00000000"
+        assert order.iceberg_qty == "0.00000000"
+        assert order.is_working == true
+        assert order.order_id == 171_162_296
+        assert order.orig_qty == "36.50000000"
+        assert order.price == "0.41023000"
+        assert order.side == "BUY"
+        assert order.status == "NEW"
+        assert order.stop_price == "0.00000000"
+        assert order.symbol == "XRPUSDT"
+        assert order.time == 1_560_949_366_308
+        assert order.time_in_force == "GTC"
+        assert order.type == "LIMIT"
+        assert order.update_time == 1_560_949_366_308
+      end
+    end
+
+    test "when called with symbol(struct) and client order id returns expected order information" do
+      use_cassette "get_order_by_struct_symbol_and_clientOrderId_success" do
+        assert {:ok, %Binance.Order{} = order} =
+                 Binance.get_order(
+                   %Binance.TradePair{:from => "XRP", :to => "USDT"},
+                   1_560_949_366_308,
+                   nil,
+                   "1fQlUBLbCuFrRAIbgx3lvy"
+                 )
+
+        assert order.client_order_id == "1fQlUBLbCuFrRAIbgx3lvy"
+        assert order.cummulative_quote_qty == "0.00000000"
+        assert order.executed_qty == "0.00000000"
+        assert order.iceberg_qty == "0.00000000"
+        assert order.is_working == true
+        assert order.order_id == 171_162_296
+        assert order.orig_qty == "36.50000000"
+        assert order.price == "0.41023000"
+        assert order.side == "BUY"
+        assert order.status == "NEW"
+        assert order.stop_price == "0.00000000"
+        assert order.symbol == "XRPUSDT"
+        assert order.time == 1_560_949_366_308
+        assert order.time_in_force == "GTC"
+        assert order.type == "LIMIT"
+        assert order.update_time == 1_560_949_366_308
+      end
+    end
+
+    test "when called with symbol(string) and client order id returns expected order information" do
+      use_cassette "get_order_by_string_symbol_and_clientOrderId_success" do
+        assert {:ok, %Binance.Order{} = order} =
+                 Binance.get_order("XRPUSDT", 1_560_949_366_308, nil, "1fQlUBLbCuFrRAIbgx3lvy")
+
+        assert order.client_order_id == "1fQlUBLbCuFrRAIbgx3lvy"
+        assert order.cummulative_quote_qty == "0.00000000"
+        assert order.executed_qty == "0.00000000"
+        assert order.iceberg_qty == "0.00000000"
+        assert order.is_working == true
+        assert order.order_id == 171_162_296
+        assert order.orig_qty == "36.50000000"
+        assert order.price == "0.41023000"
+        assert order.side == "BUY"
+        assert order.status == "NEW"
+        assert order.stop_price == "0.00000000"
+        assert order.symbol == "XRPUSDT"
+        assert order.time == 1_560_949_366_308
+        assert order.time_in_force == "GTC"
+        assert order.type == "LIMIT"
+        assert order.update_time == 1_560_949_366_308
+      end
+    end
+  end
 end
