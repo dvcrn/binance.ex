@@ -485,7 +485,7 @@ defmodule Binance do
       false ->
         case find_symbol(symbol) do
           {:ok, binance_symbol} ->
-            get_order(binance_symbol, timestamp, order_id, orig_client_order_id, recv_window)
+            fetch_order(binance_symbol, timestamp, order_id, orig_client_order_id, recv_window)
 
           e ->
             e
