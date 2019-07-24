@@ -520,4 +520,93 @@ defmodule Binance do
       err -> err
     end
   end
+
+  @doc """
+  Cancel an active order..
+
+  Symbol and either orderId or origClientOrderId must be sent.
+
+  Returns `{:ok, %Binance.Order{}}` or `{:error, reason}`.
+
+  Weight: 1
+
+  Info: https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md#cancel-order-trade
+  """
+  def cancel_order(
+        symbol,
+        timestamp,
+        order_id \\ nil,
+        orig_client_order_id \\ nil,
+        new_client_order_id \\ nil,
+        recv_window \\ nil
+      ) do
+    case is_binary(symbol) do
+      true ->
+        cancel_order_(
+          symbol,
+          timestamp,
+          order_id,
+          orig_client_order_id,
+          new_client_order_id,
+          recv_window
+        )
+
+      false ->
+        case find_symbol(symbol) do
+          {:ok, binance_symbol} ->
+            cancel_order_(
+              binance_symbol,
+              timestamp,
+              order_id,
+              orig_client_order_id,
+              new_client_order_id,
+              recv_window
+            )
+
+          e ->
+            e
+        end
+    end
+  end
+
+  defp cancel_order_(
+         symbol,
+         timestamp,
+         order_id,
+         orig_client_order_id,
+         new_client_order_id,
+         recv_window
+       )
+       when is_binary(symbol)
+       when is_integer(timestamp)
+       when is_integer(order_id) or is_binary(orig_client_order_id) do
+    api_key = Application.get_env(:binance, :api_key)
+    secret_key = Application.get_env(:binance, :secret_key)
+
+    arguments =
+      %{
+        symbol: symbol,
+        timestamp: timestamp
+      }
+      |> Map.merge(unless(is_nil(order_id), do: %{orderId: order_id}, else: %{}))
+      |> Map.merge(
+        unless(
+          is_nil(orig_client_order_id),
+          do: %{origClientOrderId: orig_client_order_id},
+          else: %{}
+        )
+      )
+      |> Map.merge(
+        unless(is_nil(new_client_order_id),
+          do: %{newClientOrderId: new_client_order_id},
+          else: %{}
+        )
+      )
+      |> Map.merge(unless(is_nil(recv_window), do: %{recvWindow: recv_window}, else: %{}))
+
+    case HTTPClient.delete_binance("/api/v3/order", arguments, secret_key, api_key) do
+      {:ok, data} -> {:ok, Binance.Order.new(data)}
+      err -> err
+    end
+  end
 end

@@ -3,40 +3,62 @@ defmodule Binance.Rest.HTTPClient do
 
   def get_binance(url, headers \\ []) do
     HTTPoison.get("#{@endpoint}#{url}", headers)
-    |> parse_get_response
+    |> parse_response
   end
 
-  def get_binance(_url, _params, nil, nil),
-    do: {:error, {:config_missing, "Secret and API key missing"}}
-
-  def get_binance(_url, _params, nil, _api_key),
-    do: {:error, {:config_missing, "Secret key missing"}}
-
-  def get_binance(_url, _params, _secret_key, nil),
-    do: {:error, {:config_missing, "API key missing"}}
+  def delete_binance(url, headers \\ []) do
+    HTTPoison.delete("#{@endpoint}#{url}", headers)
+    |> parse_response
+  end
 
   def get_binance(url, params, secret_key, api_key) do
-    headers = [{"X-MBX-APIKEY", api_key}]
-    receive_window = 5000
-    ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+    case prepare_request(url, params, secret_key, api_key) do
+      {:error, _} = error ->
+        error
 
-    params =
-      Map.merge(params, %{
-        timestamp: ts,
-        recvWindow: receive_window
-      })
+      {:ok, url, headers} ->
+        get_binance(url, headers)
+    end
+  end
 
-    argument_string = URI.encode_query(params)
+  def delete_binance(url, params, secret_key, api_key) do
+    case prepare_request(url, params, secret_key, api_key) do
+      {:error, _} = error ->
+        error
 
-    signature =
-      :crypto.hmac(
-        :sha256,
-        secret_key,
-        argument_string
-      )
-      |> Base.encode16()
+      {:ok, url, headers} ->
+        delete_binance(url, headers)
+    end
+  end
 
-    get_binance("#{url}?#{argument_string}&signature=#{signature}", headers)
+  defp prepare_request(url, params, secret_key, api_key) do
+    case validate_credentials(secret_key, api_key) do
+      {:error, _} = error ->
+        error
+
+      _ ->
+        headers = [{"X-MBX-APIKEY", api_key}]
+        receive_window = 5000
+        ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+        params =
+          Map.merge(params, %{
+            timestamp: ts,
+            recvWindow: receive_window
+          })
+
+        argument_string = URI.encode_query(params)
+
+        signature =
+          :crypto.hmac(
+            :sha256,
+            secret_key,
+            argument_string
+          )
+          |> Base.encode16()
+
+        {:ok, "#{url}?#{argument_string}&signature=#{signature}", headers}
+    end
   end
 
   def post_binance(url, params) do
@@ -71,13 +93,25 @@ defmodule Binance.Rest.HTTPClient do
     end
   end
 
-  defp parse_get_response({:ok, response}) do
+  defp validate_credentials(nil, nil),
+    do: {:error, {:config_missing, "Secret and API key missing"}}
+
+  defp validate_credentials(nil, _api_key),
+    do: {:error, {:config_missing, "Secret key missing"}}
+
+  defp validate_credentials(_secret_key, nil),
+    do: {:error, {:config_missing, "API key missing"}}
+
+  defp validate_credentials(_secret_key, _api_key),
+    do: :ok
+
+  defp parse_response({:ok, response}) do
     response.body
     |> Poison.decode()
     |> parse_response_body
   end
 
-  defp parse_get_response({:error, err}) do
+  defp parse_response({:error, err}) do
     {:error, {:http_error, err}}
   end
 
