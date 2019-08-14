@@ -1,0 +1,43 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "delete",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.binance.com/api/v3/order?origClientOrderId=ZM1ReQ1ZwiVoaGgcJcumhH&recvWindow=5000&symbol=XRPUSDT&timestamp=1564001214578&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"symbol\":\"XRPUSDT\",\"origClientOrderId\":\"ZM1ReQ1ZwiVoaGgcJcumhH\",\"orderId\":212217782,\"clientOrderId\":\"gKMdjRw8fDkpObd0fXjCRZ\",\"price\":\"0.30000000\",\"origQty\":\"100.00000000\",\"executedQty\":\"0.00000000\",\"cummulativeQuoteQty\":\"0.00000000\",\"status\":\"CANCELED\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"side\":\"BUY\"}",
+      "headers": {
+        "Content-Type": "application/json;charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Date": "Wed, 24 Jul 2019 20:46:54 GMT",
+        "Server": "nginx",
+        "Vary": "Accept-Encoding",
+        "X-MBX-USED-WEIGHT": "2",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'self'",
+        "X-Content-Security-Policy": "default-src 'self'",
+        "X-WebKit-CSP": "default-src 'self'",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 0eab76c5c28627bb9fd9e52c861b9dbb.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "LHR4",
+        "X-Amz-Cf-Id": "9mNtC5mhV_AL4J2vKeX7tM_O_xLhu1cGNMHsEpkOBhbbiTUGFHrXgw=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
