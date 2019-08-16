@@ -6,3 +6,8 @@ elixir:
 otp_release:
   - '20.0'
   - '21.0'
+
+after_success:
+  - if [ -n "$TRAVIS_TAG" ]; then
+        mix hex.publish --yes --dry-run;
+    fi
