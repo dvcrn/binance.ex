@@ -4,8 +4,8 @@ defmodule Binance.MixProject do
   def project do
     [
       app: :binance,
-      version: "0.6.0",
-      elixir: "~> 1.6",
+      version: "0.7.1",
+      elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
@@ -26,7 +26,7 @@ defmodule Binance.MixProject do
   defp deps do
     [
       {:httpoison, "~> 1.0"},
-      {:poison, "~> 3.1"},
+      {:poison, "~> 4.0.0"},
       {:exconstructor, "~> 1.1.0"},
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},

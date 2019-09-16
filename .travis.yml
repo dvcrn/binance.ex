@@ -1,8 +1,13 @@
 language: elixir
 
 elixir:
-  - '1.6'
+  - '1.7'
 
 otp_release:
   - '20.0'
   - '21.0'
+
+after_success:
+  - if [ -n "$TRAVIS_TAG" ]; then
+        mix hex.publish --yes;
+    fi
