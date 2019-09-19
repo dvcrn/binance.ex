@@ -1,0 +1,37 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://fapi.binance.com/fapi/v1/account?recvWindow=5000&timestamp=1568882788189&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"feeTier\":0,\"canTrade\":true,\"canDeposit\":true,\"canWithdraw\":true,\"updateTime\":0,\"totalInitialMargin\":\"0.00000000\",\"totalMaintMargin\":\"0.00000000\",\"totalWalletBalance\":\"10.18000000\",\"totalUnrealizedProfit\":\"0.00000000\",\"totalMarginBalance\":\"10.18000000\",\"assets\":[{\"asset\":\"USDT\",\"walletBalance\":\"10.18000000\",\"unrealizedProfit\":\"0.00000000\",\"marginBalance\":\"10.18000000\",\"maintMargin\":\"0.00000000\",\"initialMargin\":\"0.00000000\"}]}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "430",
+        "Connection": "keep-alive",
+        "Date": "Thu, 19 Sep 2019 08:46:28 GMT",
+        "Server": "Tengine",
+        "Vary": "Accept-Encoding",
+        "x-response-time": "8ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "*,clienttype,Content-Type,lang,x-ui-request-trace",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 c379fc647ec433c74b9813bff8a9cf0f.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "HKG60-C1",
+        "X-Amz-Cf-Id": "0WIhLOJMm-PJkF8mniggHEpMc8wVjle3iBzI3D_bdHVKlMs-glG4mQ=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

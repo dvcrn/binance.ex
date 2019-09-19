@@ -1,13 +1,15 @@
-defmodule Binance.Rest.HTTPClient do
-  @endpoint "https://api.binance.com"
+defmodule Binance.Futures.Rest.HTTPClient do
+  @endpoint "https://fapi.binance.com"
 
   def get_binance(url, headers \\ []) do
-    HTTPoison.get("#{@endpoint}#{url}", headers)
+    "#{@endpoint}#{url}"
+    |> HTTPoison.get(headers)
     |> parse_response
   end
 
   def delete_binance(url, headers \\ []) do
-    HTTPoison.delete("#{@endpoint}#{url}", headers)
+    "#{@endpoint}#{url}"
+    |> HTTPoison.delete(headers)
     |> parse_response
   end
 
@@ -62,28 +64,33 @@ defmodule Binance.Rest.HTTPClient do
   end
 
   def post_binance(url, params) do
-    argument_string =
-      params
-      |> Map.to_list()
-      |> Enum.map(fn x -> Tuple.to_list(x) |> Enum.join("=") end)
-      |> Enum.join("&")
-
-    # generate signature
-    signature =
-      :crypto.hmac(
-        :sha256,
-        Application.get_env(:binance, :secret_key),
-        argument_string
-      )
-      |> Base.encode16()
-
-    body = "#{argument_string}&signature=#{signature}"
+    body = sign_body(params)
 
     case HTTPoison.post("#{@endpoint}#{url}", body, [
            {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
          ]) do
       {:error, err} ->
         {:error, {:http_error, err}}
+
+      {:ok, response} ->
+        case Poison.decode(response.body) do
+          {:ok, data} -> {:ok, data}
+          {:error, err} -> {:error, {:poison_decode_error, err}}
+        end
+    end
+  end
+
+  def put_binance(url, params) do
+    body = sign_body(params)
+
+    case HTTPoison.put("#{@endpoint}#{url}", body, [
+           {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
+         ]) do
+      {:error, err} ->
+        {:error, {:http_error, err}}
+
+      {:ok, %{body: ""}} ->
+        {:ok, ""}
 
       {:ok, response} ->
         case Poison.decode(response.body) do
@@ -121,5 +128,23 @@ defmodule Binance.Rest.HTTPClient do
 
   defp parse_response_body({:error, err}) do
     {:error, {:poison_decode_error, err}}
+  end
+
+  defp sign_body(params) do
+    argument_string =
+      params
+      |> Map.to_list()
+      |> Enum.map(fn x -> Tuple.to_list(x) |> Enum.join("=") end)
+      |> Enum.join("&")
+
+    signature =
+      :crypto.hmac(
+        :sha256,
+        Application.get_env(:binance, :secret_key),
+        argument_string
+      )
+      |> Base.encode16()
+
+    "#{argument_string}&signature=#{signature}"
   end
 end

@@ -1,0 +1,35 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": [],
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://fapi.binance.com/fapi/v1/depth?symbol=BTCUSDT&limit=5"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"lastUpdateId\":36154698,\"bids\":[[\"9875.74\",\"1.849\"],[\"9875.59\",\"2.752\"],[\"9875.16\",\"2.588\"],[\"9874.67\",\"1.547\"],[\"9873.80\",\"3.647\"]],\"asks\":[[\"9876.71\",\"2.569\"],[\"9877.08\",\"1.745\"],[\"9877.48\",\"1.743\"],[\"9878.15\",\"1.580\"],[\"9878.36\",\"3.091\"]]}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "243",
+        "Connection": "keep-alive",
+        "Date": "Thu, 19 Sep 2019 07:55:24 GMT",
+        "Server": "Tengine",
+        "Vary": "Accept-Encoding",
+        "x-response-time": "0ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "*,clienttype,Content-Type,lang,x-ui-request-trace",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 2276141e64b3e76ad879a6638f87396c.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "HKG60-C1",
+        "X-Amz-Cf-Id": "Mqeq_ekILftDJu2pPPON73tO4WeZMUwTPcw3UsfxeUNJl8P4owj_JQ=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
