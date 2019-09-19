@@ -5,11 +5,19 @@ defmodule Binance.Futures.WebSocket.WSClient do
   There are 2 types of WebSocket channels/streams on Binance:
 
   - Public streams (https://binanceapitest.github.io/Binance-Futures-API-doc/wss/)
-  - User Data streams (https://binanceapitest.github.io/Binance-Futures-API-doc/userdatastream/)
+  - User Data stream (https://binanceapitest.github.io/Binance-Futures-API-doc/userdatastream/)
 
   Use the `require_auth` option to indicate if we're going to subscribe to User Data stream or not.
   If we're not, use `public_channels` to list out channels/streams we would like to subscribe to.
   Or said it in other way, `public_channels` will be ignored when `require_auth` is `true`.
+
+  Note: User Data stream requires to have a listen key created beforehand. A listen key needs
+  to be keepalive every 30 mins otherwise the stream would be closed after 30mins. This WebSocket client
+  by default sets the interval time for keepalive the stream to be 10mins (see @keep_alive_interval)
+
+  Also, this WebSocket client maintains a heartbeat mechanism by sending a ping every 5_000ms (see @ping interval)
+  to check if the WebSocket server is in connected and to decide whether to continue to keep the connection or
+  terminate the current one and start a new one.
 
   Usage example:
 
@@ -54,13 +62,7 @@ defmodule Binance.Futures.WebSocket.WSClient do
       end
 
       def schedule_keep_alive_stream() do
-        send_after(self(), :keep_alive, 10_000)
-      end
-
-      def handle_info(:keep_alive, state) do
-        {:ok, %{}} = Binance.Futures.keep_alive_listen_key()
-        schedule_keep_alive_stream()
-        {:ok, state}
+        send_after(self(), :keep_alive, @keep_alive_interval)
       end
 
       def prepare_endpoint_url(stream_name) when is_binary(stream_name) do
@@ -80,6 +82,19 @@ defmodule Binance.Futures.WebSocket.WSClient do
       def handle_connect(_conn, state) do
         :ok = info("Binance Connected!")
         send_after(self(), {:heartbeat, :ping, 1}, 20_000)
+
+        # If this is User Data stream, schedule a process to keepalive the stream every 10mins (see @keep_alive_interval)
+        if state.listen_key do
+          schedule_keep_alive_stream()
+        end
+
+        {:ok, state}
+      end
+
+      def handle_info(:keep_alive, state) do
+        {:ok, _} = Binance.Futures.keep_alive_listen_key()
+        :ok = info("Keepalive Binance's User Data stream done!")
+        schedule_keep_alive_stream()
         {:ok, state}
       end
 
