@@ -1,0 +1,36 @@
+[
+  {
+    "request": {
+      "body": "recvWindow=1000&timestamp=1568883876220&signature=***",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "put",
+      "options": [],
+      "request_body": "",
+      "url": "https://fapi.binance.com/fapi/v1/listenKey"
+    },
+    "response": {
+      "binary": false,
+      "body": "",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "0",
+        "Connection": "keep-alive",
+        "Date": "Thu, 19 Sep 2019 09:04:36 GMT",
+        "Server": "Tengine",
+        "x-response-time": "0ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "*,clienttype,Content-Type,lang,x-ui-request-trace",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 62984a52337afed4f5d9b3351d33e75c.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "HKG60-C1",
+        "X-Amz-Cf-Id": "v551i2QhW9kefM5jU5_INBe8xDh_EpKLEVwaNHmDR2sjHkdGQJoutA=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

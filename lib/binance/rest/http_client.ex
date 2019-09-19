@@ -96,14 +96,11 @@ defmodule Binance.Rest.HTTPClient do
   defp validate_credentials(nil, nil),
     do: {:error, {:config_missing, "Secret and API key missing"}}
 
-  defp validate_credentials(nil, _api_key),
-    do: {:error, {:config_missing, "Secret key missing"}}
+  defp validate_credentials(nil, _api_key), do: {:error, {:config_missing, "Secret key missing"}}
 
-  defp validate_credentials(_secret_key, nil),
-    do: {:error, {:config_missing, "API key missing"}}
+  defp validate_credentials(_secret_key, nil), do: {:error, {:config_missing, "API key missing"}}
 
-  defp validate_credentials(_secret_key, _api_key),
-    do: :ok
+  defp validate_credentials(_secret_key, _api_key), do: :ok
 
   defp parse_response({:ok, response}) do
     response.body

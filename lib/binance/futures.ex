@@ -141,7 +141,7 @@ defmodule Binance.Futures do
 
     case HTTPClient.get_binance("/fapi/v1/account", %{}, secret_key, api_key) do
       {:ok, data} ->
-        {:ok, Binance.Account.new(data)}
+        {:ok, Binance.Futures.Account.new(data)}
 
       error ->
         error

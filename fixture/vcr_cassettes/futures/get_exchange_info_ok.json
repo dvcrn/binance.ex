@@ -1,0 +1,35 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": [],
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://fapi.binance.com/fapi/v1/exchangeInfo"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"timezone\":\"UTC\",\"serverTime\":1568879257222,\"rateLimits\":[{\"rateLimitType\":\"REQUEST_WEIGHT\",\"interval\":\"MINUTE\",\"intervalNum\":1,\"limit\":1200},{\"rateLimitType\":\"ORDERS\",\"interval\":\"MINUTE\",\"intervalNum\":1,\"limit\":600}],\"exchangeFilters\":[],\"symbols\":[{\"symbol\":\"BTCUSDT\",\"status\":\"TRADING\",\"maintMarginPercent\":\"2.5000\",\"requiredMarginPercent\":\"5.0000\",\"baseAsset\":\"BTC\",\"quoteAsset\":\"USDT\",\"pricePrecision\":2,\"quantityPrecision\":3,\"baseAssetPrecision\":8,\"quotePrecision\":8,\"filters\":[{\"minPrice\":\"0.01\",\"maxPrice\":\"100000\",\"filterType\":\"PRICE_FILTER\",\"tickSize\":\"0.01\"},{\"stepSize\":\"0.001\",\"filterType\":\"LOT_SIZE\",\"maxQty\":\"1000\",\"minQty\":\"0.001\"},{\"stepSize\":\"0.001\",\"filterType\":\"MARKET_LOT_SIZE\",\"maxQty\":\"1000\",\"minQty\":\"0.001\"},{\"limit\":0,\"filterType\":\"MAX_NUM_ORDERS\"},{\"multiplierDown\":\"0.8500\",\"multiplierUp\":\"1.1500\",\"multiplierDecimal\":\"4\",\"filterType\":\"PERCENT_PRICE\"}],\"orderTypes\":[\"LIMIT\",\"MARKET\",\"STOP\"],\"timeInForce\":[\"GTC\",\"IOC\",\"FOK\",\"GTX\"]}]}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "963",
+        "Connection": "keep-alive",
+        "Date": "Thu, 19 Sep 2019 07:47:37 GMT",
+        "Server": "Tengine",
+        "Vary": "Accept-Encoding",
+        "x-response-time": "0ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "*,clienttype,Content-Type,lang,x-ui-request-trace",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 0e4baa40f8860e2e0eea54b2a4c33ba5.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "HKG60-C1",
+        "X-Amz-Cf-Id": "6qBnecgZ0Fy24cPTxeK2Z_su5swpnwXNyTYMoB0ovN-BIOCFdVmcdw=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
