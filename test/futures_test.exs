@@ -180,7 +180,7 @@ defmodule FuturesTest do
   describe ".order_limit_buy" do
     test "creates an order with a duration of good til cancel by default" do
       use_cassette "futures/order_limit_buy_good_til_cancel_default_duration_success" do
-        assert {:ok, %Binance.Futures.OrderResponse{} = response} =
+        assert {:ok, %Binance.Futures.Order{} = response} =
                  Binance.Futures.order_limit_buy("BTCUSDT", 0.001, 9000)
 
         assert response.client_order_id == "NZzeeQSqS5PH5OS9WAMBIy"
@@ -218,7 +218,7 @@ defmodule FuturesTest do
   describe ".order_limit_sell" do
     test "creates an order with a duration of good til cancel by default" do
       use_cassette "futures/order_limit_sell_good_til_cancel_default_duration_success" do
-        assert {:ok, %Binance.Futures.OrderResponse{} = response} =
+        assert {:ok, %Binance.Futures.Order{} = response} =
                  Binance.Futures.order_limit_sell("BTCUSDT", 0.001, 11000)
 
         assert response.client_order_id == "VV0vLLVnABzLXwYxvDkYqF"
@@ -253,10 +253,74 @@ defmodule FuturesTest do
     end
   end
 
+  describe ".get_open_orders" do
+    test "when called without symbol returns all open orders for all symbols" do
+      use_cassette "futures/get_open_orders_without_symbol_success" do
+        assert {:ok,
+                [
+                  %Binance.Futures.Order{} = order_1,
+                  %Binance.Futures.Order{} = order_2
+                ]} = Binance.Futures.get_open_orders()
+
+        assert order_1.client_order_id == "kFVOX0nClhOku6TTcB8B1X"
+        assert order_1.cum_quote == "0"
+        assert order_1.executed_qty == "0"
+        assert order_1.order_id == 11_377_637
+        assert order_1.orig_qty == "0.001"
+        assert order_1.price == "11000"
+        assert order_1.reduce_only == false
+        assert order_1.side == "SELL"
+        assert order_1.status == "NEW"
+        assert order_1.stop_price == "0"
+        assert order_1.symbol == "BTCUSDT"
+        assert order_1.time_in_force == "GTC"
+        assert order_1.type == "LIMIT"
+        assert order_1.update_time == 1_568_997_441_781
+
+        assert order_2.client_order_id == "qVG9BiiCkLqfvVqhHnVurH"
+        assert order_2.cum_quote == "0"
+        assert order_2.executed_qty == "0"
+        assert order_2.order_id == 18_821_005
+        assert order_2.orig_qty == "0.001"
+        assert order_2.price == "9000"
+        assert order_2.reduce_only == false
+        assert order_2.side == "BUY"
+        assert order_2.status == "NEW"
+        assert order_2.stop_price == "0"
+        assert order_2.symbol == "BTCUSDT"
+        assert order_2.time_in_force == "GTC"
+        assert order_2.type == "LIMIT"
+        assert order_2.update_time == 1_568_007_063_660
+      end
+    end
+
+    test "when called with symbol returns all open orders for that symbols(string)" do
+      use_cassette "futures/get_open_orders_with_symbol_string_success" do
+        assert {:ok, [%Binance.Futures.Order{} = order_1]} =
+                 Binance.Futures.get_open_orders("BTCUSDT")
+
+        assert order_1.client_order_id == "kFVoo0nClhOku6KbcB8B1X"
+        assert order_1.cum_quote == "0"
+        assert order_1.executed_qty == "0"
+        assert order_1.order_id == 11_333_637
+        assert order_1.orig_qty == "0.001"
+        assert order_1.price == "11000"
+        assert order_1.reduce_only == false
+        assert order_1.side == "SELL"
+        assert order_1.status == "NEW"
+        assert order_1.stop_price == "0"
+        assert order_1.symbol == "BTCUSDT"
+        assert order_1.time_in_force == "GTC"
+        assert order_1.type == "LIMIT"
+        assert order_1.update_time == 1_568_995_541_781
+      end
+    end
+  end
+
   describe ".get_order" do
     test "gets an order information by exchange order id" do
       use_cassette "futures/get_order_by_exchange_order_id_ok" do
-        assert {:ok, %Binance.Futures.OrderResponse{} = response} =
+        assert {:ok, %Binance.Futures.Order{} = response} =
                  Binance.Futures.get_order("BTCUSDT", 10_926_974)
 
         assert response.client_order_id == "F1YDd19xJvGWNiBbt7JCrr"
@@ -278,7 +342,7 @@ defmodule FuturesTest do
 
     test "gets an order information by client order id" do
       use_cassette "futures/get_order_by_client_order_id_ok" do
-        assert {:ok, %Binance.Futures.OrderResponse{} = response} =
+        assert {:ok, %Binance.Futures.Order{} = response} =
                  Binance.Futures.get_order("BTCUSDT", nil, "F1YDd11xJvGWNiBbt7JCrr")
 
         assert response.client_order_id == "F1YDd19xJvGWNiBbt7JCrr"
@@ -309,7 +373,7 @@ defmodule FuturesTest do
   describe ".cancel_order" do
     test "cancel an order by exchange order id" do
       use_cassette "futures/cancel_order_by_exchange_order_id_ok" do
-        assert {:ok, %Binance.Futures.OrderResponse{} = response} =
+        assert {:ok, %Binance.Futures.Order{} = response} =
                  Binance.Futures.cancel_order("BTCUSDT", 11_257_530)
 
         assert response.client_order_id == "wgQyWAlBFCCWinOy7yPFDu"
@@ -331,7 +395,7 @@ defmodule FuturesTest do
 
     test "cancel an order by client order id" do
       use_cassette "futures/cancel_order_by_client_order_id_ok" do
-        assert {:ok, %Binance.Futures.OrderResponse{} = response} =
+        assert {:ok, %Binance.Futures.Order{} = response} =
                  Binance.Futures.cancel_order("BTCUSDT", nil, "Slo0A5UDDOWK7cdUNVUsfO")
 
         assert response.client_order_id == "Slo0A5UDDOWK7cdUNVUsfO"

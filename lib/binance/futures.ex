@@ -241,15 +241,56 @@ defmodule Binance.Futures do
   end
 
   @doc """
+  Get all open orders, alternatively open orders by symbol
+
+  Returns `{:ok, [%Binance.Futures.Order{}]}` or `{:error, reason}`.
+
+  Weight: 1 for a single symbol; 40 when the symbol parameter is omitted
+
+  ## Example
+  ```
+  {:ok,
+    [%Binance.Futures.Order{price: "0.1", orig_qty: "1.0", executed_qty: "0.0", ...},
+     %Binance.Futures.Order{...},
+     %Binance.Futures.Order{...},
+     %Binance.Futures.Order{...},
+     %Binance.Futures.Order{...},
+     %Binance.Futures.Order{...},
+     ...]}
+  ```
+
+  Read more: https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#current-open-orders-user_data
+  """
+  def get_open_orders() do
+    api_key = Application.get_env(:binance, :api_key)
+    secret_key = Application.get_env(:binance, :secret_key)
+
+    case HTTPClient.get_binance("/fapi/v1/openOrders", %{}, secret_key, api_key) do
+      {:ok, data} -> {:ok, Enum.map(data, &Binance.Futures.Order.new(&1))}
+      err -> err
+    end
+  end
+
+  def get_open_orders(symbol) when is_binary(symbol) do
+    api_key = Application.get_env(:binance, :api_key)
+    secret_key = Application.get_env(:binance, :secret_key)
+
+    case HTTPClient.get_binance("/fapi/v1/openOrders", %{:symbol => symbol}, secret_key, api_key) do
+      {:ok, data} -> {:ok, Enum.map(data, &Binance.Futures.Order.new(&1))}
+      err -> err
+    end
+  end
+
+  @doc """
   Get order by symbol and either orderId or origClientOrderId are mandatory
 
-  Returns `{:ok, [%Binance.Futures.OrderResponse{}]}` or `{:error, reason}`.
+  Returns `{:ok, [%Binance.Futures.Order{}]}` or `{:error, reason}`.
 
   Weight: 1
 
   ## Example
   ```
-  {:ok, %Binance.Futures.OrderResponse{price: "0.1", origQty: "1.0", executedQty: "0.0", ...}}
+  {:ok, %Binance.Futures.Order{price: "0.1", origQty: "1.0", executedQty: "0.0", ...}}
   ```
 
   Info: https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#query-order-user_data
@@ -278,7 +319,7 @@ defmodule Binance.Futures do
       )
 
     case HTTPClient.get_binance("/fapi/v1/order", arguments, secret_key, api_key) do
-      {:ok, data} -> {:ok, Binance.Futures.OrderResponse.new(data)}
+      {:ok, data} -> {:ok, Binance.Futures.Order.new(data)}
       err -> err
     end
   end
@@ -288,7 +329,7 @@ defmodule Binance.Futures do
 
   Symbol and either orderId or origClientOrderId must be sent.
 
-  Returns `{:ok, %Binance.Futures.OrderResponse{}}` or `{:error, reason}`.
+  Returns `{:ok, %Binance.Futures.Order{}}` or `{:error, reason}`.
 
   Weight: 1
 
@@ -319,13 +360,13 @@ defmodule Binance.Futures do
 
     case HTTPClient.delete_binance("/fapi/v1/order", arguments, secret_key, api_key) do
       {:ok, %{"rejectReason" => _} = err} -> {:error, err}
-      {:ok, data} -> {:ok, Binance.Futures.OrderResponse.new(data)}
+      {:ok, data} -> {:ok, Binance.Futures.Order.new(data)}
       err -> err
     end
   end
 
   defp parse_order_response({:ok, response}) do
-    {:ok, Binance.Futures.OrderResponse.new(response)}
+    {:ok, Binance.Futures.Order.new(response)}
   end
 
   defp parse_order_response({

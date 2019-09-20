@@ -1,4 +1,4 @@
-defmodule Binance.Futures.OrderResponse do
+defmodule Binance.Futures.Order do
   defstruct [
     :client_order_id,
     :cum_qty,
