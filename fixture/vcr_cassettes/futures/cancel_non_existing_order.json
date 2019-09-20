@@ -1,0 +1,37 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "delete",
+      "options": [],
+      "request_body": "",
+      "url": "https://fapi.binance.com/fapi/v1/order?orderId=123456&recvWindow=5000&symbol=BTCUSDT&timestamp=1568995697788&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"status\":\"REJECTED\",\"reduceOnly\":false,\"updateTime\":1568995698674402579,\"rejectReason\":\"UNKNOWN_ORDER\"}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "104",
+        "Connection": "keep-alive",
+        "Date": "Fri, 20 Sep 2019 16:08:18 GMT",
+        "Server": "Tengine",
+        "Vary": "Accept-Encoding",
+        "x-response-time": "5ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "*,clienttype,Content-Type,lang,x-ui-request-trace",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 c967a8805fdfaef2a31a279939e3cfec.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "HKG54-C1",
+        "X-Amz-Cf-Id": "fb_eWYrEMkG7P1ZZWUjtci_6IO3DKZeAgCXfDcDzpGLio5NDHmybIw=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

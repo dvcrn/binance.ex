@@ -305,4 +305,62 @@ defmodule FuturesTest do
       end
     end
   end
+
+  describe ".cancel_order" do
+    test "cancel an order by exchange order id" do
+      use_cassette "futures/cancel_order_by_exchange_order_id_ok" do
+        assert {:ok, %Binance.Futures.OrderResponse{} = response} =
+                 Binance.Futures.cancel_order("BTCUSDT", 11_257_530)
+
+        assert response.client_order_id == "wgQyWAlBFCCWinOy7yPFDu"
+        assert response.cum_quote == "0"
+        assert response.executed_qty == "0"
+        assert response.order_id == 11_222_530
+        assert response.orig_qty == "0.001"
+        assert response.price == "11000"
+        assert response.reduce_only == false
+        assert response.side == "SELL"
+        assert response.status == "CANCELED"
+        assert response.stop_price == "0"
+        assert response.symbol == "BTCUSDT"
+        assert response.time_in_force == "GTC"
+        assert response.type == "LIMIT"
+        assert response.update_time == 1_568_999_338_577
+      end
+    end
+
+    test "cancel an order by client order id" do
+      use_cassette "futures/cancel_order_by_client_order_id_ok" do
+        assert {:ok, %Binance.Futures.OrderResponse{} = response} =
+                 Binance.Futures.cancel_order("BTCUSDT", nil, "Slo0A5UDDOWK7cdUNVUsfO")
+
+        assert response.client_order_id == "Slo0A5UDDOWK7cdUNVUsfO"
+        assert response.cum_quote == "0"
+        assert response.executed_qty == "0"
+        assert response.order_id == 11_277_192
+        assert response.orig_qty == "0.001"
+        assert response.price == "11000"
+        assert response.reduce_only == false
+        assert response.side == "SELL"
+        assert response.status == "CANCELED"
+        assert response.stop_price == "0"
+        assert response.symbol == "BTCUSDT"
+        assert response.time_in_force == "GTC"
+        assert response.type == "LIMIT"
+        assert response.update_time == 1_568_996_656_841
+      end
+    end
+
+    test "return errors when cancel an non-existing order" do
+      use_cassette "futures/cancel_non_existing_order" do
+        assert {:error,
+                %{
+                  "reduceOnly" => false,
+                  "rejectReason" => "UNKNOWN_ORDER",
+                  "status" => "REJECTED",
+                  "updateTime" => 1_568_995_698_674_402_579
+                }} = Binance.Futures.cancel_order("BTCUSDT", 123_456)
+      end
+    end
+  end
 end

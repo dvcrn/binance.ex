@@ -283,6 +283,47 @@ defmodule Binance.Futures do
     end
   end
 
+  @doc """
+  Cancel an active order.
+
+  Symbol and either orderId or origClientOrderId must be sent.
+
+  Returns `{:ok, %Binance.Futures.OrderResponse{}}` or `{:error, reason}`.
+
+  Weight: 1
+
+  Info: https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#cancel-order-trade
+  """
+  def cancel_order(
+        symbol,
+        order_id \\ nil,
+        orig_client_order_id \\ nil
+      )
+      when is_binary(symbol)
+      when is_integer(order_id) or is_binary(orig_client_order_id) do
+    api_key = Application.get_env(:binance, :api_key)
+    secret_key = Application.get_env(:binance, :secret_key)
+
+    arguments =
+      %{
+        symbol: symbol
+      }
+      |> Map.merge(unless(is_nil(order_id), do: %{orderId: order_id}, else: %{}))
+      |> Map.merge(
+        unless(
+          is_nil(orig_client_order_id),
+          do: %{origClientOrderId: orig_client_order_id},
+          else: %{}
+        )
+      )
+
+    case HTTPClient.delete_binance("/fapi/v1/order", arguments, secret_key, api_key) do
+      {:ok, %{"rejectReason" => _} = err} -> {:error, err}
+      {:ok, data} -> {:ok, Binance.Futures.OrderResponse.new(data)}
+      err -> err
+    end
+  end
+
   defp parse_order_response({:ok, response}) do
     {:ok, Binance.Futures.OrderResponse.new(response)}
   end
