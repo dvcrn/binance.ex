@@ -252,4 +252,57 @@ defmodule FuturesTest do
       end
     end
   end
+
+  describe ".get_order" do
+    test "gets an order information by exchange order id" do
+      use_cassette "futures/get_order_by_exchange_order_id_ok" do
+        assert {:ok, %Binance.Futures.OrderResponse{} = response} =
+                 Binance.Futures.get_order("BTCUSDT", 10_926_974)
+
+        assert response.client_order_id == "F1YDd19xJvGWNiBbt7JCrr"
+        assert response.cum_quote == "0"
+        assert response.executed_qty == "0"
+        assert response.order_id == 10_926_974
+        assert response.orig_qty == "0.001"
+        assert response.price == "11000"
+        assert response.reduce_only == false
+        assert response.side == "SELL"
+        assert response.status == "NEW"
+        assert response.stop_price == "0"
+        assert response.symbol == "BTCUSDT"
+        assert response.time_in_force == "GTC"
+        assert response.type == "LIMIT"
+        assert response.update_time == 1_568_988_806_336
+      end
+    end
+
+    test "gets an order information by client order id" do
+      use_cassette "futures/get_order_by_client_order_id_ok" do
+        assert {:ok, %Binance.Futures.OrderResponse{} = response} =
+                 Binance.Futures.get_order("BTCUSDT", nil, "F1YDd11xJvGWNiBbt7JCrr")
+
+        assert response.client_order_id == "F1YDd19xJvGWNiBbt7JCrr"
+        assert response.cum_quote == "0"
+        assert response.executed_qty == "0"
+        assert response.order_id == 10_926_974
+        assert response.orig_qty == "0.001"
+        assert response.price == "11000"
+        assert response.reduce_only == false
+        assert response.side == "SELL"
+        assert response.status == "NEW"
+        assert response.stop_price == "0"
+        assert response.symbol == "BTCUSDT"
+        assert response.time_in_force == "GTC"
+        assert response.type == "LIMIT"
+        assert response.update_time == 1_568_988_806_336
+      end
+    end
+
+    test "returns an insufficient margin error tuple" do
+      use_cassette "futures/get_order_error" do
+        assert {:error, %{"code" => -2013, "msg" => "Order does not exist."} = _reason} =
+                 Binance.Futures.get_order("BTCUSDT", 123_456_789)
+      end
+    end
+  end
 end

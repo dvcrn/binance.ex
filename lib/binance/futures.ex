@@ -240,6 +240,49 @@ defmodule Binance.Futures do
     |> parse_order_response
   end
 
+  @doc """
+  Get order by symbol and either orderId or origClientOrderId are mandatory
+
+  Returns `{:ok, [%Binance.Futures.OrderResponse{}]}` or `{:error, reason}`.
+
+  Weight: 1
+
+  ## Example
+  ```
+  {:ok, %Binance.Futures.OrderResponse{price: "0.1", origQty: "1.0", executedQty: "0.0", ...}}
+  ```
+
+  Info: https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#query-order-user_data
+  """
+  def get_order(
+        symbol,
+        order_id \\ nil,
+        orig_client_order_id \\ nil
+      )
+      when is_binary(symbol)
+      when is_integer(order_id) or is_binary(orig_client_order_id) do
+    api_key = Application.get_env(:binance, :api_key)
+    secret_key = Application.get_env(:binance, :secret_key)
+
+    arguments =
+      %{
+        symbol: symbol
+      }
+      |> Map.merge(unless(is_nil(order_id), do: %{orderId: order_id}, else: %{}))
+      |> Map.merge(
+        unless(
+          is_nil(orig_client_order_id),
+          do: %{origClientOrderId: orig_client_order_id},
+          else: %{}
+        )
+      )
+
+    case HTTPClient.get_binance("/fapi/v1/order", arguments, secret_key, api_key) do
+      {:ok, data} -> {:ok, Binance.Futures.OrderResponse.new(data)}
+      err -> err
+    end
+  end
+
   defp parse_order_response({:ok, response}) do
     {:ok, Binance.Futures.OrderResponse.new(response)}
   end

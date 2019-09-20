@@ -1,0 +1,34 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://fapi.binance.com/fapi/v1/order?orderId=123456789&recvWindow=5000&symbol=BTCUSDT&timestamp=1568979376562&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"code\":-2013,\"msg\":\"Order does not exist.\"}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "44",
+        "Connection": "keep-alive",
+        "Date": "Fri, 20 Sep 2019 11:36:17 GMT",
+        "Server": "Tengine",
+        "x-response-time": "3ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "X-Cache": "Error from cloudfront",
+        "Via": "1.1 5ba8379cda77812559800b5a5c101994.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "HKG53",
+        "X-Amz-Cf-Id": "b8XjToRSbc7_GnKaWw_JynoRE3Mvd5p4WNNIi_zOA1bH5AfMPab_HA=="
+      },
+      "status_code": 400,
+      "type": "ok"
+    }
+  }
+]
