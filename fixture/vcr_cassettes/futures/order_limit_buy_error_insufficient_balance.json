@@ -1,0 +1,35 @@
+[
+  {
+    "request": {
+      "body": "price=9000&quantity=0.05&recvWindow=1000&side=BUY&symbol=BTCUSDT&timeInForce=GTC&timestamp=1568970933859&type=LIMIT&signature=***",
+      "headers": {
+        "X-MBX-APIKEY": "***",
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://fapi.binance.com/fapi/v1/order"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"code\":-1000,\"msg\":\"You don't have enough margin for this new order\"}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "70",
+        "Connection": "keep-alive",
+        "Date": "Fri, 20 Sep 2019 09:15:34 GMT",
+        "Server": "Tengine",
+        "x-response-time": "6ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "X-Cache": "Error from cloudfront",
+        "Via": "1.1 6510d9494672c245cbfa38f2c21c782a.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "HKG60-C1",
+        "X-Amz-Cf-Id": "5bUYgR77sXZVff2rCQiXpMMTnn-9Ve54FnnUR34uGbhBs77T20DDAQ=="
+      },
+      "status_code": 400,
+      "type": "ok"
+    }
+  }
+]

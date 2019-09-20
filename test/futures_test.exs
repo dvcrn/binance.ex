@@ -176,4 +176,80 @@ defmodule FuturesTest do
       end
     end
   end
+
+  describe ".order_limit_buy" do
+    test "creates an order with a duration of good til cancel by default" do
+      use_cassette "futures/order_limit_buy_good_til_cancel_default_duration_success" do
+        assert {:ok, %Binance.Futures.OrderResponse{} = response} =
+                 Binance.Futures.order_limit_buy("BTCUSDT", 0.001, 9000)
+
+        assert response.client_order_id == "NZzeeQSqS5PH5OS9WAMBIy"
+        assert response.cum_qty == "0"
+        assert response.cum_quote == "0"
+        assert response.executed_qty == "0"
+        assert response.order_id == 10_817_219
+        assert response.orig_qty == "0.001"
+        assert response.price == "9000"
+        assert response.reduce_only == false
+        assert response.side == "BUY"
+        assert response.status == "NEW"
+        assert response.stop_price == "0"
+        assert response.symbol == "BTCUSDT"
+        assert response.time_in_force == "GTC"
+        assert response.type == "LIMIT"
+        assert response.update_time == 1_568_970_695_368
+      end
+    end
+
+    test "returns an insufficient margin error tuple" do
+      use_cassette "futures/order_limit_buy_error_insufficient_balance" do
+        assert {:error, reason} = Binance.Futures.order_limit_buy("BTCUSDT", 0.05, 9000)
+
+        assert reason == %Binance.InsufficientBalanceError{
+                 reason: %{
+                   code: -1000,
+                   msg: "You don't have enough margin for this new order"
+                 }
+               }
+      end
+    end
+  end
+
+  describe ".order_limit_sell" do
+    test "creates an order with a duration of good til cancel by default" do
+      use_cassette "futures/order_limit_sell_good_til_cancel_default_duration_success" do
+        assert {:ok, %Binance.Futures.OrderResponse{} = response} =
+                 Binance.Futures.order_limit_sell("BTCUSDT", 0.001, 11000)
+
+        assert response.client_order_id == "VV0vLLVnABzLXwYxvDkYqF"
+        assert response.cum_qty == "0"
+        assert response.cum_quote == "0"
+        assert response.executed_qty == "0"
+        assert response.order_id == 10_800_687
+        assert response.orig_qty == "0.001"
+        assert response.price == "11000"
+        assert response.reduce_only == false
+        assert response.side == "SELL"
+        assert response.status == "NEW"
+        assert response.stop_price == "0"
+        assert response.symbol == "BTCUSDT"
+        assert response.time_in_force == "GTC"
+        assert response.type == "LIMIT"
+        assert response.update_time == 1_568_976_216_827
+      end
+    end
+
+    test "returns an insufficient margin error tuple" do
+      use_cassette "futures/order_limit_buy_error_insufficient_balance" do
+        assert {:error, reason} = Binance.Futures.order_limit_sell("BTCUSDT", 0.05, 11000)
+
+        assert reason == %Binance.InsufficientBalanceError{
+                 reason: %{
+                   code: -1000,
+                   msg: "You don't have enough margin for this new order"
+                 }
+               }
+      end
+    end
+  end
 end

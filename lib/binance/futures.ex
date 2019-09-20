@@ -147,4 +147,110 @@ defmodule Binance.Futures do
         error
     end
   end
+
+  # Order
+
+  @doc """
+  Creates a new order on Binance Futures
+
+  Returns `{:ok, %{}}` or `{:error, reason}`.
+
+  In the case of a error on Binance, for example with invalid parameters, `{:error, {:binance_error, %{code: code, msg: msg}}}` will be returned.
+
+  Please read https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#new-order-trade
+  """
+  def create_order(
+        symbol,
+        side,
+        type,
+        quantity,
+        price \\ nil,
+        time_in_force \\ nil,
+        new_client_order_id \\ nil,
+        stop_price \\ nil,
+        receiving_window \\ 1000,
+        timestamp \\ nil
+      ) do
+    timestamp =
+      case timestamp do
+        # timestamp needs to be in milliseconds
+        nil ->
+          :os.system_time(:millisecond)
+
+        t ->
+          t
+      end
+
+    arguments =
+      %{
+        symbol: symbol,
+        side: side,
+        type: type,
+        quantity: quantity,
+        timestamp: timestamp,
+        recvWindow: receiving_window
+      }
+      |> Map.merge(
+        unless(
+          is_nil(new_client_order_id),
+          do: %{newClientOrderId: new_client_order_id},
+          else: %{}
+        )
+      )
+      |> Map.merge(unless(is_nil(stop_price), do: %{stopPrice: stop_price}, else: %{}))
+      |> Map.merge(unless(is_nil(time_in_force), do: %{timeInForce: time_in_force}, else: %{}))
+      |> Map.merge(unless(is_nil(price), do: %{price: price}, else: %{}))
+
+    case HTTPClient.post_binance("/fapi/v1/order", arguments) do
+      {:ok, %{"code" => code, "msg" => msg}} ->
+        {:error, {:binance_error, %{code: code, msg: msg}}}
+
+      data ->
+        data
+    end
+  end
+
+  @doc """
+  Creates a new **limit** **buy** order
+
+  Symbol can be a binance symbol in the form of `"BTCUSDT"`
+
+  Returns `{:ok, %{}}` or `{:error, reason}`
+  """
+  def order_limit_buy(symbol, quantity, price, time_in_force \\ "GTC")
+      when is_binary(symbol)
+      when is_number(quantity)
+      when is_number(price) do
+    create_order(symbol, "BUY", "LIMIT", quantity, price, time_in_force)
+    |> parse_order_response
+  end
+
+  @doc """
+  Creates a new **limit** **sell** order
+
+  Symbol can be a binance symbol in the form of `"BTCUSDT"` or `%Binance.TradePair{}`.
+
+  Returns `{:ok, %{}}` or `{:error, reason}`
+  """
+  def order_limit_sell(symbol, quantity, price, time_in_force \\ "GTC")
+      when is_binary(symbol)
+      when is_number(quantity)
+      when is_number(price) do
+    create_order(symbol, "SELL", "LIMIT", quantity, price, time_in_force)
+    |> parse_order_response
+  end
+
+  defp parse_order_response({:ok, response}) do
+    {:ok, Binance.Futures.OrderResponse.new(response)}
+  end
+
+  defp parse_order_response({
+         :error,
+         {
+           :binance_error,
+           %{code: -1000, msg: "You don't have enough margin for this new order"} = reason
+         }
+       }) do
+    {:error, %Binance.InsufficientBalanceError{reason: reason}}
+  end
 end
