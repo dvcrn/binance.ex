@@ -35,6 +35,54 @@ defmodule Binance do
     end
   end
 
+  @doc """
+  Start a new user data stream. The stream will close after 60 minutes unless a keepalive is sent.
+
+  Returns `{:ok, time}` if successful, `{:error, reason}` otherwise
+
+  ## Example response
+  ```
+  {
+    "listenKey": "pqia91ma19a5s61cv6a81va65sdf19v8a65a1a5s61cv6a81va65sdf19v8a65a1"
+  }
+  ```
+
+  """
+  def create_listen_key() do
+    case HTTPClient.post_binance("/api/v1/userDataStream", %{}) do
+      {:ok, %{"code" => code, "msg" => msg}} ->
+        {:error, {:binance_error, %{code: code, msg: msg}}}
+
+      data ->
+        data
+    end
+  end
+
+  @doc """
+  Keepalive a user data stream to prevent a time out. User data streams will close after 60 minutes. It's recommended to send a ping about every 30 minutes.
+
+  Returns `{:ok, time}` if successful, `{:error, reason}` otherwise
+
+  ## Example response
+  ```
+  {}
+  ```
+
+  """
+  def keep_alive_listen_key(listen_key) do
+    arguments = %{
+      listenKey: listen_key
+    }
+
+    case HTTPClient.put_binance("/api/v1/userDataStream", arguments) do
+      {:ok, %{"code" => code, "msg" => msg}} ->
+        {:error, {:binance_error, %{code: code, msg: msg}}}
+
+      data ->
+        data
+    end
+  end
+
   # Ticker
 
   @doc """
@@ -597,7 +645,8 @@ defmodule Binance do
         )
       )
       |> Map.merge(
-        unless(is_nil(new_client_order_id),
+        unless(
+          is_nil(new_client_order_id),
           do: %{newClientOrderId: new_client_order_id},
           else: %{}
         )

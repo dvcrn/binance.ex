@@ -62,28 +62,33 @@ defmodule Binance.Rest.HTTPClient do
   end
 
   def post_binance(url, params) do
-    argument_string =
-      params
-      |> Map.to_list()
-      |> Enum.map(fn x -> Tuple.to_list(x) |> Enum.join("=") end)
-      |> Enum.join("&")
-
-    # generate signature
-    signature =
-      :crypto.hmac(
-        :sha256,
-        Application.get_env(:binance, :secret_key),
-        argument_string
-      )
-      |> Base.encode16()
-
-    body = "#{argument_string}&signature=#{signature}"
+    body = prepare_body(params, false)
 
     case HTTPoison.post("#{@endpoint}#{url}", body, [
            {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
          ]) do
       {:error, err} ->
         {:error, {:http_error, err}}
+
+      {:ok, response} ->
+        case Poison.decode(response.body) do
+          {:ok, data} -> {:ok, data}
+          {:error, err} -> {:error, {:poison_decode_error, err}}
+        end
+    end
+  end
+
+  def put_binance(url, params) do
+    body = prepare_body(params, false)
+
+    case HTTPoison.put("#{@endpoint}#{url}", body, [
+           {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
+         ]) do
+      {:error, err} ->
+        {:error, {:http_error, err}}
+
+      {:ok, %{body: ""}} ->
+        {:ok, ""}
 
       {:ok, response} ->
         case Poison.decode(response.body) do
@@ -121,5 +126,31 @@ defmodule Binance.Rest.HTTPClient do
 
   defp parse_response_body({:error, err}) do
     {:error, {:poison_decode_error, err}}
+  end
+
+  defp prepare_body(params, sign?) do
+    argument_string =
+      params
+      |> Map.to_list()
+      |> Enum.map(fn x -> Tuple.to_list(x) |> Enum.join("=") end)
+      |> Enum.join("&")
+
+    case sign? do
+      true ->
+        signature = sign_content(argument_string)
+        "#{argument_string}&signature=#{signature}"
+
+      false ->
+        argument_string
+    end
+  end
+
+  defp sign_content(content) do
+    :crypto.hmac(
+      :sha256,
+      Application.get_env(:binance, :secret_key),
+      content
+    )
+    |> Base.encode16()
   end
 end
