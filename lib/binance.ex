@@ -47,9 +47,11 @@ defmodule Binance do
   }
   ```
 
+  Note: Binance Spot does not require us to sign this request body while this very same API on Binance Futures does
+
   """
   def create_listen_key() do
-    case HTTPClient.post_binance("/api/v1/userDataStream", %{}) do
+    case HTTPClient.post_binance("/api/v1/userDataStream", %{}, false) do
       {:ok, %{"code" => code, "msg" => msg}} ->
         {:error, {:binance_error, %{code: code, msg: msg}}}
 
@@ -68,13 +70,15 @@ defmodule Binance do
   {}
   ```
 
+  Note: Binance Spot does not require us to sign this request body while this very same API on Binance Futures does
+
   """
   def keep_alive_listen_key(listen_key) do
     arguments = %{
       listenKey: listen_key
     }
 
-    case HTTPClient.put_binance("/api/v1/userDataStream", arguments) do
+    case HTTPClient.put_binance("/api/v1/userDataStream", arguments, false) do
       {:ok, %{"code" => code, "msg" => msg}} ->
         {:error, {:binance_error, %{code: code, msg: msg}}}
 

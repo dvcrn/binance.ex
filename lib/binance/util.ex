@@ -4,14 +4,16 @@ defmodule Binance.Util do
   @doc """
   Prepare request body, sign it if required
   """
-  def prepare_request_body(params, sign?) do
+  def prepare_request_body(params, opts \\ []) do
+    signed? = Keyword.get(opts, :signed, true)
+
     argument_string =
       params
       |> Map.to_list()
       |> Enum.map(fn x -> Tuple.to_list(x) |> Enum.join("=") end)
       |> Enum.join("&")
 
-    case sign? do
+    case signed? do
       true ->
         signature = sign_content(argument_string)
         "#{argument_string}&signature=#{signature}"
@@ -21,10 +23,7 @@ defmodule Binance.Util do
     end
   end
 
-  @doc """
-  Sign a value using Binance Secret key
-  """
-  def sign_content(content) do
+  defp sign_content(content) do
     :crypto.hmac(
       :sha256,
       Application.get_env(:binance, :secret_key),

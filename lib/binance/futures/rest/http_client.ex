@@ -66,8 +66,7 @@ defmodule Binance.Futures.Rest.HTTPClient do
   end
 
   def post_binance(url, params) do
-    # Binance does require us to sign this request
-    body = Util.prepare_request_body(params, true)
+    body = Util.prepare_request_body(params)
 
     case HTTPoison.post("#{@endpoint}#{url}", body, [
            {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)},
@@ -85,8 +84,7 @@ defmodule Binance.Futures.Rest.HTTPClient do
   end
 
   def put_binance(url, params) do
-    # Binance does require us to sign this request
-    body = Util.prepare_request_body(params, true)
+    body = Util.prepare_request_body(params)
 
     case HTTPoison.put("#{@endpoint}#{url}", body, [
            {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)},
