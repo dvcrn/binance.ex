@@ -101,6 +101,29 @@ defmodule BinanceTest do
     end
   end
 
+  describe ".create_listen_key" do
+    test "returns a listen key which could be used to subscrbe to a User Data stream" do
+      use_cassette "create_listen_key_ok" do
+        assert Binance.create_listen_key() == {
+                 :ok,
+                 %{
+                   "listenKey" => "l6oKmHZzY6CGcO7PlGehRO3NStJgPMMON7899c1xs6qYGKBfqPjbEw9hZlf5"
+                 }
+               }
+      end
+    end
+  end
+
+  describe ".keep_alive_listen_key" do
+    test "returns empty indicating the given listen key has been keepalive successfully" do
+      use_cassette "keep_alive_listen_key_ok" do
+        assert Binance.keep_alive_listen_key(
+                 "l6oKmHZzY6CGcO7PlGehRO3NStJgPMMON7899c1xs6qYGKBfqPjbEw9hZlf5"
+               ) == {:ok, %{}}
+      end
+    end
+  end
+
   describe ".get_depth" do
     test "returns the bids & asks up to the given depth" do
       use_cassette "get_depth_ok" do
@@ -434,7 +457,7 @@ defmodule BinanceTest do
         assert order.executed_qty == "0.00000000"
         assert order.iceberg_qty == nil
         assert order.is_working == nil
-        assert order.order_id == 212217782
+        assert order.order_id == 212_217_782
         assert order.orig_qty == "100.00000000"
         assert order.price == "0.30000000"
         assert order.side == "BUY"

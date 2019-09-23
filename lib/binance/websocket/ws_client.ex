@@ -1,11 +1,11 @@
-defmodule Binance.Futures.WebSocket.WSClient do
+defmodule Binance.WebSocket.WSClient do
   @moduledoc """
-  WebSocket client for Binance Futures
+  WebSocket client for Binance Spot
 
-  There are 2 types of WebSocket channels/streams on Binance:
+  There are 2 types of WebSocket channels/streams for Spot trading on Binance:
 
-  - Public streams (https://binanceapitest.github.io/Binance-Futures-API-doc/wss/)
-  - User Data stream (https://binanceapitest.github.io/Binance-Futures-API-doc/userdatastream/)
+  - [Public streams](https://github.com/binance-exchange/binance-official-api-docs/blob/master/web-socket-streams.md)
+  - [User Data stream](https://github.com/binance-exchange/binance-official-api-docs/blob/master/user-data-stream.md)
 
   Use the `require_auth` option to indicate if we're going to subscribe to User Data stream or not.
   If we're not, use `public_channels` to list out channels/streams we would like to subscribe to.
@@ -22,7 +22,7 @@ defmodule Binance.Futures.WebSocket.WSClient do
   Usage example:
 
   defmodule A do
-    use Binance.Futures.WebSocket.WSClient
+    use Binance.WebSocket.WSClient
   end
 
   # Public channels/streams
@@ -40,7 +40,7 @@ defmodule Binance.Futures.WebSocket.WSClient do
     quote do
       use WebSockex
       alias ExOkex.Config
-      @base Application.get_env(:binance, :ws_endpoint, "wss://fstream.binance.com")
+      @base Application.get_env(:binance, :ws_endpoint, "wss://stream.binance.com:9443")
       @ping_interval Application.get_env(:binance, :ping_interval, 5_000)
       @keep_alive_interval Application.get_env(:binance, :keep_alive_interval, 10 * 60_000)
 
@@ -51,7 +51,7 @@ defmodule Binance.Futures.WebSocket.WSClient do
         state = Map.merge(args, %{heartbeat: 0, listen_key: nil})
 
         if require_auth == true do
-          {:ok, %{"listenKey" => listen_key}} = Binance.Futures.create_listen_key()
+          {:ok, %{"listenKey" => listen_key}} = Binance.create_listen_key()
           state = Map.merge(state, %{listen_key: listen_key})
           endpoint_url = prepare_endpoint_url(listen_key)
           WebSockex.start_link(endpoint_url, __MODULE__, state, name: name)
@@ -80,7 +80,7 @@ defmodule Binance.Futures.WebSocket.WSClient do
       end
 
       def handle_connect(_conn, state) do
-        :ok = info("Binance Futures Connected!")
+        :ok = info("Binance Spot Connected!")
         send_after(self(), {:heartbeat, :ping, 1}, 20_000)
 
         # If this is User Data stream, schedule a process to keepalive the stream every 10mins (see @keep_alive_interval)
@@ -92,7 +92,7 @@ defmodule Binance.Futures.WebSocket.WSClient do
       end
 
       def handle_info(:keep_alive, state) do
-        {:ok, _} = Binance.Futures.keep_alive_listen_key()
+        {:ok, _} = Binance.keep_alive_listen_key()
         :ok = info("Keepalive Binance's User Data stream done!")
         schedule_keep_alive_stream()
         {:ok, state}
@@ -148,7 +148,7 @@ defmodule Binance.Futures.WebSocket.WSClient do
       end
 
       def handle_disconnect(resp, state) do
-        :ok = info("Binance Futures Disconnected! #{inspect(resp)}")
+        :ok = info("Binance Spot Disconnected! #{inspect(resp)}")
         {:ok, state}
       end
 

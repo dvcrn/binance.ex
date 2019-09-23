@@ -1,6 +1,8 @@
 defmodule Binance.Rest.HTTPClient do
   @endpoint "https://api.binance.com"
 
+  alias Binance.Util
+
   def get_binance(url, headers \\ []) do
     HTTPoison.get("#{@endpoint}#{url}", headers)
     |> parse_response
@@ -61,29 +63,32 @@ defmodule Binance.Rest.HTTPClient do
     end
   end
 
-  def post_binance(url, params) do
-    argument_string =
-      params
-      |> Map.to_list()
-      |> Enum.map(fn x -> Tuple.to_list(x) |> Enum.join("=") end)
-      |> Enum.join("&")
+  def post_binance(url, params, signed? \\ true) do
+    headers = Util.prepare_request_headers(:post)
+    body = Util.prepare_request_body(params, signed: signed?)
 
-    # generate signature
-    signature =
-      :crypto.hmac(
-        :sha256,
-        Application.get_env(:binance, :secret_key),
-        argument_string
-      )
-      |> Base.encode16()
-
-    body = "#{argument_string}&signature=#{signature}"
-
-    case HTTPoison.post("#{@endpoint}#{url}", body, [
-           {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
-         ]) do
+    case HTTPoison.post("#{@endpoint}#{url}", body, headers) do
       {:error, err} ->
         {:error, {:http_error, err}}
+
+      {:ok, response} ->
+        case Poison.decode(response.body) do
+          {:ok, data} -> {:ok, data}
+          {:error, err} -> {:error, {:poison_decode_error, err}}
+        end
+    end
+  end
+
+  def put_binance(url, params, signed? \\ true) do
+    headers = Util.prepare_request_headers(:put)
+    body = Util.prepare_request_body(params, signed: signed?)
+
+    case HTTPoison.put("#{@endpoint}#{url}", body, headers) do
+      {:error, err} ->
+        {:error, {:http_error, err}}
+
+      {:ok, %{body: ""}} ->
+        {:ok, ""}
 
       {:ok, response} ->
         case Poison.decode(response.body) do
