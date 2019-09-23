@@ -1,6 +1,9 @@
 defmodule Binance.Futures do
   alias Binance.Futures.Rest.HTTPClient
 
+  @api_key Application.get_env(:binance, :api_key)
+  @secret_key Application.get_env(:binance, :secret_key)
+
   # Server
 
   @doc """
@@ -136,10 +139,7 @@ defmodule Binance.Futures do
   """
 
   def get_account() do
-    api_key = Application.get_env(:binance, :api_key)
-    secret_key = Application.get_env(:binance, :secret_key)
-
-    case HTTPClient.get_binance("/fapi/v1/account", %{}, secret_key, api_key) do
+    case HTTPClient.get_binance("/fapi/v1/account", %{}, @secret_key, @api_key) do
       {:ok, data} ->
         {:ok, Binance.Futures.Account.new(data)}
 
@@ -262,20 +262,19 @@ defmodule Binance.Futures do
   Read more: https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#current-open-orders-user_data
   """
   def get_open_orders() do
-    api_key = Application.get_env(:binance, :api_key)
-    secret_key = Application.get_env(:binance, :secret_key)
-
-    case HTTPClient.get_binance("/fapi/v1/openOrders", %{}, secret_key, api_key) do
+    case HTTPClient.get_binance("/fapi/v1/openOrders", %{}, @secret_key, @api_key) do
       {:ok, data} -> {:ok, Enum.map(data, &Binance.Futures.Order.new(&1))}
       err -> err
     end
   end
 
   def get_open_orders(symbol) when is_binary(symbol) do
-    api_key = Application.get_env(:binance, :api_key)
-    secret_key = Application.get_env(:binance, :secret_key)
-
-    case HTTPClient.get_binance("/fapi/v1/openOrders", %{:symbol => symbol}, secret_key, api_key) do
+    case HTTPClient.get_binance(
+           "/fapi/v1/openOrders",
+           %{:symbol => symbol},
+           @secret_key,
+           @api_key
+         ) do
       {:ok, data} -> {:ok, Enum.map(data, &Binance.Futures.Order.new(&1))}
       err -> err
     end
@@ -302,9 +301,6 @@ defmodule Binance.Futures do
       )
       when is_binary(symbol)
       when is_integer(order_id) or is_binary(orig_client_order_id) do
-    api_key = Application.get_env(:binance, :api_key)
-    secret_key = Application.get_env(:binance, :secret_key)
-
     arguments =
       %{
         symbol: symbol
@@ -318,7 +314,7 @@ defmodule Binance.Futures do
         )
       )
 
-    case HTTPClient.get_binance("/fapi/v1/order", arguments, secret_key, api_key) do
+    case HTTPClient.get_binance("/fapi/v1/order", arguments, @secret_key, @api_key) do
       {:ok, data} -> {:ok, Binance.Futures.Order.new(data)}
       err -> err
     end
@@ -342,9 +338,6 @@ defmodule Binance.Futures do
       )
       when is_binary(symbol)
       when is_integer(order_id) or is_binary(orig_client_order_id) do
-    api_key = Application.get_env(:binance, :api_key)
-    secret_key = Application.get_env(:binance, :secret_key)
-
     arguments =
       %{
         symbol: symbol
@@ -358,7 +351,7 @@ defmodule Binance.Futures do
         )
       )
 
-    case HTTPClient.delete_binance("/fapi/v1/order", arguments, secret_key, api_key) do
+    case HTTPClient.delete_binance("/fapi/v1/order", arguments, @secret_key, @api_key) do
       {:ok, %{"rejectReason" => _} = err} -> {:error, err}
       {:ok, data} -> {:ok, Binance.Futures.Order.new(data)}
       err -> err
