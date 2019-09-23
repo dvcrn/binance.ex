@@ -23,6 +23,19 @@ defmodule Binance.Util do
     end
   end
 
+  def prepare_request_headers(method) when method in [:post, :put] do
+    [
+      {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)},
+      {"Content-Type", "application/x-www-form-urlencoded"}
+    ]
+  end
+
+  def prepare_request_headers(_) do
+    [
+      {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
+    ]
+  end
+
   defp sign_content(content) do
     :crypto.hmac(
       :sha256,

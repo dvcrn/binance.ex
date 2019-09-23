@@ -64,12 +64,10 @@ defmodule Binance.Rest.HTTPClient do
   end
 
   def post_binance(url, params, signed? \\ true) do
+    headers = Util.prepare_request_headers(:post)
     body = Util.prepare_request_body(params, signed: signed?)
 
-    case HTTPoison.post("#{@endpoint}#{url}", body, [
-           {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)},
-           {"Content-Type", "application/x-www-form-urlencoded"}
-         ]) do
+    case HTTPoison.post("#{@endpoint}#{url}", body, headers) do
       {:error, err} ->
         {:error, {:http_error, err}}
 
@@ -82,12 +80,10 @@ defmodule Binance.Rest.HTTPClient do
   end
 
   def put_binance(url, params, signed? \\ true) do
+    headers = Util.prepare_request_headers(:put)
     body = Util.prepare_request_body(params, signed: signed?)
 
-    case HTTPoison.put("#{@endpoint}#{url}", body, [
-           {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)},
-           {"Content-Type", "application/x-www-form-urlencoded"}
-         ]) do
+    case HTTPoison.put("#{@endpoint}#{url}", body, headers) do
       {:error, err} ->
         {:error, {:http_error, err}}
 
