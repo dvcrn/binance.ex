@@ -80,7 +80,7 @@ defmodule Binance.Futures.WebSocket.WSClient do
       end
 
       def handle_connect(_conn, state) do
-        :ok = info("Binance Connected!")
+        :ok = info("Binance Futures Connected!")
         send_after(self(), {:heartbeat, :ping, 1}, 20_000)
 
         # If this is User Data stream, schedule a process to keepalive the stream every 10mins (see @keep_alive_interval)
@@ -148,7 +148,7 @@ defmodule Binance.Futures.WebSocket.WSClient do
       end
 
       def handle_disconnect(resp, state) do
-        :ok = info("Binance Disconnected! #{inspect(resp)}")
+        :ok = info("Binance Futures Disconnected! #{inspect(resp)}")
         {:ok, state}
       end
 

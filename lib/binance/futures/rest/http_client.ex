@@ -1,6 +1,8 @@
 defmodule Binance.Futures.Rest.HTTPClient do
   @endpoint "https://fapi.binance.com"
 
+  alias Binance.Util
+
   def get_binance(url, headers \\ []) do
     "#{@endpoint}#{url}"
     |> HTTPoison.get(headers)
@@ -64,10 +66,12 @@ defmodule Binance.Futures.Rest.HTTPClient do
   end
 
   def post_binance(url, params) do
-    body = sign_body(params)
+    # Binance does require us to sign this request
+    body = Util.prepare_request_body(params, true)
 
     case HTTPoison.post("#{@endpoint}#{url}", body, [
-           {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
+           {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)},
+           {"Content-Type", "application/x-www-form-urlencoded"}
          ]) do
       {:error, err} ->
         {:error, {:http_error, err}}
@@ -81,10 +85,12 @@ defmodule Binance.Futures.Rest.HTTPClient do
   end
 
   def put_binance(url, params) do
-    body = sign_body(params)
+    # Binance does require us to sign this request
+    body = Util.prepare_request_body(params, true)
 
     case HTTPoison.put("#{@endpoint}#{url}", body, [
-           {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
+           {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)},
+           {"Content-Type", "application/x-www-form-urlencoded"}
          ]) do
       {:error, err} ->
         {:error, {:http_error, err}}
@@ -128,23 +134,5 @@ defmodule Binance.Futures.Rest.HTTPClient do
 
   defp parse_response_body({:error, err}) do
     {:error, {:poison_decode_error, err}}
-  end
-
-  defp sign_body(params) do
-    argument_string =
-      params
-      |> Map.to_list()
-      |> Enum.map(fn x -> Tuple.to_list(x) |> Enum.join("=") end)
-      |> Enum.join("&")
-
-    signature =
-      :crypto.hmac(
-        :sha256,
-        Application.get_env(:binance, :secret_key),
-        argument_string
-      )
-      |> Base.encode16()
-
-    "#{argument_string}&signature=#{signature}"
   end
 end

@@ -1,6 +1,8 @@
 defmodule Binance.Rest.HTTPClient do
   @endpoint "https://api.binance.com"
 
+  alias Binance.Util
+
   def get_binance(url, headers \\ []) do
     HTTPoison.get("#{@endpoint}#{url}", headers)
     |> parse_response
@@ -62,7 +64,8 @@ defmodule Binance.Rest.HTTPClient do
   end
 
   def post_binance(url, params) do
-    body = prepare_body(params, false)
+    # Binance does not require us to sign this request
+    body = Util.prepare_request_body(params, false)
 
     case HTTPoison.post("#{@endpoint}#{url}", body, [
            {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
@@ -79,7 +82,8 @@ defmodule Binance.Rest.HTTPClient do
   end
 
   def put_binance(url, params) do
-    body = prepare_body(params, false)
+    # Binance does not require us to sign this request
+    body = Util.prepare_request_body(params, false)
 
     case HTTPoison.put("#{@endpoint}#{url}", body, [
            {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
@@ -126,31 +130,5 @@ defmodule Binance.Rest.HTTPClient do
 
   defp parse_response_body({:error, err}) do
     {:error, {:poison_decode_error, err}}
-  end
-
-  defp prepare_body(params, sign?) do
-    argument_string =
-      params
-      |> Map.to_list()
-      |> Enum.map(fn x -> Tuple.to_list(x) |> Enum.join("=") end)
-      |> Enum.join("&")
-
-    case sign? do
-      true ->
-        signature = sign_content(argument_string)
-        "#{argument_string}&signature=#{signature}"
-
-      false ->
-        argument_string
-    end
-  end
-
-  defp sign_content(content) do
-    :crypto.hmac(
-      :sha256,
-      Application.get_env(:binance, :secret_key),
-      content
-    )
-    |> Base.encode16()
   end
 end
