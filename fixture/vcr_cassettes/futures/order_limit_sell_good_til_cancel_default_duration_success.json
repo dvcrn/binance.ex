@@ -1,0 +1,38 @@
+[
+  {
+    "request": {
+      "body": "price=11000&quantity=0.001&recvWindow=1000&side=SELL&symbol=BTCUSDT&timeInForce=GTC&timestamp=1568976216026&type=LIMIT&signature=***",
+      "headers": {
+        "X-MBX-APIKEY": "***",
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://fapi.binance.com/fapi/v1/order"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"orderId\":10800687,\"symbol\":\"BTCUSDT\",\"accountId\":1000,\"status\":\"NEW\",\"clientOrderId\":\"VV0vLLVnABzLXwYxvDkYqF\",\"price\":\"11000\",\"origQty\":\"0.001\",\"executedQty\":\"0\",\"cumQty\":\"0\",\"cumQuote\":\"0\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"reduceOnly\":false,\"side\":\"SELL\",\"stopPrice\":\"0\",\"updateTime\":1568976216827}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "303",
+        "Connection": "keep-alive",
+        "Date": "Fri, 20 Sep 2019 10:43:36 GMT",
+        "Server": "Tengine",
+        "Vary": "Accept-Encoding",
+        "x-response-time": "5ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "*,clienttype,Content-Type,lang,x-ui-request-trace",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 ceabec403784e3c3155b50578b3935fd.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "HKG60-C1",
+        "X-Amz-Cf-Id": "yFRG59V-d5--YlCJ_94Y4vxKoWeeMZJb9IBbBZXTRv-Px69CuHGq_w=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

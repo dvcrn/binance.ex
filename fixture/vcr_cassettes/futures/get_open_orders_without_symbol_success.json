@@ -1,0 +1,37 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://fapi.binance.com/fapi/v1/openOrders?recvWindow=5000&timestamp=1568997285742&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "[{\"orderId\":11377637,\"symbol\":\"BTCUSDT\",\"accountId\":1000,\"status\":\"NEW\",\"clientOrderId\":\"kFVOX0nClhOku6TTcB8B1X\",\"price\":\"11000\",\"origQty\":\"0.001\",\"executedQty\":\"0\",\"cumQuote\":\"0\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"reduceOnly\":false,\"side\":\"SELL\",\"stopPrice\":\"0\",\"updateTime\":1568997441781},{\"orderId\":18821005,\"symbol\":\"BTCUSDT\",\"accountId\":1000,\"status\":\"NEW\",\"clientOrderId\":\"qVG9BiiCkLqfvVqhHnVurH\",\"price\":\"9000\",\"origQty\":\"0.001\",\"executedQty\":\"0\",\"cumQuote\":\"0\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"reduceOnly\":false,\"side\":\"BUY\",\"stopPrice\":\"0\",\"updateTime\":1568007063660}]",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "581",
+        "Connection": "keep-alive",
+        "Date": "Fri, 20 Sep 2019 16:34:46 GMT",
+        "Server": "Tengine",
+        "Vary": "Accept-Encoding",
+        "x-response-time": "1ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "*,clienttype,Content-Type,lang,x-ui-request-trace",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 373c716feb96dba95431972bb1105837.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "HKG54-C1",
+        "X-Amz-Cf-Id": "9iidLg5KhUirX8dQHM9cuQbkTpDvywAA5KAKltQ8RfiwCVJXVjgL-A=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

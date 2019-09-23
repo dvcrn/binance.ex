@@ -1,0 +1,37 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "delete",
+      "options": [],
+      "request_body": "",
+      "url": "https://fapi.binance.com/fapi/v1/order?orderId=11257530&recvWindow=5000&symbol=BTCUSDT&timestamp=1568995337209&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"orderId\":11222530,\"symbol\":\"BTCUSDT\",\"accountId\":1000,\"status\":\"CANCELED\",\"clientOrderId\":\"wgQyWAlBFCCWinOy7yPFDu\",\"price\":\"11000\",\"origQty\":\"0.001\",\"executedQty\":\"0\",\"cumQty\":\"0\",\"cumQuote\":\"0\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"reduceOnly\":false,\"side\":\"SELL\",\"stopPrice\":\"0\",\"updateTime\":1568999338577}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "308",
+        "Connection": "keep-alive",
+        "Date": "Fri, 20 Sep 2019 16:02:18 GMT",
+        "Server": "Tengine",
+        "Vary": "Accept-Encoding",
+        "x-response-time": "6ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "*,clienttype,Content-Type,lang,x-ui-request-trace",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 4cd19ffd43f53635451d728efb012d71.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "HKG53",
+        "X-Amz-Cf-Id": "vvk0A6Hov8u-SNowZpPLP8wvVz_N2jwNQ52Qol57ZLwbKtp5j6gm5A=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

@@ -1,6 +1,9 @@
 defmodule Binance.Futures do
   alias Binance.Futures.Rest.HTTPClient
 
+  @api_key Application.get_env(:binance, :api_key)
+  @secret_key Application.get_env(:binance, :secret_key)
+
   # Server
 
   @doc """
@@ -136,15 +139,236 @@ defmodule Binance.Futures do
   """
 
   def get_account() do
-    api_key = Application.get_env(:binance, :api_key)
-    secret_key = Application.get_env(:binance, :secret_key)
-
-    case HTTPClient.get_binance("/fapi/v1/account", %{}, secret_key, api_key) do
+    case HTTPClient.get_binance("/fapi/v1/account", %{}, @secret_key, @api_key) do
       {:ok, data} ->
         {:ok, Binance.Futures.Account.new(data)}
 
       error ->
         error
     end
+  end
+
+  # Order
+
+  @doc """
+  Creates a new order on Binance Futures
+
+  Returns `{:ok, %{}}` or `{:error, reason}`.
+
+  In the case of a error on Binance, for example with invalid parameters, `{:error, {:binance_error, %{code: code, msg: msg}}}` will be returned.
+
+  Please read https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#new-order-trade
+  """
+  def create_order(
+        symbol,
+        side,
+        type,
+        quantity,
+        price \\ nil,
+        time_in_force \\ nil,
+        new_client_order_id \\ nil,
+        stop_price \\ nil,
+        receiving_window \\ 1000,
+        timestamp \\ nil
+      ) do
+    timestamp =
+      case timestamp do
+        # timestamp needs to be in milliseconds
+        nil ->
+          :os.system_time(:millisecond)
+
+        t ->
+          t
+      end
+
+    arguments =
+      %{
+        symbol: symbol,
+        side: side,
+        type: type,
+        quantity: quantity,
+        timestamp: timestamp,
+        recvWindow: receiving_window
+      }
+      |> Map.merge(
+        unless(
+          is_nil(new_client_order_id),
+          do: %{newClientOrderId: new_client_order_id},
+          else: %{}
+        )
+      )
+      |> Map.merge(unless(is_nil(stop_price), do: %{stopPrice: stop_price}, else: %{}))
+      |> Map.merge(unless(is_nil(time_in_force), do: %{timeInForce: time_in_force}, else: %{}))
+      |> Map.merge(unless(is_nil(price), do: %{price: price}, else: %{}))
+
+    case HTTPClient.post_binance("/fapi/v1/order", arguments) do
+      {:ok, %{"code" => code, "msg" => msg}} ->
+        {:error, {:binance_error, %{code: code, msg: msg}}}
+
+      data ->
+        data
+    end
+  end
+
+  @doc """
+  Creates a new **limit** **buy** order
+
+  Symbol can be a binance symbol in the form of `"BTCUSDT"`
+
+  Returns `{:ok, %{}}` or `{:error, reason}`
+  """
+  def order_limit_buy(symbol, quantity, price, time_in_force \\ "GTC")
+      when is_binary(symbol)
+      when is_number(quantity)
+      when is_number(price) do
+    create_order(symbol, "BUY", "LIMIT", quantity, price, time_in_force)
+    |> parse_order_response
+  end
+
+  @doc """
+  Creates a new **limit** **sell** order
+
+  Symbol can be a binance symbol in the form of `"BTCUSDT"` or `%Binance.TradePair{}`.
+
+  Returns `{:ok, %{}}` or `{:error, reason}`
+  """
+  def order_limit_sell(symbol, quantity, price, time_in_force \\ "GTC")
+      when is_binary(symbol)
+      when is_number(quantity)
+      when is_number(price) do
+    create_order(symbol, "SELL", "LIMIT", quantity, price, time_in_force)
+    |> parse_order_response
+  end
+
+  @doc """
+  Get all open orders, alternatively open orders by symbol
+
+  Returns `{:ok, [%Binance.Futures.Order{}]}` or `{:error, reason}`.
+
+  Weight: 1 for a single symbol; 40 when the symbol parameter is omitted
+
+  ## Example
+  ```
+  {:ok,
+    [%Binance.Futures.Order{price: "0.1", orig_qty: "1.0", executed_qty: "0.0", ...},
+     %Binance.Futures.Order{...},
+     %Binance.Futures.Order{...},
+     %Binance.Futures.Order{...},
+     %Binance.Futures.Order{...},
+     %Binance.Futures.Order{...},
+     ...]}
+  ```
+
+  Read more: https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#current-open-orders-user_data
+  """
+  def get_open_orders() do
+    case HTTPClient.get_binance("/fapi/v1/openOrders", %{}, @secret_key, @api_key) do
+      {:ok, data} -> {:ok, Enum.map(data, &Binance.Futures.Order.new(&1))}
+      err -> err
+    end
+  end
+
+  def get_open_orders(symbol) when is_binary(symbol) do
+    case HTTPClient.get_binance(
+           "/fapi/v1/openOrders",
+           %{:symbol => symbol},
+           @secret_key,
+           @api_key
+         ) do
+      {:ok, data} -> {:ok, Enum.map(data, &Binance.Futures.Order.new(&1))}
+      err -> err
+    end
+  end
+
+  @doc """
+  Get order by symbol and either orderId or origClientOrderId are mandatory
+
+  Returns `{:ok, [%Binance.Futures.Order{}]}` or `{:error, reason}`.
+
+  Weight: 1
+
+  ## Example
+  ```
+  {:ok, %Binance.Futures.Order{price: "0.1", origQty: "1.0", executedQty: "0.0", ...}}
+  ```
+
+  Info: https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#query-order-user_data
+  """
+  def get_order(
+        symbol,
+        order_id \\ nil,
+        orig_client_order_id \\ nil
+      )
+      when is_binary(symbol)
+      when is_integer(order_id) or is_binary(orig_client_order_id) do
+    arguments =
+      %{
+        symbol: symbol
+      }
+      |> Map.merge(unless(is_nil(order_id), do: %{orderId: order_id}, else: %{}))
+      |> Map.merge(
+        unless(
+          is_nil(orig_client_order_id),
+          do: %{origClientOrderId: orig_client_order_id},
+          else: %{}
+        )
+      )
+
+    case HTTPClient.get_binance("/fapi/v1/order", arguments, @secret_key, @api_key) do
+      {:ok, data} -> {:ok, Binance.Futures.Order.new(data)}
+      err -> err
+    end
+  end
+
+  @doc """
+  Cancel an active order.
+
+  Symbol and either orderId or origClientOrderId must be sent.
+
+  Returns `{:ok, %Binance.Futures.Order{}}` or `{:error, reason}`.
+
+  Weight: 1
+
+  Info: https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#cancel-order-trade
+  """
+  def cancel_order(
+        symbol,
+        order_id \\ nil,
+        orig_client_order_id \\ nil
+      )
+      when is_binary(symbol)
+      when is_integer(order_id) or is_binary(orig_client_order_id) do
+    arguments =
+      %{
+        symbol: symbol
+      }
+      |> Map.merge(unless(is_nil(order_id), do: %{orderId: order_id}, else: %{}))
+      |> Map.merge(
+        unless(
+          is_nil(orig_client_order_id),
+          do: %{origClientOrderId: orig_client_order_id},
+          else: %{}
+        )
+      )
+
+    case HTTPClient.delete_binance("/fapi/v1/order", arguments, @secret_key, @api_key) do
+      {:ok, %{"rejectReason" => _} = err} -> {:error, err}
+      {:ok, data} -> {:ok, Binance.Futures.Order.new(data)}
+      err -> err
+    end
+  end
+
+  defp parse_order_response({:ok, response}) do
+    {:ok, Binance.Futures.Order.new(response)}
+  end
+
+  defp parse_order_response({
+         :error,
+         {
+           :binance_error,
+           %{code: -1000, msg: "You don't have enough margin for this new order"} = reason
+         }
+       }) do
+    {:error, %Binance.InsufficientBalanceError{reason: reason}}
   end
 end
