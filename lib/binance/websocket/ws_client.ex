@@ -91,8 +91,8 @@ defmodule Binance.WebSocket.WSClient do
         {:ok, state}
       end
 
-      def handle_info(:keep_alive, state) do
-        {:ok, _} = Binance.keep_alive_listen_key()
+      def handle_info(:keep_alive, %{listen_key: listen_key} = state) do
+        {:ok, _} = Binance.keep_alive_listen_key(listen_key)
         :ok = info("Keepalive Binance's User Data stream done!")
         schedule_keep_alive_stream()
         {:ok, state}
