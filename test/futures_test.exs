@@ -181,7 +181,14 @@ defmodule FuturesTest do
     test "creates an order with a duration of good til cancel by default" do
       use_cassette "futures/order_limit_buy_good_til_cancel_default_duration_success" do
         assert {:ok, %Binance.Futures.Order{} = response} =
-                 Binance.Futures.create_order("BTCUSDT", "BUY", "LIMIT", 0.001, 9000)
+                 Binance.Futures.create_order(%{
+                   symbol: "BTCUSDT",
+                   side: "BUY",
+                   type: "LIMIT",
+                   quantity: 0.001,
+                   price: 9000,
+                   time_in_force: "GTC"
+                 })
 
         assert response.client_order_id == "NZzeeQSqS5PH5OS9WAMBIy"
         assert response.cum_qty == "0"
@@ -204,7 +211,16 @@ defmodule FuturesTest do
     test "returns an insufficient margin error tuple" do
       use_cassette "futures/order_limit_buy_error_insufficient_balance" do
         assert {:error, reason} =
-                 Binance.Futures.create_order("BTCUSDT", "BUY", "LIMIT", 0.05, 9000)
+                 Binance.Futures.create_order(%{
+                   symbol: "BTCUSDT",
+                   side: "BUY",
+                   type: "LIMIT",
+                   quantity: 0.05,
+                   price: 9000,
+                   time_in_force: "GTC"
+                 })
+
+        # Binance.Futures.create_order("BTCUSDT", "BUY", "LIMIT", 0.05, 9000)
 
         assert reason == %Binance.InsufficientBalanceError{
                  reason: %{
@@ -220,7 +236,14 @@ defmodule FuturesTest do
     test "creates an order with a duration of good til cancel by default" do
       use_cassette "futures/order_limit_sell_good_til_cancel_default_duration_success" do
         assert {:ok, %Binance.Futures.Order{} = response} =
-                 Binance.Futures.create_order("BTCUSDT", "SELL", "LIMIT", 0.001, 11000)
+                 Binance.Futures.create_order(%{
+                   symbol: "BTCUSDT",
+                   side: "SELL",
+                   type: "LIMIT",
+                   quantity: 0.001,
+                   price: 11000,
+                   time_in_force: "GTC"
+                 })
 
         assert response.client_order_id == "VV0vLLVnABzLXwYxvDkYqF"
         assert response.cum_qty == "0"
@@ -243,7 +266,14 @@ defmodule FuturesTest do
     test "returns an insufficient margin error tuple" do
       use_cassette "futures/order_limit_buy_error_insufficient_balance" do
         assert {:error, reason} =
-                 Binance.Futures.create_order("BTCUSDT", "SELL", "LIMIT", 0.05, 11000)
+                 Binance.Futures.create_order(%{
+                   symbol: "BTCUSDT",
+                   side: "SELL",
+                   type: "LIMIT",
+                   quantity: 0.05,
+                   price: 11000,
+                   time_in_force: "GTC"
+                 })
 
         assert reason == %Binance.InsufficientBalanceError{
                  reason: %{

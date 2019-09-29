@@ -217,51 +217,43 @@ defmodule Binance do
 
   Please read https://www.binance.com/restapipub.html#user-content-account-endpoints to understand all the parameters
   """
-  def create_order(
-        symbol,
-        side,
-        type,
-        quantity,
-        price \\ nil,
-        time_in_force \\ nil,
-        new_client_order_id \\ nil,
-        stop_price \\ nil,
-        iceberg_quantity \\ nil,
-        receiving_window \\ 1000,
-        timestamp \\ nil
-      ) do
-    timestamp =
-      case timestamp do
-        # timestamp needs to be in milliseconds
-        nil ->
-          :os.system_time(:millisecond)
-
-        t ->
-          t
-      end
+  def create_order(%{symbol: symbol, side: side, type: type, quantity: quantity} = params) do
+    arguments = %{
+      symbol: symbol,
+      side: side,
+      type: type,
+      quantity: quantity,
+      timestamp: params[:timestamp] || :os.system_time(:millisecond),
+      recvWindow: params[:receiving_window]
+    }
 
     arguments =
-      %{
-        symbol: symbol,
-        side: side,
-        type: type,
-        quantity: quantity,
-        timestamp: timestamp,
-        recvWindow: receiving_window
-      }
+      arguments
       |> Map.merge(
         unless(
-          is_nil(new_client_order_id),
-          do: %{newClientOrderId: new_client_order_id},
+          is_nil(params[:new_client_order_id]),
+          do: %{newClientOrderId: params[:new_client_order_id]},
           else: %{}
         )
       )
-      |> Map.merge(unless(is_nil(stop_price), do: %{stopPrice: stop_price}, else: %{}))
       |> Map.merge(
-        unless(is_nil(new_client_order_id), do: %{icebergQty: iceberg_quantity}, else: %{})
+        unless(is_nil(params[:stop_price]), do: %{stopPrice: params[:stop_price]}, else: %{})
       )
-      |> Map.merge(unless(is_nil(time_in_force), do: %{timeInForce: time_in_force}, else: %{}))
-      |> Map.merge(unless(is_nil(price), do: %{price: price}, else: %{}))
+      |> Map.merge(
+        unless(
+          is_nil(params[:new_client_order_id]),
+          do: %{icebergQty: params[:iceberg_quantity]},
+          else: %{}
+        )
+      )
+      |> Map.merge(
+        unless(
+          is_nil(params[:time_in_force]),
+          do: %{timeInForce: params[:time_in_force]},
+          else: %{}
+        )
+      )
+      |> Map.merge(unless(is_nil(params[:price]), do: %{price: params[:price]}, else: %{}))
 
     case HTTPClient.post_binance("/api/v3/order", arguments) do
       {:ok, %{"code" => code, "msg" => msg}} ->
