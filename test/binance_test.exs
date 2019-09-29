@@ -160,11 +160,11 @@ defmodule BinanceTest do
     end
   end
 
-  describe ".order_limit_buy" do
+  describe ".create_order limit buy" do
     test "creates an order with a duration of good til cancel by default" do
       use_cassette "order_limit_buy_good_til_cancel_default_duration_success" do
         assert {:ok, %Binance.OrderResponse{} = response} =
-                 Binance.order_limit_buy("LTCBTC", 0.1, 0.01)
+                 Binance.create_order("LTCBTC", "BUY", "LIMIT", 0.1, 0.01, "GTC")
 
         assert response.client_order_id == "9kITBshSwrClye1HJcLM3j"
         assert response.executed_qty == "0.00000000"
@@ -183,7 +183,7 @@ defmodule BinanceTest do
     test "can create an order with a fill or kill duration" do
       use_cassette "order_limit_buy_fill_or_kill_success" do
         assert {:ok, %Binance.OrderResponse{} = response} =
-                 Binance.order_limit_buy("LTCBTC", 0.1, 0.01, "FOK")
+                 Binance.create_order("LTCBTC", "BUY", "LIMIT", 0.1, 0.01, "FOK")
 
         assert response.client_order_id == "dY67P33S4IxPnJGx5EtuSf"
         assert response.executed_qty == "0.00000000"
@@ -202,7 +202,7 @@ defmodule BinanceTest do
     test "can create an order with am immediate or cancel duration" do
       use_cassette "order_limit_buy_immediate_or_cancel_success" do
         assert {:ok, %Binance.OrderResponse{} = response} =
-                 Binance.order_limit_buy("LTCBTC", 0.1, 0.01, "IOC")
+                 Binance.create_order("LTCBTC", "BUY", "LIMIT", 0.1, 0.01, "IOC")
 
         assert response.client_order_id == "zyMyhtRENlvFHrl4CitDe0"
         assert response.executed_qty == "0.00000000"
@@ -220,7 +220,8 @@ defmodule BinanceTest do
 
     test "returns an insufficient balance error tuple" do
       use_cassette "order_limit_buy_error_insufficient_balance" do
-        assert {:error, reason} = Binance.order_limit_buy("LTCBTC", 10_000, 0.001, "FOK")
+        assert {:error, reason} =
+                 Binance.create_order("LTCBTC", "BUY", "LIMIT", 10_000, 0.001, "FOK")
 
         assert reason == %Binance.InsufficientBalanceError{
                  reason: %{
@@ -232,11 +233,11 @@ defmodule BinanceTest do
     end
   end
 
-  describe ".order_limit_sell" do
+  describe ".create_order limit sell" do
     test "creates an order with a duration of good til cancel by default" do
       use_cassette "order_limit_sell_good_til_cancel_default_duration_success" do
         assert {:ok, %Binance.OrderResponse{} = response} =
-                 Binance.order_limit_sell("BTCUSDT", 0.001, 50_000)
+                 Binance.create_order("BTCUSDT", "SELL", "LIMIT", 0.001, 50_000)
 
         assert response.client_order_id == "9UFMPloZsQ3eshCx66PVqD"
         assert response.executed_qty == "0.00000000"
@@ -255,7 +256,7 @@ defmodule BinanceTest do
     test "can create an order with a fill or kill duration" do
       use_cassette "order_limit_sell_fill_or_kill_success" do
         assert {:ok, %Binance.OrderResponse{} = response} =
-                 Binance.order_limit_sell("BTCUSDT", 0.001, 50_000, "FOK")
+                 Binance.create_order("BTCUSDT", "SELL", "LIMIT", 0.001, 50_000, "FOK")
 
         assert response.client_order_id == "lKYECwEPSTPzurwx6emuN2"
         assert response.executed_qty == "0.00000000"
@@ -274,7 +275,7 @@ defmodule BinanceTest do
     test "can create an order with am immediate or cancel duration" do
       use_cassette "order_limit_sell_immediate_or_cancel_success" do
         assert {:ok, %Binance.OrderResponse{} = response} =
-                 Binance.order_limit_sell("BTCUSDT", 0.001, 50_000, "IOC")
+                 Binance.create_order("BTCUSDT", "SELL", "LIMIT", 0.001, 50_000, "IOC")
 
         assert response.client_order_id == "roSkLhwX9KCgYqr4yFPx1V"
         assert response.executed_qty == "0.00000000"

@@ -203,41 +203,11 @@ defmodule Binance.Futures do
 
     case HTTPClient.post_binance("/fapi/v1/order", arguments) do
       {:ok, %{"code" => code, "msg" => msg}} ->
-        {:error, {:binance_error, %{code: code, msg: msg}}}
+        {:error, {:binance_error, %{code: code, msg: msg}}} |> parse_order_response
 
       data ->
-        data
+        data |> parse_order_response
     end
-  end
-
-  @doc """
-  Creates a new **limit** **buy** order
-
-  Symbol can be a binance symbol in the form of `"BTCUSDT"`
-
-  Returns `{:ok, %{}}` or `{:error, reason}`
-  """
-  def order_limit_buy(symbol, quantity, price, time_in_force \\ "GTC")
-      when is_binary(symbol)
-      when is_number(quantity)
-      when is_number(price) do
-    create_order(symbol, "BUY", "LIMIT", quantity, price, time_in_force)
-    |> parse_order_response
-  end
-
-  @doc """
-  Creates a new **limit** **sell** order
-
-  Symbol can be a binance symbol in the form of `"BTCUSDT"` or `%Binance.TradePair{}`.
-
-  Returns `{:ok, %{}}` or `{:error, reason}`
-  """
-  def order_limit_sell(symbol, quantity, price, time_in_force \\ "GTC")
-      when is_binary(symbol)
-      when is_number(quantity)
-      when is_number(price) do
-    create_order(symbol, "SELL", "LIMIT", quantity, price, time_in_force)
-    |> parse_order_response
   end
 
   @doc """
