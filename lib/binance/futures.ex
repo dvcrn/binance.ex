@@ -166,7 +166,7 @@ defmodule Binance.Futures do
       type: type,
       quantity: quantity,
       timestamp: params[:timestamp] || :os.system_time(:millisecond),
-      recvWindow: params[:receiving_window]
+      recvWindow: params[:recv_window]
     }
 
     arguments =
@@ -253,22 +253,18 @@ defmodule Binance.Futures do
 
   Info: https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#query-order-user_data
   """
-  def get_order(
-        symbol,
-        order_id \\ nil,
-        orig_client_order_id \\ nil
-      )
-      when is_binary(symbol)
-      when is_integer(order_id) or is_binary(orig_client_order_id) do
+  def get_order(symbol, params) when is_binary(symbol) do
     arguments =
       %{
         symbol: symbol
       }
-      |> Map.merge(unless(is_nil(order_id), do: %{orderId: order_id}, else: %{}))
+      |> Map.merge(
+        unless(is_nil(params[:order_id]), do: %{orderId: params[:order_id]}, else: %{})
+      )
       |> Map.merge(
         unless(
-          is_nil(orig_client_order_id),
-          do: %{origClientOrderId: orig_client_order_id},
+          is_nil(params[:orig_client_order_id]),
+          do: %{origClientOrderId: params[:orig_client_order_id]},
           else: %{}
         )
       )
@@ -290,22 +286,18 @@ defmodule Binance.Futures do
 
   Info: https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#cancel-order-trade
   """
-  def cancel_order(
-        symbol,
-        order_id \\ nil,
-        orig_client_order_id \\ nil
-      )
-      when is_binary(symbol)
-      when is_integer(order_id) or is_binary(orig_client_order_id) do
+  def cancel_order(symbol, params) when is_binary(symbol) do
     arguments =
       %{
         symbol: symbol
       }
-      |> Map.merge(unless(is_nil(order_id), do: %{orderId: order_id}, else: %{}))
+      |> Map.merge(
+        unless(is_nil(params[:order_id]), do: %{orderId: params[:order_id]}, else: %{})
+      )
       |> Map.merge(
         unless(
-          is_nil(orig_client_order_id),
-          do: %{origClientOrderId: orig_client_order_id},
+          is_nil(params[:orig_client_order_id]),
+          do: %{origClientOrderId: params[:orig_client_order_id]},
           else: %{}
         )
       )

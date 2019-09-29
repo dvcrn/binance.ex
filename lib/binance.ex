@@ -119,7 +119,7 @@ defmodule Binance do
   @doc """
   Retrieves the current ticker information for the given trade pair.
 
-  Symbol can be a binance symbol in the form of `"ETHBTC"` or `%Binance.TradePair{}`.
+  Symbol can be a binance symbol in the form of `"ETHBTC"`.
 
   Returns `{:ok, %Binance.Ticker{}}` or `{:error, reason}`
 
@@ -135,13 +135,6 @@ defmodule Binance do
       weighted_avg_price: "0.06946930"}}
   ```
   """
-  def get_ticker(%Binance.TradePair{} = symbol) do
-    case find_symbol(symbol) do
-      {:ok, binance_symbol} -> get_ticker(binance_symbol)
-      e -> e
-    end
-  end
-
   def get_ticker(symbol) when is_binary(symbol) do
     case HTTPClient.get_binance("/api/v1/ticker/24hr?symbol=#{symbol}") do
       {:ok, data} -> {:ok, Binance.Ticker.new(data)}
@@ -224,7 +217,7 @@ defmodule Binance do
       type: type,
       quantity: quantity,
       timestamp: params[:timestamp] || :os.system_time(:millisecond),
-      recvWindow: params[:receiving_window]
+      recvWindow: params[:recv_window]
     }
 
     arguments =
@@ -278,67 +271,6 @@ defmodule Binance do
     {:error, %Binance.InsufficientBalanceError{reason: reason}}
   end
 
-  # Misc
-
-  @doc """
-  Searches and normalizes the symbol as it is listed on binance.
-
-  To retrieve this information, a request to the binance API is done. The result is then **cached** to ensure the request is done only once.
-
-  Order of which symbol comes first, and case sensitivity does not matter.
-
-  Returns `{:ok, "SYMBOL"}` if successfully, or `{:error, reason}` otherwise.
-
-  ## Examples
-  These 3 calls will result in the same result string:
-  ```
-  find_symbol(%Binance.TradePair{from: "ETH", to: "REQ"})
-  ```
-  ```
-  find_symbol(%Binance.TradePair{from: "REQ", to: "ETH"})
-  ```
-  ```
-  find_symbol(%Binance.TradePair{from: "rEq", to: "eTH"})
-  ```
-
-  Result: `{:ok, "REQETH"}`
-
-  """
-  def find_symbol(%Binance.TradePair{from: from, to: to} = tp)
-      when is_binary(from)
-      when is_binary(to) do
-    case Binance.SymbolCache.get() do
-      # cache hit
-      {:ok, data} ->
-        from = String.upcase(from)
-        to = String.upcase(to)
-
-        found = Enum.filter(data, &Enum.member?([from <> to, to <> from], &1))
-
-        case Enum.count(found) do
-          1 -> {:ok, found |> List.first()}
-          0 -> {:error, :symbol_not_found}
-        end
-
-      # cache miss
-      {:error, :not_initialized} ->
-        case get_all_prices() do
-          {:ok, price_data} ->
-            price_data
-            |> Enum.map(fn x -> x.symbol end)
-            |> Binance.SymbolCache.store()
-
-            find_symbol(tp)
-
-          err ->
-            err
-        end
-
-      err ->
-        err
-    end
-  end
-
   # Open orders
 
   @doc """
@@ -370,13 +302,6 @@ defmodule Binance do
     end
   end
 
-  def get_open_orders(%Binance.TradePair{} = symbol) do
-    case find_symbol(symbol) do
-      {:ok, binance_symbol} -> get_open_orders(binance_symbol)
-      e -> e
-    end
-  end
-
   def get_open_orders(symbol) when is_binary(symbol) do
     api_key = Application.get_env(:binance, :api_key)
     secret_key = Application.get_env(:binance, :secret_key)
@@ -390,7 +315,7 @@ defmodule Binance do
   # Order
 
   @doc """
-  Get order by symbol, timestamp and either orderId or origClientOrderId are mandatory
+  Get order by symbol, timestamp and either params[:orderId] or params[:origClientOrderId] are mandatory
 
   Returns `{:ok, [%Binance.Order{}]}` or `{:error, reason}`.
 
@@ -403,49 +328,28 @@ defmodule Binance do
 
   Info: https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md#query-order-user_data
   """
-  def get_order(
-        symbol,
-        timestamp,
-        order_id \\ nil,
-        orig_client_order_id \\ nil,
-        recv_window \\ nil
-      ) do
-    case is_binary(symbol) do
-      true ->
-        fetch_order(symbol, timestamp, order_id, orig_client_order_id, recv_window)
-
-      false ->
-        case find_symbol(symbol) do
-          {:ok, binance_symbol} ->
-            fetch_order(binance_symbol, timestamp, order_id, orig_client_order_id, recv_window)
-
-          e ->
-            e
-        end
-    end
-  end
-
-  def fetch_order(symbol, timestamp, order_id, orig_client_order_id, recv_window)
-      when is_binary(symbol)
-      when is_integer(timestamp)
-      when is_integer(order_id) or is_binary(orig_client_order_id) do
+  def get_order(symbol, params) when is_binary(symbol) do
     api_key = Application.get_env(:binance, :api_key)
     secret_key = Application.get_env(:binance, :secret_key)
 
     arguments =
       %{
         symbol: symbol,
-        timestamp: timestamp
+        timestamp: params[:timestamp] || :os.system_time(:millisecond)
       }
-      |> Map.merge(unless(is_nil(order_id), do: %{orderId: order_id}, else: %{}))
+      |> Map.merge(
+        unless(is_nil(params[:order_id]), do: %{orderId: params[:order_id]}, else: %{})
+      )
       |> Map.merge(
         unless(
-          is_nil(orig_client_order_id),
-          do: %{origClientOrderId: orig_client_order_id},
+          is_nil(params[:orig_client_order_id]),
+          do: %{origClientOrderId: params[:orig_client_order_id]},
           else: %{}
         )
       )
-      |> Map.merge(unless(is_nil(recv_window), do: %{recvWindow: recv_window}, else: %{}))
+      |> Map.merge(
+        unless(is_nil(params[:recv_window]), do: %{recvWindow: params[:recv_window]}, else: %{})
+      )
 
     case HTTPClient.get_binance("/api/v3/order", arguments, secret_key, api_key) do
       {:ok, data} -> {:ok, Binance.Order.new(data)}
@@ -456,7 +360,7 @@ defmodule Binance do
   @doc """
   Cancel an active order..
 
-  Symbol and either orderId or origClientOrderId must be sent.
+  Symbol and either params[:orderId] or params[:origClientOrderId] must be sent.
 
   Returns `{:ok, %Binance.Order{}}` or `{:error, reason}`.
 
@@ -464,78 +368,39 @@ defmodule Binance do
 
   Info: https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md#cancel-order-trade
   """
-  def cancel_order(
-        symbol,
-        timestamp,
-        order_id \\ nil,
-        orig_client_order_id \\ nil,
-        new_client_order_id \\ nil,
-        recv_window \\ nil
-      ) do
-    case is_binary(symbol) do
-      true ->
-        cancel_order_(
-          symbol,
-          timestamp,
-          order_id,
-          orig_client_order_id,
-          new_client_order_id,
-          recv_window
-        )
-
-      false ->
-        case find_symbol(symbol) do
-          {:ok, binance_symbol} ->
-            cancel_order_(
-              binance_symbol,
-              timestamp,
-              order_id,
-              orig_client_order_id,
-              new_client_order_id,
-              recv_window
-            )
-
-          e ->
-            e
-        end
-    end
-  end
-
-  defp cancel_order_(
-         symbol,
-         timestamp,
-         order_id,
-         orig_client_order_id,
-         new_client_order_id,
-         recv_window
-       )
-       when is_binary(symbol)
-       when is_integer(timestamp)
-       when is_integer(order_id) or is_binary(orig_client_order_id) do
+  def cancel_order(symbol, params) when is_binary(symbol) do
     api_key = Application.get_env(:binance, :api_key)
     secret_key = Application.get_env(:binance, :secret_key)
 
     arguments =
       %{
         symbol: symbol,
-        timestamp: timestamp
+        timestamp: params[:timestamp] || :os.system_time(:millisecond)
       }
-      |> Map.merge(unless(is_nil(order_id), do: %{orderId: order_id}, else: %{}))
+      |> Map.merge(
+        unless(is_nil(params[:order_id]), do: %{orderId: params[:order_id]}, else: %{})
+      )
       |> Map.merge(
         unless(
-          is_nil(orig_client_order_id),
-          do: %{origClientOrderId: orig_client_order_id},
+          is_nil(params[:orig_client_order_id]),
+          do: %{origClientOrderId: params[:orig_client_order_id]},
           else: %{}
         )
       )
       |> Map.merge(
         unless(
-          is_nil(new_client_order_id),
-          do: %{newClientOrderId: new_client_order_id},
+          is_nil(params[:new_client_order_id]),
+          do: %{newClientOrderId: params[:new_client_order_id]},
           else: %{}
         )
       )
-      |> Map.merge(unless(is_nil(recv_window), do: %{recvWindow: recv_window}, else: %{}))
+      |> Map.merge(
+        unless(
+          is_nil(params[:recv_window]),
+          do: %{recvWindow: params[:recv_window]},
+          else: %{}
+        )
+      )
 
     case HTTPClient.delete_binance("/api/v3/order", arguments, secret_key, api_key) do
       {:ok, data} -> {:ok, Binance.Order.new(data)}

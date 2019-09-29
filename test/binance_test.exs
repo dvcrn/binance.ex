@@ -409,69 +409,15 @@ defmodule BinanceTest do
         assert result.update_time == 1_556_710_717_616
       end
     end
-
-    test "when called with symbol returns all open orders for that symbols(TradePair struct)" do
-      use_cassette "get_open_orders_with_trade_pair_struct_string_success" do
-        assert {:ok, [%Binance.Order{} = result]} =
-                 Binance.get_open_orders(%Binance.TradePair{:from => "WABI", :to => "BTC"})
-
-        assert result.client_order_id == "web_db04d8a507f14135a9a9d4467bc541a1"
-        assert result.cummulative_quote_qty == "0.00000000"
-        assert result.executed_qty == "0.00000000"
-        assert result.iceberg_qty == "0.00000000"
-        assert result.is_working == true
-        assert result.order_id == 42_240_233
-        assert result.orig_qty == "215.00000000"
-        assert result.price == "0.00064200"
-        assert result.side == "SELL"
-        assert result.status == "NEW"
-        assert result.stop_price == "0.00000000"
-        assert result.symbol == "WABIBTC"
-        assert result.time == 1_556_710_717_616
-        assert result.time_in_force == "GTC"
-        assert result.type == "LIMIT"
-        assert result.update_time == 1_556_710_717_616
-      end
-    end
   end
 
   describe ".cancel_order" do
-    test "when called with symbol(struct), orderId and timestamp cancels order" do
-      use_cassette "cancel_order_by_struct_symbol_orderId_and_timestamp_success" do
-        assert {:ok, %Binance.Order{} = order} =
-                 Binance.cancel_order(
-                   %Binance.TradePair{:from => "XRP", :to => "USDT"},
-                   1_564_000_518_279,
-                   212_213_771
-                 )
-
-        assert order.client_order_id == "iBz2JsX9hCsR6LRv6lqKld"
-        assert order.cummulative_quote_qty == "0.00000000"
-        assert order.executed_qty == "0.00000000"
-        assert order.iceberg_qty == nil
-        assert order.is_working == nil
-        assert order.order_id == 212_213_771
-        assert order.orig_qty == "100.00000000"
-        assert order.price == "0.30000000"
-        assert order.side == "BUY"
-        assert order.status == "CANCELED"
-        assert order.stop_price == nil
-        assert order.symbol == "XRPUSDT"
-        assert order.time == nil
-        assert order.time_in_force == "GTC"
-        assert order.type == "LIMIT"
-        assert order.update_time == nil
-      end
-    end
-
     test "when called with symbol(string), orderId and timestamp cancels order" do
       use_cassette "cancel_order_by_symbol_string_orderid_and_timestamp_success" do
         assert {:ok, %Binance.Order{} = order} =
-                 Binance.cancel_order(
-                   "XRPUSDT",
-                   1_564_000_518_279,
-                   212_213_771
-                 )
+                 Binance.cancel_order("XRPUSDT", %{
+                   order_id: 212_213_771
+                 })
 
         assert order.client_order_id == "iBz2JsX9hCsR6LRv6lqKld"
         assert order.cummulative_quote_qty == "0.00000000"
@@ -495,12 +441,9 @@ defmodule BinanceTest do
     test "when called with symbol(string), clientOrderId and timestamp cancels order" do
       use_cassette "cancel_order_by_symbol_string_clientOrderId_and_timestamp_success" do
         assert {:ok, %Binance.Order{} = order} =
-                 Binance.cancel_order(
-                   "XRPUSDT",
-                   1_564_000_518_279,
-                   nil,
-                   "ZM1ReQ1ZwiVoaGgcJcumhH"
-                 )
+                 Binance.cancel_order("XRPUSDT", %{
+                   orig_client_order_id: "ZM1ReQ1ZwiVoaGgcJcumhH"
+                 })
 
         assert order.client_order_id == "gKMdjRw8fDkpObd0fXjCRZ"
         assert order.cummulative_quote_qty == "0.00000000"
