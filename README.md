@@ -11,7 +11,7 @@ Elixir wrapper for interacting with the [Binance API](https://github.com/binance
 ```elixir
 def deps do
   [
-    {:binance, "~> 0.7.1"}
+    {:binance, "~> 0.7.1", github: "acuityinnovations/binance.ex", branch: "master"}
   ]
 end
 ```
@@ -24,18 +24,9 @@ def application do
 end
 ```
 
-3. Add your Binance API credentials to your `config.exs` file, like so (you can create a new API
-key [here](https://www.binance.com/userCenter/createApi.html)):
-
-```
-config :binance,
-  api_key: "xxx",
-  secret_key: "xxx"
-```
-
 ## Usage
 
-Documentation available at [https://hexdocs.pm/binance](https://hexdocs.pm/binance).
+Documentation to be updated.
 
 Get all prices
 ```
@@ -51,27 +42,18 @@ iex> Binance.get_all_prices
   ...]}
 ```
 
-Buy 100 REQ for the current market price
+Binance API credentials could be passed to some APIs calls which require authentication/request signing like so:
 
 ```
-iex> Binance.order_market_buy("REQETH", 100)
-{:ok, %{}}
+config = %{access_keys: ["XXX_BINANCE_API_KEY", "XXX_BINANCE_SECRET_KEY"]}
+Binance.get_account(config)
+
+# or
+
+Binance.Futures.create_order(%{symbol: "BTCUSDT", side: "SELL", type: "LIMIT", quantity: 0.005, price: 9000, time_in_force: "GTC"}, config)
 ```
 
-## Trade pair normalization
-
-For convenience, all functions that require a symbol in the form of "ETHBTC" also accept a
-`%Binance.TradePair{}` struct in the form of `%Binance.TradePair{from: "ETH", to: "BTC"}`. The order of symbols in `%Binance.TradePair{}` does not matter. All symbols are also case insensitive.
-
-`Binance.find_symbol/1` will return the correct string representation as it is listed on binance
-
-```
-Binance.find_symbol(%Binance.TradePair{from: "ReQ", to: "eTH"})
-{:ok, "REQETH"}
-
-Binance.find_symbol(%Binance.TradePair{from: "ETH", to: "REQ"})
-{:ok, "REQETH"}
-```
+in which, `XXX_BINANCE_API_KEY` and `XXX_BINANCE_SECRET_KEY` are ENV names that holds the values of your API and Secret keys respectively.
 
 ## License
 

@@ -48,10 +48,13 @@ defmodule Binance.Futures.WebSocket.WSClient do
         name = args[:name] || __MODULE__
         require_auth = args[:require_auth] || false
         public_channels = args[:public_channels]
-        state = Map.merge(args, %{heartbeat: 0, listen_key: nil})
+        config = args[:config]
+        state = Map.merge(args, %{heartbeat: 0, listen_key: nil, config: config})
 
         if require_auth == true do
-          {:ok, %{"listenKey" => listen_key}} = Binance.Futures.create_listen_key()
+          {:ok, %{"listenKey" => listen_key}} =
+            Binance.Futures.create_listen_key(1000, nil, config)
+
           state = Map.merge(state, %{listen_key: listen_key})
           endpoint_url = prepare_endpoint_url(listen_key)
           WebSockex.start_link(endpoint_url, __MODULE__, state, name: name)
@@ -91,8 +94,8 @@ defmodule Binance.Futures.WebSocket.WSClient do
         {:ok, state}
       end
 
-      def handle_info(:keep_alive, state) do
-        {:ok, _} = Binance.Futures.keep_alive_listen_key()
+      def handle_info(:keep_alive, %{config: config} = state) do
+        {:ok, _} = Binance.Futures.keep_alive_listen_key(1000, nil, config)
         :ok = info("Keepalive Binance's User Data stream done!")
         schedule_keep_alive_stream()
         {:ok, state}
@@ -138,7 +141,7 @@ defmodule Binance.Futures.WebSocket.WSClient do
       end
 
       def handle_frame({:text, json_data}, state) do
-        response = json_data |> Jason.decode!()
+        response = json_data |> Poison.decode!()
         handle_response(response, state)
       end
 

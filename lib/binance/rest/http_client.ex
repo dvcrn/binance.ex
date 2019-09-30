@@ -1,20 +1,20 @@
 defmodule Binance.Rest.HTTPClient do
   @endpoint "https://api.binance.com"
 
-  alias Binance.Util
+  alias Binance.{Config, Util}
 
-  def get_binance(url, headers \\ []) do
+  def get_binance(url, headers \\ []) when is_list(headers) do
     HTTPoison.get("#{@endpoint}#{url}", headers)
     |> parse_response
   end
 
-  def delete_binance(url, headers \\ []) do
+  def delete_binance(url, headers \\ []) when is_list(headers) do
     HTTPoison.delete("#{@endpoint}#{url}", headers)
     |> parse_response
   end
 
-  def get_binance(url, params, secret_key, api_key) do
-    case prepare_request(url, params, secret_key, api_key) do
+  def get_binance(url, params, config) do
+    case prepare_request(:get, url, params, config, true) do
       {:error, _} = error ->
         error
 
@@ -23,8 +23,8 @@ defmodule Binance.Rest.HTTPClient do
     end
   end
 
-  def delete_binance(url, params, secret_key, api_key) do
-    case prepare_request(url, params, secret_key, api_key) do
+  def delete_binance(url, params, config) do
+    case prepare_request(:delete, url, params, config, true) do
       {:error, _} = error ->
         error
 
@@ -33,79 +33,103 @@ defmodule Binance.Rest.HTTPClient do
     end
   end
 
-  defp prepare_request(url, params, secret_key, api_key) do
-    case validate_credentials(secret_key, api_key) do
+  def post_binance(url, params, config, signed? \\ true) do
+    case prepare_request(:post, url, params, config, signed?) do
       {:error, _} = error ->
         error
 
+      {:ok, url, headers, body} ->
+        case HTTPoison.post("#{@endpoint}#{url}", body, headers) do
+          {:error, err} ->
+            {:error, {:http_error, err}}
+
+          {:ok, response} ->
+            case Poison.decode(response.body) do
+              {:ok, data} -> {:ok, data}
+              {:error, err} -> {:error, {:poison_decode_error, err}}
+            end
+        end
+    end
+  end
+
+  def put_binance(url, params, config, signed? \\ true) do
+    case prepare_request(:put, url, params, config, signed?) do
+      {:error, _} = error ->
+        error
+
+      {:ok, url, headers, body} ->
+        case HTTPoison.put("#{@endpoint}#{url}", body, headers) do
+          {:error, err} ->
+            {:error, {:http_error, err}}
+
+          {:ok, %{body: ""}} ->
+            {:ok, ""}
+
+          {:ok, response} ->
+            case Poison.decode(response.body) do
+              {:ok, data} -> {:ok, data}
+              {:error, err} -> {:error, {:poison_decode_error, err}}
+            end
+        end
+    end
+  end
+
+  defp prepare_request(method, url, params, config, signed?) do
+    case validate_credentials(config) do
+      {:error, _} = error ->
+        error
+
+      {:ok, %Config{api_key: api_key, api_secret: api_secret}} ->
+        cond do
+          method in [:get, :delete] ->
+            headers = [
+              {"X-MBX-APIKEY", api_key}
+            ]
+
+            params =
+              Map.merge(params, %{
+                timestamp: :os.system_time(:millisecond),
+                recvWindow: 5000
+              })
+
+            argument_string = URI.encode_query(params)
+            signature = Util.sign_content(api_secret, argument_string)
+
+            {:ok, "#{url}?#{argument_string}&signature=#{signature}", headers}
+
+          method in [:post, :put] ->
+            headers = [
+              {"X-MBX-APIKEY", api_key},
+              {"Content-Type", "application/x-www-form-urlencoded"}
+            ]
+
+            argument_string = URI.encode_query(params)
+
+            argument_string =
+              case signed? do
+                true ->
+                  signature = Util.sign_content(api_secret, argument_string)
+                  "#{argument_string}&signature=#{signature}"
+
+                false ->
+                  argument_string
+              end
+
+            {:ok, url, headers, argument_string}
+        end
+    end
+  end
+
+  defp validate_credentials(config) do
+    case Config.get(config) do
+      %Config{api_key: api_key, api_secret: api_secret} = config
+      when is_binary(api_key) and is_binary(api_secret) ->
+        {:ok, config}
+
       _ ->
-        headers = [{"X-MBX-APIKEY", api_key}]
-        receive_window = 5000
-        ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
-
-        params =
-          Map.merge(params, %{
-            timestamp: ts,
-            recvWindow: receive_window
-          })
-
-        argument_string = URI.encode_query(params)
-
-        signature =
-          :crypto.hmac(
-            :sha256,
-            secret_key,
-            argument_string
-          )
-          |> Base.encode16()
-
-        {:ok, "#{url}?#{argument_string}&signature=#{signature}", headers}
+        {:error, {:config_missing, "Secret or API key missing"}}
     end
   end
-
-  def post_binance(url, params, signed? \\ true) do
-    headers = Util.prepare_request_headers(:post)
-    body = Util.prepare_request_body(params, signed: signed?)
-
-    case HTTPoison.post("#{@endpoint}#{url}", body, headers) do
-      {:error, err} ->
-        {:error, {:http_error, err}}
-
-      {:ok, response} ->
-        case Poison.decode(response.body) do
-          {:ok, data} -> {:ok, data}
-          {:error, err} -> {:error, {:poison_decode_error, err}}
-        end
-    end
-  end
-
-  def put_binance(url, params, signed? \\ true) do
-    headers = Util.prepare_request_headers(:put)
-    body = Util.prepare_request_body(params, signed: signed?)
-
-    case HTTPoison.put("#{@endpoint}#{url}", body, headers) do
-      {:error, err} ->
-        {:error, {:http_error, err}}
-
-      {:ok, %{body: ""}} ->
-        {:ok, ""}
-
-      {:ok, response} ->
-        case Poison.decode(response.body) do
-          {:ok, data} -> {:ok, data}
-          {:error, err} -> {:error, {:poison_decode_error, err}}
-        end
-    end
-  end
-
-  defp validate_credentials(nil, nil),
-    do: {:error, {:config_missing, "Secret and API key missing"}}
-
-  defp validate_credentials(nil, _api_key), do: {:error, {:config_missing, "Secret key missing"}}
-
-  defp validate_credentials(_secret_key, nil), do: {:error, {:config_missing, "API key missing"}}
-
-  defp validate_credentials(_secret_key, _api_key), do: :ok
 
   defp parse_response({:ok, response}) do
     response.body
