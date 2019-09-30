@@ -4,6 +4,8 @@ defmodule FuturesTest do
   doctest Binance
 
   setup_all do
+    System.put_env("BINANCE_API_KEY", "fake_api_key")
+    System.put_env("BINANCE_API_SECRET", "fake_secret_key")
     HTTPoison.start()
   end
 
@@ -177,11 +179,18 @@ defmodule FuturesTest do
     end
   end
 
-  describe ".order_limit_buy" do
+  describe ".create_order limit buy" do
     test "creates an order with a duration of good til cancel by default" do
       use_cassette "futures/order_limit_buy_good_til_cancel_default_duration_success" do
         assert {:ok, %Binance.Futures.Order{} = response} =
-                 Binance.Futures.order_limit_buy("BTCUSDT", 0.001, 9000)
+                 Binance.Futures.create_order(%{
+                   symbol: "BTCUSDT",
+                   side: "BUY",
+                   type: "LIMIT",
+                   quantity: 0.001,
+                   price: 9000,
+                   time_in_force: "GTC"
+                 })
 
         assert response.client_order_id == "NZzeeQSqS5PH5OS9WAMBIy"
         assert response.cum_qty == "0"
@@ -203,7 +212,17 @@ defmodule FuturesTest do
 
     test "returns an insufficient margin error tuple" do
       use_cassette "futures/order_limit_buy_error_insufficient_balance" do
-        assert {:error, reason} = Binance.Futures.order_limit_buy("BTCUSDT", 0.05, 9000)
+        assert {:error, reason} =
+                 Binance.Futures.create_order(%{
+                   symbol: "BTCUSDT",
+                   side: "BUY",
+                   type: "LIMIT",
+                   quantity: 0.05,
+                   price: 9000,
+                   time_in_force: "GTC"
+                 })
+
+        # Binance.Futures.create_order("BTCUSDT", "BUY", "LIMIT", 0.05, 9000)
 
         assert reason == %Binance.InsufficientBalanceError{
                  reason: %{
@@ -215,11 +234,18 @@ defmodule FuturesTest do
     end
   end
 
-  describe ".order_limit_sell" do
+  describe ".create_order limit sell" do
     test "creates an order with a duration of good til cancel by default" do
       use_cassette "futures/order_limit_sell_good_til_cancel_default_duration_success" do
         assert {:ok, %Binance.Futures.Order{} = response} =
-                 Binance.Futures.order_limit_sell("BTCUSDT", 0.001, 11000)
+                 Binance.Futures.create_order(%{
+                   symbol: "BTCUSDT",
+                   side: "SELL",
+                   type: "LIMIT",
+                   quantity: 0.001,
+                   price: 11000,
+                   time_in_force: "GTC"
+                 })
 
         assert response.client_order_id == "VV0vLLVnABzLXwYxvDkYqF"
         assert response.cum_qty == "0"
@@ -241,7 +267,15 @@ defmodule FuturesTest do
 
     test "returns an insufficient margin error tuple" do
       use_cassette "futures/order_limit_buy_error_insufficient_balance" do
-        assert {:error, reason} = Binance.Futures.order_limit_sell("BTCUSDT", 0.05, 11000)
+        assert {:error, reason} =
+                 Binance.Futures.create_order(%{
+                   symbol: "BTCUSDT",
+                   side: "SELL",
+                   type: "LIMIT",
+                   quantity: 0.05,
+                   price: 11000,
+                   time_in_force: "GTC"
+                 })
 
         assert reason == %Binance.InsufficientBalanceError{
                  reason: %{
@@ -297,7 +331,7 @@ defmodule FuturesTest do
     test "when called with symbol returns all open orders for that symbols(string)" do
       use_cassette "futures/get_open_orders_with_symbol_string_success" do
         assert {:ok, [%Binance.Futures.Order{} = order_1]} =
-                 Binance.Futures.get_open_orders("BTCUSDT")
+                 Binance.Futures.get_open_orders(%{symbol: "BTCUSDT"})
 
         assert order_1.client_order_id == "kFVoo0nClhOku6KbcB8B1X"
         assert order_1.cum_quote == "0"
@@ -321,7 +355,7 @@ defmodule FuturesTest do
     test "gets an order information by exchange order id" do
       use_cassette "futures/get_order_by_exchange_order_id_ok" do
         assert {:ok, %Binance.Futures.Order{} = response} =
-                 Binance.Futures.get_order("BTCUSDT", 10_926_974)
+                 Binance.Futures.get_order(%{symbol: "BTCUSDT", order_id: 10_926_974})
 
         assert response.client_order_id == "F1YDd19xJvGWNiBbt7JCrr"
         assert response.cum_quote == "0"
@@ -343,7 +377,10 @@ defmodule FuturesTest do
     test "gets an order information by client order id" do
       use_cassette "futures/get_order_by_client_order_id_ok" do
         assert {:ok, %Binance.Futures.Order{} = response} =
-                 Binance.Futures.get_order("BTCUSDT", nil, "F1YDd11xJvGWNiBbt7JCrr")
+                 Binance.Futures.get_order(%{
+                   symbol: "BTCUSDT",
+                   orig_client_order_id: "F1YDd11xJvGWNiBbt7JCrr"
+                 })
 
         assert response.client_order_id == "F1YDd19xJvGWNiBbt7JCrr"
         assert response.cum_quote == "0"
@@ -365,7 +402,7 @@ defmodule FuturesTest do
     test "returns an insufficient margin error tuple" do
       use_cassette "futures/get_order_error" do
         assert {:error, %{"code" => -2013, "msg" => "Order does not exist."} = _reason} =
-                 Binance.Futures.get_order("BTCUSDT", 123_456_789)
+                 Binance.Futures.get_order(%{symbol: "BTCUSDT", order_id: 123_456_789})
       end
     end
   end
@@ -374,7 +411,7 @@ defmodule FuturesTest do
     test "cancel an order by exchange order id" do
       use_cassette "futures/cancel_order_by_exchange_order_id_ok" do
         assert {:ok, %Binance.Futures.Order{} = response} =
-                 Binance.Futures.cancel_order("BTCUSDT", 11_257_530)
+                 Binance.Futures.cancel_order(%{symbol: "BTCUSDT", order_id: 11_257_530})
 
         assert response.client_order_id == "wgQyWAlBFCCWinOy7yPFDu"
         assert response.cum_quote == "0"
@@ -396,7 +433,10 @@ defmodule FuturesTest do
     test "cancel an order by client order id" do
       use_cassette "futures/cancel_order_by_client_order_id_ok" do
         assert {:ok, %Binance.Futures.Order{} = response} =
-                 Binance.Futures.cancel_order("BTCUSDT", nil, "Slo0A5UDDOWK7cdUNVUsfO")
+                 Binance.Futures.cancel_order(%{
+                   symbol: "BTCUSDT",
+                   orig_client_order_id: "Slo0A5UDDOWK7cdUNVUsfO"
+                 })
 
         assert response.client_order_id == "Slo0A5UDDOWK7cdUNVUsfO"
         assert response.cum_quote == "0"
@@ -423,7 +463,7 @@ defmodule FuturesTest do
                   "rejectReason" => "UNKNOWN_ORDER",
                   "status" => "REJECTED",
                   "updateTime" => 1_568_995_698_674_402_579
-                }} = Binance.Futures.cancel_order("BTCUSDT", 123_456)
+                }} = Binance.Futures.cancel_order(%{symbol: "BTCUSDT", order_id: 123_456})
       end
     end
   end

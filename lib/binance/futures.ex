@@ -1,9 +1,6 @@
 defmodule Binance.Futures do
   alias Binance.Futures.Rest.HTTPClient
 
-  @api_key Application.get_env(:binance, :api_key)
-  @secret_key Application.get_env(:binance, :secret_key)
-
   # Server
 
   @doc """
@@ -40,7 +37,8 @@ defmodule Binance.Futures do
 
   def create_listen_key(
         receiving_window \\ 1000,
-        timestamp \\ nil
+        timestamp \\ nil,
+        config \\ nil
       ) do
     timestamp =
       case timestamp do
@@ -57,7 +55,7 @@ defmodule Binance.Futures do
       recvWindow: receiving_window
     }
 
-    case HTTPClient.post_binance("/fapi/v1/listenKey", arguments) do
+    case HTTPClient.post_binance("/fapi/v1/listenKey", arguments, config) do
       {:ok, %{"code" => code, "msg" => msg}} ->
         {:error, {:binance_error, %{code: code, msg: msg}}}
 
@@ -66,7 +64,7 @@ defmodule Binance.Futures do
     end
   end
 
-  def keep_alive_listen_key(receiving_window \\ 1000, timestamp \\ nil) do
+  def keep_alive_listen_key(receiving_window \\ 1000, timestamp \\ nil, config \\ nil) do
     timestamp =
       case timestamp do
         # timestamp needs to be in milliseconds
@@ -82,7 +80,7 @@ defmodule Binance.Futures do
       recvWindow: receiving_window
     }
 
-    case HTTPClient.put_binance("/fapi/v1/listenKey", arguments) do
+    case HTTPClient.put_binance("/fapi/v1/listenKey", arguments, config) do
       {:ok, %{"code" => code, "msg" => msg}} ->
         {:error, {:binance_error, %{code: code, msg: msg}}}
 
@@ -138,8 +136,8 @@ defmodule Binance.Futures do
   Please read https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/
   """
 
-  def get_account() do
-    case HTTPClient.get_binance("/fapi/v1/account", %{}, @secret_key, @api_key) do
+  def get_account(config \\ nil) do
+    case HTTPClient.get_binance("/fapi/v1/account", %{}, config) do
       {:ok, data} ->
         {:ok, Binance.Futures.Account.new(data)}
 
@@ -160,88 +158,50 @@ defmodule Binance.Futures do
   Please read https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#new-order-trade
   """
   def create_order(
-        symbol,
-        side,
-        type,
-        quantity,
-        price \\ nil,
-        time_in_force \\ nil,
-        new_client_order_id \\ nil,
-        stop_price \\ nil,
-        receiving_window \\ 1000,
-        timestamp \\ nil
+        %{symbol: symbol, side: side, type: type, quantity: quantity} = params,
+        config \\ nil
       ) do
-    timestamp =
-      case timestamp do
-        # timestamp needs to be in milliseconds
-        nil ->
-          :os.system_time(:millisecond)
-
-        t ->
-          t
-      end
+    arguments = %{
+      symbol: symbol,
+      side: side,
+      type: type,
+      quantity: quantity,
+      timestamp: params[:timestamp] || :os.system_time(:millisecond),
+      recvWindow: params[:recv_window] || 1000
+    }
 
     arguments =
-      %{
-        symbol: symbol,
-        side: side,
-        type: type,
-        quantity: quantity,
-        timestamp: timestamp,
-        recvWindow: receiving_window
-      }
+      arguments
       |> Map.merge(
         unless(
-          is_nil(new_client_order_id),
-          do: %{newClientOrderId: new_client_order_id},
+          is_nil(params[:new_client_order_id]),
+          do: %{newClientOrderId: params[:new_client_order_id]},
           else: %{}
         )
       )
-      |> Map.merge(unless(is_nil(stop_price), do: %{stopPrice: stop_price}, else: %{}))
-      |> Map.merge(unless(is_nil(time_in_force), do: %{timeInForce: time_in_force}, else: %{}))
-      |> Map.merge(unless(is_nil(price), do: %{price: price}, else: %{}))
+      |> Map.merge(
+        unless(is_nil(params[:stop_price]), do: %{stopPrice: params[:stop_price]}, else: %{})
+      )
+      |> Map.merge(
+        unless(
+          is_nil(params[:time_in_force]),
+          do: %{timeInForce: params[:time_in_force]},
+          else: %{}
+        )
+      )
+      |> Map.merge(unless(is_nil(params[:price]), do: %{price: params[:price]}, else: %{}))
 
-    case HTTPClient.post_binance("/fapi/v1/order", arguments) do
+    case HTTPClient.post_binance("/fapi/v1/order", arguments, config) do
       {:ok, %{"code" => code, "msg" => msg}} ->
-        {:error, {:binance_error, %{code: code, msg: msg}}}
+        {:error, {:binance_error, %{code: code, msg: msg}}} |> parse_order_response
 
       data ->
-        data
+        data |> parse_order_response
     end
   end
 
   @doc """
-  Creates a new **limit** **buy** order
-
-  Symbol can be a binance symbol in the form of `"BTCUSDT"`
-
-  Returns `{:ok, %{}}` or `{:error, reason}`
-  """
-  def order_limit_buy(symbol, quantity, price, time_in_force \\ "GTC")
-      when is_binary(symbol)
-      when is_number(quantity)
-      when is_number(price) do
-    create_order(symbol, "BUY", "LIMIT", quantity, price, time_in_force)
-    |> parse_order_response
-  end
-
-  @doc """
-  Creates a new **limit** **sell** order
-
-  Symbol can be a binance symbol in the form of `"BTCUSDT"` or `%Binance.TradePair{}`.
-
-  Returns `{:ok, %{}}` or `{:error, reason}`
-  """
-  def order_limit_sell(symbol, quantity, price, time_in_force \\ "GTC")
-      when is_binary(symbol)
-      when is_number(quantity)
-      when is_number(price) do
-    create_order(symbol, "SELL", "LIMIT", quantity, price, time_in_force)
-    |> parse_order_response
-  end
-
-  @doc """
-  Get all open orders, alternatively open orders by symbol
+  Get all open orders, alternatively open orders by symbol (params[:symbol])
 
   Returns `{:ok, [%Binance.Futures.Order{}]}` or `{:error, reason}`.
 
@@ -261,20 +221,8 @@ defmodule Binance.Futures do
 
   Read more: https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#current-open-orders-user_data
   """
-  def get_open_orders() do
-    case HTTPClient.get_binance("/fapi/v1/openOrders", %{}, @secret_key, @api_key) do
-      {:ok, data} -> {:ok, Enum.map(data, &Binance.Futures.Order.new(&1))}
-      err -> err
-    end
-  end
-
-  def get_open_orders(symbol) when is_binary(symbol) do
-    case HTTPClient.get_binance(
-           "/fapi/v1/openOrders",
-           %{:symbol => symbol},
-           @secret_key,
-           @api_key
-         ) do
+  def get_open_orders(params \\ %{}, config \\ nil) do
+    case HTTPClient.get_binance("/fapi/v1/openOrders", params, config) do
       {:ok, data} -> {:ok, Enum.map(data, &Binance.Futures.Order.new(&1))}
       err -> err
     end
@@ -294,27 +242,23 @@ defmodule Binance.Futures do
 
   Info: https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#query-order-user_data
   """
-  def get_order(
-        symbol,
-        order_id \\ nil,
-        orig_client_order_id \\ nil
-      )
-      when is_binary(symbol)
-      when is_integer(order_id) or is_binary(orig_client_order_id) do
+  def get_order(params, config \\ nil) do
     arguments =
       %{
-        symbol: symbol
+        symbol: params[:symbol]
       }
-      |> Map.merge(unless(is_nil(order_id), do: %{orderId: order_id}, else: %{}))
+      |> Map.merge(
+        unless(is_nil(params[:order_id]), do: %{orderId: params[:order_id]}, else: %{})
+      )
       |> Map.merge(
         unless(
-          is_nil(orig_client_order_id),
-          do: %{origClientOrderId: orig_client_order_id},
+          is_nil(params[:orig_client_order_id]),
+          do: %{origClientOrderId: params[:orig_client_order_id]},
           else: %{}
         )
       )
 
-    case HTTPClient.get_binance("/fapi/v1/order", arguments, @secret_key, @api_key) do
+    case HTTPClient.get_binance("/fapi/v1/order", arguments, config) do
       {:ok, data} -> {:ok, Binance.Futures.Order.new(data)}
       err -> err
     end
@@ -331,27 +275,23 @@ defmodule Binance.Futures do
 
   Info: https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#cancel-order-trade
   """
-  def cancel_order(
-        symbol,
-        order_id \\ nil,
-        orig_client_order_id \\ nil
-      )
-      when is_binary(symbol)
-      when is_integer(order_id) or is_binary(orig_client_order_id) do
+  def cancel_order(params, config \\ nil) do
     arguments =
       %{
-        symbol: symbol
+        symbol: params[:symbol]
       }
-      |> Map.merge(unless(is_nil(order_id), do: %{orderId: order_id}, else: %{}))
+      |> Map.merge(
+        unless(is_nil(params[:order_id]), do: %{orderId: params[:order_id]}, else: %{})
+      )
       |> Map.merge(
         unless(
-          is_nil(orig_client_order_id),
-          do: %{origClientOrderId: orig_client_order_id},
+          is_nil(params[:orig_client_order_id]),
+          do: %{origClientOrderId: params[:orig_client_order_id]},
           else: %{}
         )
       )
 
-    case HTTPClient.delete_binance("/fapi/v1/order", arguments, @secret_key, @api_key) do
+    case HTTPClient.delete_binance("/fapi/v1/order", arguments, config) do
       {:ok, %{"rejectReason" => _} = err} -> {:error, err}
       {:ok, data} -> {:ok, Binance.Futures.Order.new(data)}
       err -> err
