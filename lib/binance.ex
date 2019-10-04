@@ -234,7 +234,7 @@ defmodule Binance do
       )
       |> Map.merge(
         unless(
-          is_nil(params[:new_client_order_id]),
+          is_nil(params[:iceberg_quantity]),
           do: %{icebergQty: params[:iceberg_quantity]},
           else: %{}
         )
