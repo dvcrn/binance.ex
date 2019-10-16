@@ -31,7 +31,8 @@ defmodule Binance.MixProject do
       {:websockex, "~> 0.4.2"},
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
-      {:exvcr, "~> 0.10.1", only: :test}
+      {:exvcr, "~> 0.10.1", only: :test},
+      {:dialyxir, "~> 1.0.0-rc.7", only: [:dev], runtime: false}
     ]
   end
 

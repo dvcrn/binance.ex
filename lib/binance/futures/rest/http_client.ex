@@ -43,6 +43,15 @@ defmodule Binance.Futures.Rest.HTTPClient do
           {:error, err} ->
             {:error, {:http_error, err}}
 
+          {:ok, %{status_code: status_code} = response} when status_code not in 200..299 ->
+            case Poison.decode(response.body) do
+              {:ok, %{"code" => code, "msg" => msg}} ->
+                {:error, {:binance_error, %{code: code, msg: msg}}}
+
+              {:error, err} ->
+                {:error, {:poison_decode_error, err}}
+            end
+
           {:ok, response} ->
             case Poison.decode(response.body) do
               {:ok, data} -> {:ok, data}
@@ -61,6 +70,15 @@ defmodule Binance.Futures.Rest.HTTPClient do
         case HTTPoison.put("#{@endpoint}#{url}", body, headers) do
           {:error, err} ->
             {:error, {:http_error, err}}
+
+          {:ok, %{status_code: status_code} = response} when status_code not in 200..299 ->
+            case Poison.decode(response.body) do
+              {:ok, %{"code" => code, "msg" => msg}} ->
+                {:error, {:binance_error, %{code: code, msg: msg}}}
+
+              {:error, err} ->
+                {:error, {:poison_decode_error, err}}
+            end
 
           {:ok, %{body: ""}} ->
             {:ok, ""}
@@ -131,24 +149,25 @@ defmodule Binance.Futures.Rest.HTTPClient do
     end
   end
 
-  defp parse_response({:ok, response}) do
+  defp parse_response({:ok, %{status_code: status_code} = response})
+       when status_code not in 200..299 do
     response.body
     |> Poison.decode()
-    |> parse_response_body
-  end
+    |> case do
+      {:ok, %{"code" => code, "msg" => msg}} ->
+        {:error, {:binance_error, %{code: code, msg: msg}}}
 
-  defp parse_response({:error, err}) do
-    {:error, {:http_error, err}}
-  end
-
-  defp parse_response_body({:ok, data}) do
-    case data do
-      %{"code" => _c, "msg" => _m} = error -> {:error, error}
-      _ -> {:ok, data}
+      {:error, error} ->
+        {:error, {:poison_decode_error, error}}
     end
   end
 
-  defp parse_response_body({:error, err}) do
-    {:error, {:poison_decode_error, err}}
+  defp parse_response({:ok, response}) do
+    response.body
+    |> Poison.decode()
+    |> case do
+      {:ok, data} -> {:ok, data}
+      {:error, error} -> {:error, {:poison_decode_error, error}}
+    end
   end
 end
