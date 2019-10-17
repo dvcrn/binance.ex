@@ -1,11 +1,18 @@
 defmodule Binance.Futures do
   alias Binance.Futures.Rest.HTTPClient
 
+  @type error ::
+          {:binance_error, %{code: integer(), message: String.t()}}
+          | {:http_error, any()}
+          | {:poison_decode_error, any()}
+          | {:config_missing, String.t()}
+
   # Server
 
   @doc """
   Pings Binance API. Returns `{:ok, %{}}` if successful, `{:error, reason}` otherwise
   """
+  @spec ping() :: {:ok, %{}} | {:error, error()}
   def ping() do
     HTTPClient.get_binance("/fapi/v1/ping")
   end
@@ -13,14 +20,13 @@ defmodule Binance.Futures do
   @doc """
   Get binance server time in unix epoch.
 
-  Returns `{:ok, time}` if successful, `{:error, reason}` otherwise
-
   ## Example
   ```
   {:ok, 1515390701097}
   ```
 
   """
+  @spec get_server_time() :: {:ok, integer()} | {:error, error()}
   def get_server_time() do
     case HTTPClient.get_binance("/fapi/v1/time") do
       {:ok, %{"serverTime" => time}} -> {:ok, time}
@@ -28,6 +34,7 @@ defmodule Binance.Futures do
     end
   end
 
+  @spec get_exchange_info() :: {:ok, %Binance.ExchangeInfo{}} | {:error, error()}
   def get_exchange_info() do
     case HTTPClient.get_binance("/fapi/v1/exchangeInfo") do
       {:ok, data} -> {:ok, Binance.ExchangeInfo.new(data)}
@@ -35,8 +42,9 @@ defmodule Binance.Futures do
     end
   end
 
+  @spec create_listen_key(map()) :: {:ok, map()} | {:error, error()}
   def create_listen_key(
-        receiving_window \\ 1000,
+        receiving_window \\ 1500,
         timestamp \\ nil,
         config \\ nil
       ) do
@@ -64,7 +72,9 @@ defmodule Binance.Futures do
     end
   end
 
-  def keep_alive_listen_key(receiving_window \\ 1000, timestamp \\ nil, config \\ nil) do
+  @spec keep_alive_listen_key(integer(), integer() | nil, map() | nil) ::
+          {:ok, %{}} | {:error, error()}
+  def keep_alive_listen_key(receiving_window \\ 1500, timestamp \\ nil, config \\ nil) do
     timestamp =
       case timestamp do
         # timestamp needs to be in milliseconds
@@ -92,8 +102,6 @@ defmodule Binance.Futures do
   @doc """
   Retrieves the bids & asks of the order book up to the depth for the given symbol
 
-  Returns `{:ok, %{bids: [...], asks: [...], lastUpdateId: 12345}}` or `{:error, reason}`
-
   ## Example
   ```
   {:ok,
@@ -117,6 +125,7 @@ defmodule Binance.Futures do
   }
   ```
   """
+  @spec get_depth(String.t(), integer) :: {:ok, %Binance.OrderBook{}} | {:error, error()}
   def get_depth(symbol, limit) do
     case HTTPClient.get_binance("/fapi/v1/depth?symbol=#{symbol}&limit=#{limit}") do
       {:ok, data} -> {:ok, Binance.OrderBook.new(data)}
@@ -129,13 +138,11 @@ defmodule Binance.Futures do
   @doc """
   Fetches user account from binance
 
-  Returns `{:ok, %Binance.Account{}}` or `{:error, reason}`.
-
   In the case of a error on binance, for example with invalid parameters, `{:error, {:binance_error, %{code: code, msg: msg}}}` will be returned.
 
   Please read https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/
   """
-
+  @spec get_account(map() | nil) :: {:ok, %Binance.Account{}} | {:error, error()}
   def get_account(config \\ nil) do
     case HTTPClient.get_binance("/fapi/v1/account", %{}, config) do
       {:ok, data} ->
@@ -151,12 +158,11 @@ defmodule Binance.Futures do
   @doc """
   Creates a new order on Binance Futures
 
-  Returns `{:ok, %{}}` or `{:error, reason}`.
-
   In the case of a error on Binance, for example with invalid parameters, `{:error, {:binance_error, %{code: code, msg: msg}}}` will be returned.
 
   Please read https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#new-order-trade
   """
+  @spec create_order(map(), map() | nil) :: {:ok, map()} | {:error, error()}
   def create_order(
         %{symbol: symbol, side: side, type: type, quantity: quantity} = params,
         config \\ nil
@@ -167,7 +173,7 @@ defmodule Binance.Futures do
       type: type,
       quantity: quantity,
       timestamp: params[:timestamp] || :os.system_time(:millisecond),
-      recvWindow: params[:recv_window] || 1000
+      recvWindow: params[:recv_window] || 1500
     }
 
     arguments =
@@ -192,18 +198,16 @@ defmodule Binance.Futures do
       |> Map.merge(unless(is_nil(params[:price]), do: %{price: params[:price]}, else: %{}))
 
     case HTTPClient.post_binance("/fapi/v1/order", arguments, config) do
-      {:ok, %{"code" => code, "msg" => msg}} ->
-        {:error, {:binance_error, %{code: code, msg: msg}}} |> parse_order_response
+      {:ok, data} ->
+        {:ok, Binance.Futures.Order.new(data)}
 
-      data ->
-        data |> parse_order_response
+      error ->
+        error
     end
   end
 
   @doc """
   Get all open orders, alternatively open orders by symbol (params[:symbol])
-
-  Returns `{:ok, [%Binance.Futures.Order{}]}` or `{:error, reason}`.
 
   Weight: 1 for a single symbol; 40 when the symbol parameter is omitted
 
@@ -221,6 +225,8 @@ defmodule Binance.Futures do
 
   Read more: https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#current-open-orders-user_data
   """
+  @spec get_open_orders(map(), map() | nil) ::
+          {:ok, list(%Binance.Futures.Order{})} | {:error, error()}
   def get_open_orders(params \\ %{}, config \\ nil) do
     case HTTPClient.get_binance("/fapi/v1/openOrders", params, config) do
       {:ok, data} -> {:ok, Enum.map(data, &Binance.Futures.Order.new(&1))}
@@ -231,8 +237,6 @@ defmodule Binance.Futures do
   @doc """
   Get order by symbol and either orderId or origClientOrderId are mandatory
 
-  Returns `{:ok, [%Binance.Futures.Order{}]}` or `{:error, reason}`.
-
   Weight: 1
 
   ## Example
@@ -242,6 +246,7 @@ defmodule Binance.Futures do
 
   Info: https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#query-order-user_data
   """
+  @spec get_order(map(), map() | nil) :: {:ok, list(%Binance.Futures.Order{})} | {:error, error()}
   def get_order(params, config \\ nil) do
     arguments =
       %{
@@ -275,6 +280,7 @@ defmodule Binance.Futures do
 
   Info: https://binanceapitest.github.io/Binance-Futures-API-doc/trade_and_account/#cancel-order-trade
   """
+  @spec cancel_order(map(), map() | nil) :: {:ok, %Binance.Futures.Order{}} | {:error, error()}
   def cancel_order(params, config \\ nil) do
     arguments =
       %{
@@ -296,19 +302,5 @@ defmodule Binance.Futures do
       {:ok, data} -> {:ok, Binance.Futures.Order.new(data)}
       err -> err
     end
-  end
-
-  defp parse_order_response({:ok, response}) do
-    {:ok, Binance.Futures.Order.new(response)}
-  end
-
-  defp parse_order_response({
-         :error,
-         {
-           :binance_error,
-           %{code: -1000, msg: "You don't have enough margin for this new order"} = reason
-         }
-       }) do
-    {:error, %Binance.InsufficientBalanceError{reason: reason}}
   end
 end

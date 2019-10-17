@@ -139,10 +139,8 @@ defmodule FuturesTest do
 
     test "returns an error tuple when the symbol doesn't exist" do
       use_cassette "get_depth_error" do
-        assert Binance.get_depth("IDONTEXIST", 1000) == {
-                 :error,
-                 %{"code" => -1121, "msg" => "Invalid symbol."}
-               }
+        assert Binance.get_depth("IDONTEXIST", 1000) ==
+                 {:error, {:binance_error, %{code: -1121, msg: "Invalid symbol."}}}
       end
     end
   end
@@ -224,12 +222,12 @@ defmodule FuturesTest do
 
         # Binance.Futures.create_order("BTCUSDT", "BUY", "LIMIT", 0.05, 9000)
 
-        assert reason == %Binance.InsufficientBalanceError{
-                 reason: %{
-                   code: -1000,
-                   msg: "You don't have enough margin for this new order"
-                 }
-               }
+        assert reason ==
+                 {:binance_error,
+                  %{
+                    code: -1000,
+                    msg: "You don't have enough margin for this new order"
+                  }}
       end
     end
   end
@@ -277,12 +275,12 @@ defmodule FuturesTest do
                    time_in_force: "GTC"
                  })
 
-        assert reason == %Binance.InsufficientBalanceError{
-                 reason: %{
-                   code: -1000,
-                   msg: "You don't have enough margin for this new order"
-                 }
-               }
+        assert reason ==
+                 {:binance_error,
+                  %{
+                    code: -1000,
+                    msg: "You don't have enough margin for this new order"
+                  }}
       end
     end
   end
@@ -401,8 +399,8 @@ defmodule FuturesTest do
 
     test "returns an insufficient margin error tuple" do
       use_cassette "futures/get_order_error" do
-        assert {:error, %{"code" => -2013, "msg" => "Order does not exist."} = _reason} =
-                 Binance.Futures.get_order(%{symbol: "BTCUSDT", order_id: 123_456_789})
+        assert Binance.Futures.get_order(%{symbol: "BTCUSDT", order_id: 123_456_789}) ==
+                 {:error, {:binance_error, %{code: -2013, msg: "Order does not exist."}}}
       end
     end
   end
