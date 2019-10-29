@@ -1,0 +1,43 @@
+[
+  {
+    "request": {
+      "body": "listenKey=cqcFKuqCCRv1QNnhiA4gsdMLSRgTz4qyd0l5JWryjaAxjQlr8JAcyksNt1Ct",
+      "headers": {
+        "X-MBX-APIKEY": "***",
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      "method": "put",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.binance.com/sapi/v1/userDataStream"
+    },
+    "response": {
+      "binary": false,
+      "body": "{}",
+      "headers": {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Content-Length": "2",
+        "Connection": "keep-alive",
+        "Date": "Tue, 29 Oct 2019 13:17:33 GMT",
+        "Server": "nginx",
+        "X-Application-Context": "sapi:bnb-prod:9056",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'self'",
+        "X-Content-Security-Policy": "default-src 'self'",
+        "X-WebKit-CSP": "default-src 'self'",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 02d36a84a910749e0e01cf16e7e1a02b.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "SIN5-C1",
+        "X-Amz-Cf-Id": "n6r30mtITjP8IjO3Vuf-NHmSrZbMdgdOoM6a4OgwtugKXQMJrQVgxA=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
