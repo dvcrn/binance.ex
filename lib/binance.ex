@@ -14,7 +14,7 @@ defmodule Binance do
   """
   @spec ping() :: {:ok, %{}} | {:error, error()}
   def ping() do
-    HTTPClient.get_binance("/api/v1/ping")
+    HTTPClient.get_binance("/api/v3/ping")
   end
 
   @doc """
@@ -28,7 +28,7 @@ defmodule Binance do
   """
   @spec get_server_time() :: {:ok, integer()} | {:error, error()}
   def get_server_time() do
-    case HTTPClient.get_binance("/api/v1/time") do
+    case HTTPClient.get_binance("/api/v3/time") do
       {:ok, %{"serverTime" => time}} -> {:ok, time}
       err -> err
     end
@@ -36,7 +36,7 @@ defmodule Binance do
 
   @spec get_exchange_info() :: {:ok, %Binance.ExchangeInfo{}} | {:error, error()}
   def get_exchange_info() do
-    case HTTPClient.get_binance("/api/v1/exchangeInfo") do
+    case HTTPClient.get_binance("/api/v3/exchangeInfo") do
       {:ok, data} -> {:ok, Binance.ExchangeInfo.new(data)}
       err -> err
     end
@@ -57,7 +57,7 @@ defmodule Binance do
   """
   @spec create_listen_key(map() | nil) :: {:ok, map()} | {:error, error()}
   def create_listen_key(config \\ nil) do
-    case HTTPClient.post_binance("/api/v1/userDataStream", %{}, config, false) do
+    case HTTPClient.post_binance("/api/v3/userDataStream", %{}, config, false) do
       {:ok, %{"code" => code, "msg" => msg}} ->
         {:error, {:binance_error, %{code: code, msg: msg}}}
 
@@ -83,7 +83,7 @@ defmodule Binance do
       listenKey: listen_key
     }
 
-    case HTTPClient.put_binance("/api/v1/userDataStream", arguments, config, false) do
+    case HTTPClient.put_binance("/api/v3/userDataStream", arguments, config, false) do
       {:ok, %{"code" => code, "msg" => msg}} ->
         {:error, {:binance_error, %{code: code, msg: msg}}}
 
@@ -93,32 +93,6 @@ defmodule Binance do
   end
 
   # Ticker
-
-  @doc """
-  Get all symbols and current prices listed in binance
-
-  ## Example
-  ```
-  {:ok,
-    [%Binance.SymbolPrice{price: "0.07579300", symbol: "ETHBTC"},
-     %Binance.SymbolPrice{price: "0.01670200", symbol: "LTCBTC"},
-     %Binance.SymbolPrice{price: "0.00114550", symbol: "BNBBTC"},
-     %Binance.SymbolPrice{price: "0.00640000", symbol: "NEOBTC"},
-     %Binance.SymbolPrice{price: "0.00030000", symbol: "123456"},
-     %Binance.SymbolPrice{price: "0.04895000", symbol: "QTUMETH"},
-     ...]}
-  ```
-  """
-  @spec get_all_prices() :: {:ok, list(%Binance.SymbolPrice{})} | {:error, error()}
-  def get_all_prices() do
-    case HTTPClient.get_binance("/api/v1/ticker/allPrices") do
-      {:ok, data} ->
-        {:ok, Enum.map(data, &Binance.SymbolPrice.new(&1))}
-
-      err ->
-        err
-    end
-  end
 
   @doc """
   Retrieves the current ticker information for the given trade pair.
@@ -139,7 +113,7 @@ defmodule Binance do
   """
   @spec get_ticker(String.t()) :: {:ok, %Binance.Ticker{}} | {:error, error()}
   def get_ticker(symbol) when is_binary(symbol) do
-    case HTTPClient.get_binance("/api/v1/ticker/24hr?symbol=#{symbol}") do
+    case HTTPClient.get_binance("/api/v3/ticker/24hr?symbol=#{symbol}") do
       {:ok, data} -> {:ok, Binance.Ticker.new(data)}
       err -> err
     end
@@ -173,7 +147,7 @@ defmodule Binance do
   """
   @spec get_depth(String.t(), integer()) :: {:ok, %Binance.OrderBook{}} | {:error, error()}
   def get_depth(symbol, limit) do
-    case HTTPClient.get_binance("/api/v1/depth?symbol=#{symbol}&limit=#{limit}") do
+    case HTTPClient.get_binance("/api/v3/depth?symbol=#{symbol}&limit=#{limit}") do
       {:ok, data} -> {:ok, Binance.OrderBook.new(data)}
       err -> err
     end

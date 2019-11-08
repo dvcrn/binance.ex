@@ -6,18 +6,21 @@
       "method": "get",
       "options": [],
       "request_body": "",
-      "url": "https://api.binance.com/api/v1/ticker/24hr?symbol=LTCBTC"
+      "url": "https://api.binance.com/api/v3/ticker/24hr?symbol=LTCBTC"
     },
     "response": {
       "binary": false,
-      "body": "{\"symbol\":\"LTCBTC\",\"priceChange\":\"-0.00016000\",\"priceChangePercent\":\"-0.846\",\"weightedAvgPrice\":\"0.01882262\",\"prevClosePrice\":\"0.01892700\",\"lastPrice\":\"0.01876100\",\"lastQty\":\"5.90000000\",\"bidPrice\":\"0.01875200\",\"bidQty\":\"1.22000000\",\"askPrice\":\"0.01876000\",\"askQty\":\"16.76000000\",\"openPrice\":\"0.01892100\",\"highPrice\":\"0.01897600\",\"lowPrice\":\"0.01870000\",\"volume\":\"92105.72000000\",\"quoteVolume\":\"1733.67136150\",\"openTime\":1521739938547,\"closeTime\":1521826338547,\"firstId\":9749445,\"lastId\":9780056,\"count\":30612}",
+      "body": "{\"symbol\":\"LTCBTC\",\"priceChange\":\"-0.00001300\",\"priceChangePercent\":\"-0.194\",\"weightedAvgPrice\":\"0.00667994\",\"prevClosePrice\":\"0.00671300\",\"lastPrice\":\"0.00669900\",\"lastQty\":\"1.10000000\",\"bidPrice\":\"0.00669600\",\"bidQty\":\"7.99000000\",\"askPrice\":\"0.00669900\",\"askQty\":\"28.90000000\",\"openPrice\":\"0.00671200\",\"highPrice\":\"0.00676100\",\"lowPrice\":\"0.00655800\",\"volume\":\"123522.34000000\",\"quoteVolume\":\"825.12234599\",\"openTime\":1573118875494,\"closeTime\":1573205275494,\"firstId\":35642100,\"lastId\":35666093,\"count\":23994}",
       "headers": {
-        "Date": "Fri, 23 Mar 2018 17:32:18 GMT",
-        "Content-Type": "application/json",
+        "Content-Type": "application/json;charset=utf-8",
         "Transfer-Encoding": "chunked",
         "Connection": "keep-alive",
+        "Date": "Fri, 08 Nov 2019 09:27:55 GMT",
         "Server": "nginx",
         "Vary": "Accept-Encoding",
+        "X-MBX-UUID": "1984e513-cb7c-4934-bb65-bc130b9941d8",
+        "X-MBX-USED-WEIGHT": "16",
+        "X-MBX-USED-WEIGHT-1M": "16",
         "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
         "X-Frame-Options": "SAMEORIGIN",
         "X-Xss-Protection": "1; mode=block",
@@ -27,7 +30,11 @@
         "X-WebKit-CSP": "default-src 'self'",
         "Cache-Control": "no-cache, no-store, must-revalidate",
         "Pragma": "no-cache",
-        "Expires": "0"
+        "Expires": "0",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 f9fe1d14b5af0af813191b1f72368679.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "HKG54-C1",
+        "X-Amz-Cf-Id": "LI6-11ed0SeCRmdOdYwmWqS7tCFyIteaZQXeh76EUYYD9AYmW7iq2A=="
       },
       "status_code": 200,
       "type": "ok"
