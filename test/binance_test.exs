@@ -17,7 +17,7 @@ defmodule BinanceTest do
 
   test "get_server_time success return an ok, time tuple" do
     use_cassette "get_server_time_ok" do
-      assert Binance.get_server_time() == {:ok, 1_521_781_361_467}
+      assert Binance.get_server_time() == {:ok, 1_573_205_271_410}
     end
   end
 
@@ -28,9 +28,24 @@ defmodule BinanceTest do
       assert info.server_time != nil
 
       assert info.rate_limits == [
-               %{"interval" => "MINUTE", "limit" => 1200, "rateLimitType" => "REQUESTS"},
-               %{"interval" => "SECOND", "limit" => 10, "rateLimitType" => "ORDERS"},
-               %{"interval" => "DAY", "limit" => 100_000, "rateLimitType" => "ORDERS"}
+               %{
+                 "interval" => "MINUTE",
+                 "intervalNum" => 1,
+                 "limit" => 1200,
+                 "rateLimitType" => "REQUEST_WEIGHT"
+               },
+               %{
+                 "interval" => "SECOND",
+                 "intervalNum" => 1,
+                 "limit" => 10,
+                 "rateLimitType" => "ORDERS"
+               },
+               %{
+                 "interval" => "DAY",
+                 "intervalNum" => 1,
+                 "limit" => 200_000,
+                 "rateLimitType" => "ORDERS"
+               }
              ]
 
       assert info.exchange_filters == []
@@ -47,14 +62,36 @@ defmodule BinanceTest do
                    "tickSize" => "0.00000100"
                  },
                  %{
+                   "avgPriceMins" => 5,
+                   "filterType" => "PERCENT_PRICE",
+                   "multiplierDown" => "0.2",
+                   "multiplierUp" => "5"
+                 },
+                 %{
                    "filterType" => "LOT_SIZE",
                    "maxQty" => "100000.00000000",
                    "minQty" => "0.00100000",
                    "stepSize" => "0.00100000"
                  },
-                 %{"filterType" => "MIN_NOTIONAL", "minNotional" => "0.00100000"}
+                 %{
+                   "applyToMarket" => true,
+                   "avgPriceMins" => 5,
+                   "filterType" => "MIN_NOTIONAL",
+                   "minNotional" => "0.00010000"
+                 },
+                 %{"filterType" => "ICEBERG_PARTS", "limit" => 10},
+                 %{
+                   "filterType" => "MARKET_LOT_SIZE",
+                   "maxQty" => "63100.00000000",
+                   "minQty" => "0.00000000",
+                   "stepSize" => "0.00000000"
+                 },
+                 %{"filterType" => "MAX_NUM_ALGO_ORDERS", "maxNumAlgoOrders" => 5}
                ],
-               "icebergAllowed" => false,
+               "icebergAllowed" => true,
+               "isMarginTradingAllowed" => true,
+               "isSpotTradingAllowed" => true,
+               "ocoAllowed" => true,
                "orderTypes" => [
                  "LIMIT",
                  "LIMIT_MAKER",
@@ -70,26 +107,28 @@ defmodule BinanceTest do
     end
   end
 
-  test "get_all_prices returns a list of prices for every symbol" do
-    use_cassette "get_all_prices_ok" do
-      assert {:ok, symbol_prices} = Binance.get_all_prices()
-      assert [%Binance.SymbolPrice{price: "0.06137000", symbol: "ETHBTC"} | _tail] = symbol_prices
-      assert symbol_prices |> Enum.count() == 288
-    end
-  end
-
   describe ".get_ticker" do
     test "returns a ticker struct with details for the given symbol" do
       use_cassette "get_ticker_ok" do
-        assert {
-                 :ok,
-                 %Binance.Ticker{
-                   ask_price: "0.01876000",
-                   bid_price: "0.01875200",
-                   close_time: 1_521_826_338_547,
-                   count: 30612
-                 }
-               } = Binance.get_ticker("LTCBTC")
+        assert {:ok,
+                %Binance.Ticker{
+                  ask_price: "0.00669900",
+                  bid_price: "0.00669600",
+                  close_time: 1_573_205_275_494,
+                  count: 23994,
+                  first_id: 35_642_100,
+                  high_price: "0.00676100",
+                  last_id: 35_666_093,
+                  last_price: "0.00669900",
+                  low_price: "0.00655800",
+                  open_price: "0.00671200",
+                  open_time: 1_573_118_875_494,
+                  prev_close_price: "0.00671300",
+                  price_change: "-0.00001300",
+                  price_change_percent: "-0.194",
+                  volume: "123522.34000000",
+                  weighted_avg_price: "0.00667994"
+                }} = Binance.get_ticker("LTCBTC")
       end
     end
 
@@ -107,7 +146,7 @@ defmodule BinanceTest do
         assert Binance.create_listen_key() == {
                  :ok,
                  %{
-                   "listenKey" => "l6oKmHZzY6CGcO7PlGehRO3NStJgPMMON7899c1xs6qYGKBfqPjbEw9hZlf5"
+                   "listenKey" => "AoaTlfkZv6KtpFLIiNn08x8hX51Hcy2MURjwnraU1rvmTlm4pdtkNdJDIpO2"
                  }
                }
       end
@@ -118,7 +157,7 @@ defmodule BinanceTest do
     test "returns empty indicating the given listen key has been keepalive successfully" do
       use_cassette "keep_alive_listen_key_ok" do
         assert Binance.keep_alive_listen_key(
-                 "l6oKmHZzY6CGcO7PlGehRO3NStJgPMMON7899c1xs6qYGKBfqPjbEw9hZlf5"
+                 "AoaTlfkZv6KtpFLIiNn08x8hX51Hcy2MURjwnraU1rvmTlm4pdtkNdJDIpO2"
                ) == {:ok, %{}}
       end
     end
@@ -127,26 +166,25 @@ defmodule BinanceTest do
   describe ".get_depth" do
     test "returns the bids & asks up to the given depth" do
       use_cassette "get_depth_ok" do
-        assert Binance.get_depth("BTCUSDT", 5) == {
-                 :ok,
-                 %Binance.OrderBook{
-                   asks: [
-                     ["8400.00000000", "2.04078100", []],
-                     ["8405.35000000", "0.50354700", []],
-                     ["8406.00000000", "0.32769800", []],
-                     ["8406.33000000", "0.00239000", []],
-                     ["8406.51000000", "0.03241000", []]
-                   ],
-                   bids: [
-                     ["8393.00000000", "0.20453200", []],
-                     ["8392.57000000", "0.02639000", []],
-                     ["8392.00000000", "1.40893300", []],
-                     ["8390.09000000", "0.07047100", []],
-                     ["8388.72000000", "0.04577400", []]
-                   ],
-                   last_update_id: 113_634_395
-                 }
-               }
+        assert Binance.get_depth("BTCUSDT", 5) ==
+                 {:ok,
+                  %Binance.OrderBook{
+                    asks: [
+                      ["9019.25000000", "0.44862000"],
+                      ["9019.29000000", "0.12076700"],
+                      ["9019.31000000", "0.55440600"],
+                      ["9020.22000000", "0.02162700"],
+                      ["9020.23000000", "2.00000000"]
+                    ],
+                    bids: [
+                      ["9017.97000000", "0.09418300"],
+                      ["9017.91000000", "0.22854400"],
+                      ["9016.20000000", "0.10200000"],
+                      ["9015.47000000", "0.02218400"],
+                      ["9015.21000000", "0.15102300"]
+                    ],
+                    last_update_id: 1_307_751_521
+                  }}
       end
     end
 

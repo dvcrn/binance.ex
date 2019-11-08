@@ -3,24 +3,25 @@
     "request": {
       "body": "",
       "headers": {
-        "X-MBX-APIKEY": "***"
+        "X-MBX-APIKEY": "***",
+        "Content-Type": "application/x-www-form-urlencoded"
       },
       "method": "post",
       "options": [],
       "request_body": "",
-      "url": "https://api.binance.com/api/v1/userDataStream"
+      "url": "https://api.binance.com/api/v3/userDataStream"
     },
     "response": {
       "binary": false,
-      "body": "{\"listenKey\":\"l6oKmHZzY6CGcO7PlGehRO3NStJgPMMON7899c1xs6qYGKBfqPjbEw9hZlf5\"}",
+      "body": "{\"listenKey\":\"AoaTlfkZv6KtpFLIiNn08x8hX51Hcy2MURjwnraU1rvmTlm4pdtkNdJDIpO2\"}",
       "headers": {
         "Content-Type": "application/json;charset=utf-8",
         "Transfer-Encoding": "chunked",
         "Connection": "keep-alive",
-        "Date": "Mon, 23 Sep 2019 09:11:11 GMT",
+        "Date": "Fri, 08 Nov 2019 09:39:54 GMT",
         "Server": "nginx",
         "Vary": "Accept-Encoding",
-        "X-MBX-UUID": "55b8df0c-a986-4657-85a0-00c4793ebd90",
+        "X-MBX-UUID": "7ee24844-ed7c-4e0f-a06f-8dcc584cec96",
         "X-MBX-USED-WEIGHT": "1",
         "X-MBX-USED-WEIGHT-1M": "1",
         "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
@@ -34,9 +35,9 @@
         "Pragma": "no-cache",
         "Expires": "0",
         "X-Cache": "Miss from cloudfront",
-        "Via": "1.1 a0dab1619e09a1e6e84a759dfdfe7343.cloudfront.net (CloudFront)",
-        "X-Amz-Cf-Pop": "SIN5-C1",
-        "X-Amz-Cf-Id": "7mS6gw5fG5qPF76Y5jDDK-PI0Zahttk-c2TZ1kQ8yfJGkLiqDHXzUQ=="
+        "Via": "1.1 523773ea134442f5fb8c61175c2ccecb.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "HKG54-C1",
+        "X-Amz-Cf-Id": "Wil5CbqSZaMQCVXEv3up31Y5zuoqX6GVWGQMzb4Ir98WT63mOJbFJA=="
       },
       "status_code": 200,
       "type": "ok"
