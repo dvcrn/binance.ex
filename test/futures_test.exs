@@ -177,6 +177,37 @@ defmodule FuturesTest do
     end
   end
 
+  describe ".get_position" do
+    test "returns current position information" do
+      use_cassette "futures/get_position_ok" do
+        assert Binance.Futures.get_position() ==
+                 {:ok,
+                  [
+                    %Binance.Futures.Position{
+                      entry_price: "6901.58000",
+                      leverage: "20",
+                      liquidation_price: "0",
+                      max_notional_value: "5000000",
+                      position_amt: "0.001",
+                      symbol: "BTCUSDT",
+                      mark_price: "7519.01708334",
+                      unRealized_profit: "0.61743708"
+                    },
+                    %Binance.Futures.Position{
+                      entry_price: "0.00000",
+                      leverage: "20",
+                      liquidation_price: "0",
+                      max_notional_value: "250000",
+                      position_amt: "0.000",
+                      symbol: "ETHUSDT",
+                      unRealized_profit: "0.00000000",
+                      mark_price: "153.04898463"
+                    }
+                  ]}
+      end
+    end
+  end
+
   describe ".create_order limit buy" do
     test "creates an order with a duration of good til cancel by default" do
       use_cassette "futures/order_limit_buy_good_til_cancel_default_duration_success" do

@@ -153,6 +153,17 @@ defmodule Binance.Futures do
     end
   end
 
+  @spec get_position(map() | nil) :: {:ok, list(%Binance.Futures.Position{})} | {:error, error()}
+  def get_position(config \\ nil) do
+    case HTTPClient.get_binance("/fapi/v1/positionRisk", %{}, config) do
+      {:ok, data} ->
+        {:ok, Enum.map(data, &Binance.Futures.Position.new(&1))}
+
+      error ->
+        error
+    end
+  end
+
   # Order
 
   @doc """

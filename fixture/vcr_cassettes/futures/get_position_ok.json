@@ -1,0 +1,38 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://fapi.binance.com/fapi/v1/positionRisk?recvWindow=5000&timestamp=1574907927582&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "[{\"symbol\":\"BTCUSDT\",\"positionAmt\":\"0.001\",\"entryPrice\":\"6901.58000\",\"markPrice\":\"7519.01708334\",\"unRealizedProfit\":\"0.61743708\",\"liquidationPrice\":\"0\",\"leverage\":\"20\",\"maxNotionalValue\":\"5000000\"},{\"symbol\":\"ETHUSDT\",\"positionAmt\":\"0.000\",\"entryPrice\":\"0.00000\",\"markPrice\":\"153.04898463\",\"unRealizedProfit\":\"0.00000000\",\"liquidationPrice\":\"0\",\"leverage\":\"20\",\"maxNotionalValue\":\"250000\"}]",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "390",
+        "Connection": "keep-alive",
+        "Date": "Thu, 28 Nov 2019 02:25:27 GMT",
+        "Server": "Tengine",
+        "Vary": "Accept-Encoding",
+        "X-MBX-USED-WEIGHT-1M": "1",
+        "x-response-time": "7ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "*,clienttype,Content-Type,lang,x-ui-request-trace",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 3a121bfa9fd8f1948df6cf2868bc292f.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "SIN52-C2",
+        "X-Amz-Cf-Id": "Wtj6OAkhj-MJAngMR-exKNsVqrH71M9vqRvQzNdfPASYZsnlU5lfpg=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
