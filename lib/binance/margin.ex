@@ -74,6 +74,13 @@ defmodule Binance.Margin do
         )
       )
       |> Map.merge(unless(is_nil(params[:price]), do: %{price: params[:price]}, else: %{}))
+      |> Map.merge(
+        unless(
+          is_nil(params[:side_effect_type]),
+          do: %{sideEffectType: params[:side_effect_type]},
+          else: %{}
+        )
+      )
 
     case HTTPClient.post_binance("/sapi/v1/margin/order", arguments, config) do
       {:ok, data} ->
