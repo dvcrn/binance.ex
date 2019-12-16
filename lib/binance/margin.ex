@@ -50,8 +50,7 @@ defmodule Binance.Margin do
       side: side,
       type: type,
       quantity: quantity,
-      timestamp: params[:timestamp] || :os.system_time(:millisecond),
-      recvWindow: params[:recv_window] || 1500
+      timestamp: params[:timestamp] || :os.system_time(:millisecond)
     }
 
     arguments =
@@ -80,6 +79,9 @@ defmodule Binance.Margin do
           do: %{sideEffectType: params[:side_effect_type]},
           else: %{}
         )
+      )
+      |> Map.merge(
+        unless(is_nil(params[:recv_window]), do: %{recvWindow: params[:recv_window]}, else: %{})
       )
 
     case HTTPClient.post_binance("/sapi/v1/margin/order", arguments, config) do

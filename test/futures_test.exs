@@ -92,7 +92,7 @@ defmodule FuturesTest do
   describe ".create_listen_key" do
     test "returns a listen key which could be used to subscrbe to a User Data stream" do
       use_cassette "futures/create_listen_key_ok" do
-        assert Binance.Futures.create_listen_key() == {
+        assert Binance.Futures.create_listen_key(%{}) == {
                  :ok,
                  %{
                    "listenKey" =>
@@ -106,7 +106,7 @@ defmodule FuturesTest do
   describe ".keep_alive_listen_key" do
     test "returns empty indicating the given listen key has been keepalive successfully" do
       use_cassette "futures/keep_alive_listen_key_ok" do
-        assert Binance.Futures.keep_alive_listen_key() == {:ok, ""}
+        assert Binance.Futures.keep_alive_listen_key(%{}) == {:ok, ""}
       end
     end
   end

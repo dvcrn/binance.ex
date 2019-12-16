@@ -188,8 +188,7 @@ defmodule Binance do
       side: side,
       type: type,
       quantity: quantity,
-      timestamp: params[:timestamp] || :os.system_time(:millisecond),
-      recvWindow: params[:recv_window] || 1500
+      timestamp: params[:timestamp] || :os.system_time(:millisecond)
     }
 
     arguments =
@@ -219,6 +218,9 @@ defmodule Binance do
         )
       )
       |> Map.merge(unless(is_nil(params[:price]), do: %{price: params[:price]}, else: %{}))
+      |> Map.merge(
+        unless(is_nil(params[:recv_window]), do: %{recvWindow: params[:recv_window]}, else: %{})
+      )
 
     case HTTPClient.post_binance("/api/v3/order", arguments, config) do
       {:ok, data} ->

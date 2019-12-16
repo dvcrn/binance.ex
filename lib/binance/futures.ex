@@ -43,25 +43,17 @@ defmodule Binance.Futures do
   end
 
   @spec create_listen_key(map()) :: {:ok, map()} | {:error, error()}
-  def create_listen_key(
-        receiving_window \\ 1500,
-        timestamp \\ nil,
-        config \\ nil
-      ) do
-    timestamp =
-      case timestamp do
-        # timestamp needs to be in milliseconds
-        nil ->
-          :os.system_time(:millisecond)
-
-        t ->
-          t
-      end
-
-    arguments = %{
-      timestamp: timestamp,
-      recvWindow: receiving_window
-    }
+  def create_listen_key(params, config \\ nil) do
+    arguments =
+      %{
+        timestamp: :os.system_time(:millisecond)
+      }
+      |> Map.merge(
+        unless(is_nil(params[:timestamp]), do: %{timestamp: params[:timestamp]}, else: %{})
+      )
+      |> Map.merge(
+        unless(is_nil(params[:recv_window]), do: %{recvWindow: params[:recv_window]}, else: %{})
+      )
 
     case HTTPClient.post_binance("/fapi/v1/listenKey", arguments, config) do
       {:ok, %{"code" => code, "msg" => msg}} ->
@@ -72,23 +64,19 @@ defmodule Binance.Futures do
     end
   end
 
-  @spec keep_alive_listen_key(integer(), integer() | nil, map() | nil) ::
+  @spec keep_alive_listen_key(map(), map() | nil) ::
           {:ok, %{}} | {:error, error()}
-  def keep_alive_listen_key(receiving_window \\ 1500, timestamp \\ nil, config \\ nil) do
-    timestamp =
-      case timestamp do
-        # timestamp needs to be in milliseconds
-        nil ->
-          :os.system_time(:millisecond)
-
-        t ->
-          t
-      end
-
-    arguments = %{
-      timestamp: timestamp,
-      recvWindow: receiving_window
-    }
+  def keep_alive_listen_key(params, config \\ nil) do
+    arguments =
+      %{
+        timestamp: :os.system_time(:millisecond)
+      }
+      |> Map.merge(
+        unless(is_nil(params[:timestamp]), do: %{timestamp: params[:timestamp]}, else: %{})
+      )
+      |> Map.merge(
+        unless(is_nil(params[:recv_window]), do: %{recvWindow: params[:recv_window]}, else: %{})
+      )
 
     case HTTPClient.put_binance("/fapi/v1/listenKey", arguments, config) do
       {:ok, %{"code" => code, "msg" => msg}} ->
@@ -183,8 +171,7 @@ defmodule Binance.Futures do
       side: side,
       type: type,
       quantity: quantity,
-      timestamp: params[:timestamp] || :os.system_time(:millisecond),
-      recvWindow: params[:recv_window] || 1500
+      timestamp: params[:timestamp] || :os.system_time(:millisecond)
     }
 
     arguments =
@@ -207,6 +194,9 @@ defmodule Binance.Futures do
         )
       )
       |> Map.merge(unless(is_nil(params[:price]), do: %{price: params[:price]}, else: %{}))
+      |> Map.merge(
+        unless(is_nil(params[:recv_window]), do: %{recvWindow: params[:recv_window]}, else: %{})
+      )
 
     case HTTPClient.post_binance("/fapi/v1/order", arguments, config) do
       {:ok, data} ->

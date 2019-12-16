@@ -106,8 +106,7 @@ defmodule Binance.Rest.HTTPClient do
 
             params =
               Map.merge(params, %{
-                timestamp: :os.system_time(:millisecond),
-                recvWindow: 5000
+                timestamp: :os.system_time(:millisecond)
               })
 
             argument_string = URI.encode_query(params)
