@@ -1,5 +1,5 @@
 defmodule Binance.Rest.HTTPClient do
-  @endpoint "https://api.binance.com"
+  @endpoint "https://api.binance.us"
 
   def get_binance(url, headers \\ []) do
     HTTPoison.get("#{@endpoint}#{url}", headers)
