@@ -4,7 +4,8 @@ use Mix.Config
 
 config :binance,
   api_key: "",
-  secret_key: ""
+  secret_key: "",
+  end_point: "https://api.binance.com"
 
 config :exvcr,
   filter_request_headers: [

@@ -30,7 +30,8 @@ key [here](https://www.binance.com/userCenter/createApi.html)):
 ```
 config :binance,
   api_key: "xxx",
-  secret_key: "xxx"
+  secret_key: "xxx",
+  end_point: "https://api.binance.us" # for the US API end point
 ```
 
 ## Usage
