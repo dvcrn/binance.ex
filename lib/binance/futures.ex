@@ -207,6 +207,59 @@ defmodule Binance.Futures do
     end
   end
 
+  def prepare_create_order(
+        %{symbol: symbol, side: side, type: type, quantity: quantity} = params,
+        config \\ nil
+      ) do
+    arguments = %{
+      symbol: symbol,
+      side: side,
+      type: type,
+      quantity: quantity,
+      timestamp: params[:timestamp] || :os.system_time(:millisecond)
+    }
+
+    arguments =
+      arguments
+      |> Map.merge(
+        unless(
+          is_nil(params[:new_client_order_id]),
+          do: %{newClientOrderId: params[:new_client_order_id]},
+          else: %{}
+        )
+      )
+      |> Map.merge(
+        unless(is_nil(params[:stop_price]), do: %{stopPrice: params[:stop_price]}, else: %{})
+      )
+      |> Map.merge(
+        unless(
+          is_nil(params[:time_in_force]),
+          do: %{timeInForce: params[:time_in_force]},
+          else: %{}
+        )
+      )
+      |> Map.merge(unless(is_nil(params[:price]), do: %{price: params[:price]}, else: %{}))
+      |> Map.merge(
+        unless(is_nil(params[:recv_window]), do: %{recvWindow: params[:recv_window]}, else: %{})
+      )
+
+    {:ok, url, headers, argument_string} =
+      HTTPClient.prepare_request(
+        :post,
+        "https://fapi.binance.com/fapi/v1/order",
+        arguments,
+        config,
+        true
+      )
+
+    %{
+      method: "POST",
+      url: url,
+      headers: headers,
+      body: argument_string
+    }
+  end
+
   @doc """
   Get all open orders, alternatively open orders by symbol (params[:symbol])
 
@@ -303,5 +356,37 @@ defmodule Binance.Futures do
       {:ok, data} -> {:ok, Binance.Futures.Order.new(data)}
       err -> err
     end
+  end
+
+  def prepare_cancel_order(params, config \\ nil) do
+    arguments =
+      %{
+        symbol: params[:symbol]
+      }
+      |> Map.merge(
+        unless(is_nil(params[:order_id]), do: %{orderId: params[:order_id]}, else: %{})
+      )
+      |> Map.merge(
+        unless(
+          is_nil(params[:orig_client_order_id]),
+          do: %{origClientOrderId: params[:orig_client_order_id]},
+          else: %{}
+        )
+      )
+
+    {:ok, url, headers} =
+      HTTPClient.prepare_request(
+        :delete,
+        "https://fapi.binance.com/fapi/v1/order",
+        arguments,
+        config,
+        true
+      )
+
+    %{
+      method: "DELETE",
+      url: url,
+      headers: headers
+    }
   end
 end
