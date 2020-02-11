@@ -92,7 +92,7 @@ defmodule Binance.Futures.Rest.HTTPClient do
     end
   end
 
-  defp prepare_request(method, url, params, config, signed?) do
+  def prepare_request(method, url, params, config, signed?) do
     case validate_credentials(config) do
       {:error, _} = error ->
         error
