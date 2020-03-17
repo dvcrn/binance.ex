@@ -1,15 +1,15 @@
 defmodule Binance.Futures.Rest.HTTPClient do
   @endpoint "https://fapi.binance.com"
-
+  @ssl_option  ssl: [versions: [:"tlsv1.2"]]
   alias Binance.{Config, Util}
 
   def get_binance(url, headers \\ []) when is_list(headers) do
-    HTTPoison.get("#{@endpoint}#{url}", headers)
+    HTTPoison.get("#{@endpoint}#{url}", headers, @ssl_option)
     |> parse_response
   end
 
   def delete_binance(url, headers \\ []) when is_list(headers) do
-    HTTPoison.delete("#{@endpoint}#{url}", headers)
+    HTTPoison.delete("#{@endpoint}#{url}", headers, @ssl_option)
     |> parse_response
   end
 
@@ -39,7 +39,7 @@ defmodule Binance.Futures.Rest.HTTPClient do
         error
 
       {:ok, url, headers, body} ->
-        case HTTPoison.post("#{@endpoint}#{url}", body, headers) do
+        case HTTPoison.post("#{@endpoint}#{url}", body, headers, @ssl_option) do
           {:error, err} ->
             {:error, {:http_error, err}}
 
@@ -67,7 +67,7 @@ defmodule Binance.Futures.Rest.HTTPClient do
         error
 
       {:ok, url, headers, body} ->
-        case HTTPoison.put("#{@endpoint}#{url}", body, headers) do
+        case HTTPoison.put("#{@endpoint}#{url}", body, headers, @ssl_option) do
           {:error, err} ->
             {:error, {:http_error, err}}
 
