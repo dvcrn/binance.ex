@@ -104,10 +104,20 @@ defmodule Binance.Futures.Rest.HTTPClient do
               {"X-MBX-APIKEY", api_key}
             ]
 
-            params =
-              Map.merge(params, %{
-                timestamp: :os.system_time(:millisecond)
-              })
+            params = params
+                |> Map.merge(%{timestamp: :os.system_time(:millisecond)})
+                |> Enum.reduce(params,
+                    fn(x, acc) -> Map.put(acc, elem(x, 0),
+                      if is_list elem(x, 1) do
+                        ele = x |> elem(1)
+                                |> Enum.join(",")
+
+                        "[#{ele}]"
+                      else
+                        elem(x, 1)
+                      end)
+                    end
+                  )
 
             argument_string = URI.encode_query(params)
             signature = Util.sign_content(api_secret, argument_string)
