@@ -495,5 +495,17 @@ defmodule FuturesTest do
                 }} = Binance.Futures.cancel_order(%{symbol: "BTCUSDT", order_id: 123_456})
       end
     end
+
+    test "cancel batch order by exchange order id" do
+      use_cassette "futures/cancel_batch_order_by_exchange_order_id_ok" do
+        assert {:ok, [order1, order2]} =
+                 Binance.Futures.cancel_batch_order(%{symbol: "BTCUSDT", order_id_list: [1853071596, 1853071597]})
+
+        assert order1["orderId"] == 1853071596
+        assert order1["status"] == "CANCELED"
+        assert order2["orderId"] == 1853071597
+        assert order2["status"] == "CANCELED"
+      end
+    end
   end
 end

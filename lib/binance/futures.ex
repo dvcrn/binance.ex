@@ -389,4 +389,28 @@ defmodule Binance.Futures do
       headers: headers
     }
   end
+
+  @spec cancel_batch_order(map(), map() | nil) :: {:ok, list} | {:error, error()}
+  def cancel_batch_order(params, config \\ nil) do
+    arguments =
+      %{
+        symbol: params[:symbol]
+      }
+      |> Map.merge(
+        if(!!(params[:order_id_list]), do: %{"orderIdList": params[:order_id_list]}, else: %{})
+      )
+      |> Map.merge(
+        if(
+          !!(params[:orig_client_order_id_list]),
+          do: %{origClientOrderIdList: params[:orig_client_order_id_list]},
+          else: %{}
+        )
+      )
+
+    case HTTPClient.delete_binance("/fapi/v1/batchOrders", arguments, config) do
+      {:ok, %{"rejectReason" => _} = err} -> {:error, err}
+      {:ok, data} -> {:ok, data}
+      err -> err
+    end
+  end
 end

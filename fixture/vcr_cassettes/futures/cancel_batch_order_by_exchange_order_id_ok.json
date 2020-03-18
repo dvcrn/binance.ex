@@ -1,0 +1,75 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "delete",
+      "options": [],
+      "request_body": "",
+      "url": "https://fapi.binance.com/fapi/v1/batchOrders?orderIdList=%5B11257530%5D&symbol=BTCUSDT&timestamp=1584522731587&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "[{\"avgPrice\":\"0.00000\",
+                  \"clientOrderId\":\"TrG8w56dpO7IMw51ya5uV5\",
+                  \"cumQty\":\"0\",
+                  \"cumQuote\":\"0\",
+                  \"executedQty\":\"0\",
+                  \"orderId\":1853071596,
+                  \"origQty\":\"0.002\",
+                  \"origType\":\"LIMIT\",
+                  \"price\":\"6000\",
+                  \"reduceOnly\":false,
+                  \"side\":\"SELL\",
+                  \"status\":\"CANCELED\",
+                  \"stopPrice\":\"0\",
+                  \"symbol\":\"BTCUSDT\",
+                  \"timeInForce\":\"GTC\",
+                  \"type\":\"LIMIT\",
+                  \"updateTime\":1584521987581,
+                  \"workingType\":\"CONTRACT_PRICE\"
+                },
+                {\"avgPrice\":\"0.00000\",
+                \"clientOrderId\":\"TrG8w56dpO7IMw51ya5uV4\",
+                \"cumQty\":\"0\",
+                \"cumQuote\":\"0\",
+                \"executedQty\":\"0\",
+                \"orderId\":1853071597,
+                \"origQty\":\"0.002\",
+                \"origType\":\"LIMIT\",
+                \"price\":\"6000\",
+                \"reduceOnly\":false,
+                \"side\":\"SELL\",
+                \"status\":\"CANCELED\",
+                \"stopPrice\":\"0\",
+                \"symbol\":\"BTCUSDT\",
+                \"timeInForce\":\"GTC\",
+                \"type\":\"LIMIT\",
+                \"updateTime\":1584521987581,
+                \"workingType\":\"CONTRACT_PRICE\"
+              }]",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "46",
+        "Connection": "keep-alive",
+        "Date": "Wed, 18 Mar 2020 09:12:11 GMT",
+        "Server": "Tengine",
+        "X-MBX-USED-WEIGHT-1M": "1",
+        "x-response-time": "0ms",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "origin-when-cross-origin",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 c967a8805fdfaef2a31a279939e3cfec.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "HKG54-C1",
+        "X-Amz-Cf-Id": "Wt5wj-99PvzMhdYoPNZYtt_UKMWaGdvHER71l7sA7jDxmPxR9BD4Mw=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
