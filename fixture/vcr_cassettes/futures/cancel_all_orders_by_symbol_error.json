@@ -1,0 +1,38 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "delete",
+      "options": [],
+      "request_body": "",
+      "url": "https://fapi.binance.com/fapi/v1/allOpenOrders?timestamp=1586425369954&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"code\":-1102,\"msg\":\"Mandatory parameter 'symbol' was not sent, was empty/null, or malformed.\"}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "95",
+        "Connection": "keep-alive",
+        "Date": "Thu, 09 Apr 2020 09:42:50 GMT",
+        "Server": "Tengine",
+        "X-MBX-USED-WEIGHT-1M": "1",
+        "x-response-time": "0ms",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "origin-when-cross-origin",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Cache": "Error from cloudfront",
+        "Via": "1.1 423016d18a128e118b016383665b6de8.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "SIN52-C3",
+        "X-Amz-Cf-Id": "56qVy5MVubnA5PGHOui_r1fcoIhiyUfumC2GeoM4XvFsvho7Fu-PcA=="
+      },
+      "status_code": 400,
+      "type": "ok"
+    }
+  }
+]

@@ -1,0 +1,39 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "delete",
+      "options": [],
+      "request_body": "",
+      "url": "https://fapi.binance.com/fapi/v1/allOpenOrders?symbol=BTCUSDT&timestamp=1586425196250&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"code\": 200,\"msg\": \"The operation of cancel all open order is done.\"}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "70",
+        "Connection": "keep-alive",
+        "Date": "Thu, 09 Apr 2020 09:39:56 GMT",
+        "Server": "Tengine",
+        "Vary": "Accept-Encoding",
+        "X-MBX-USED-WEIGHT-1M": "1",
+        "x-response-time": "1ms",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "origin-when-cross-origin",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 900a893b03bf29fa958d4587d585157f.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "SIN52-C3",
+        "X-Amz-Cf-Id": "sHLvGCbTKy4I-dHAjY7KIaFhyQGAx12CKeYHimnknyN-0qLTw1KQEA=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
