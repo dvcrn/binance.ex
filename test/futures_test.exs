@@ -507,5 +507,22 @@ defmodule FuturesTest do
         assert order2["status"] == "CANCELED"
       end
     end
+
+    test "should cancel all open orders by symbol" do
+      use_cassette "futures/cancel_all_orders_by_symbol" do
+        {:ok, response} = Binance.Futures.cancel_all_orders(%{symbol: "BTCUSDT"})
+        assert response == %{
+              "code" => 200,
+              "msg" => "The operation of cancel all open order is done."
+            }
+      end
+    end
+
+    test "should return error when cancel all open orders without sending symbol param" do
+      use_cassette "futures/cancel_all_orders_by_symbol_error" do
+        {:error, response} = Binance.Futures.cancel_all_orders(%{})
+        assert response == {:binance_error, %{code: -1102, msg: "Mandatory parameter 'symbol' was not sent, was empty/null, or malformed."}}
+      end
+    end
   end
 end
