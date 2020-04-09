@@ -413,4 +413,25 @@ defmodule Binance.Futures do
       err -> err
     end
   end
+
+
+  @doc """
+  Cancel all orders for a symbol (params[:symbol])
+
+  Weight: 1 
+
+  ## Example
+  ```
+  Binance.Futures.cancel_all_orders(%{symbol: "BTCUSDT"}, config)
+
+  Read more: https://binance-docs.github.io/apidocs/futures/en/#cancel-all-open-orders-trade
+  """
+  @spec cancel_all_orders(map(), map() | nil) :: {:ok, any()} | {:error, any()}
+  def cancel_all_orders(params, config \\ nil) do
+    case HTTPClient.delete_binance("/fapi/v1/allOpenOrders", params, config) do
+      {:ok, %{"rejectReason" => _} = err} -> {:error, err}
+      {:ok, data} -> {:ok, data}
+      err -> err
+    end
+  end
 end
