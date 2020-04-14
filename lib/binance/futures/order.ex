@@ -14,7 +14,8 @@ defmodule Binance.Futures.Order do
     :symbol,
     :time_in_force,
     :type,
-    :update_time
+    :update_time,
+    :time
   ]
 
   use ExConstructor

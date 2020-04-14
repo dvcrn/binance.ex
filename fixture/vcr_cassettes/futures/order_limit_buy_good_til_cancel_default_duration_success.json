@@ -1,7 +1,7 @@
 [
   {
     "request": {
-      "body": "price=9000&quantity=0.001&recvWindow=1000&side=BUY&symbol=BTCUSDT&timeInForce=GTC&timestamp=1568970694511&type=LIMIT&signature=***",
+      "body": "price=8000&quantity=0.001&side=BUY&symbol=BTCUSDT&timeInForce=GTC&timestamp=1586855766035&type=LIMIT&signature=***",
       "headers": {
         "X-MBX-APIKEY": "***",
         "Content-Type": "application/x-www-form-urlencoded"
@@ -13,23 +13,26 @@
     },
     "response": {
       "binary": false,
-      "body": "{\"orderId\":10817219,\"symbol\":\"BTCUSDT\",\"accountId\":1000,\"status\":\"NEW\",\"clientOrderId\":\"NZzeeQSqS5PH5OS9WAMBIy\",\"price\":\"9000\",\"origQty\":\"0.001\",\"executedQty\":\"0\",\"cumQty\":\"0\",\"cumQuote\":\"0\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"reduceOnly\":false,\"side\":\"BUY\",\"stopPrice\":\"0\",\"updateTime\":1568970695368}",
+      "body": "{\"orderId\":2634722102,\"symbol\":\"BTCUSDT\",\"status\":\"NEW\",\"clientOrderId\":\"e7BFySSxfObXahpsHJirjC\",\"price\":\"8000\",\"avgPrice\":\"0.00000\",\"origQty\":\"0.001\",\"executedQty\":\"0\",\"cumQty\":\"0\",\"cumQuote\":\"0\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"reduceOnly\":false,\"side\":\"BUY\",\"positionSide\":\"BOTH\",\"stopPrice\":\"0\",\"workingType\":\"CONTRACT_PRICE\",\"origType\":\"LIMIT\",\"updateTime\":1586855766315}",
       "headers": {
         "Content-Type": "application/json",
-        "Content-Length": "301",
+        "Content-Length": "379",
         "Connection": "keep-alive",
-        "Date": "Fri, 20 Sep 2019 09:11:35 GMT",
+        "Date": "Tue, 14 Apr 2020 09:16:06 GMT",
         "Server": "Tengine",
         "Vary": "Accept-Encoding",
-        "x-response-time": "5ms",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Allow-Headers": "*,clienttype,Content-Type,lang,x-ui-request-trace",
+        "X-MBX-USED-WEIGHT-1M": "0",
+        "X-MBX-ORDER-COUNT-1M": "1",
+        "x-response-time": "4ms",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "origin-when-cross-origin",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
         "X-Cache": "Miss from cloudfront",
-        "Via": "1.1 472637409b8ae00cf91bae609bb7b3ae.cloudfront.net (CloudFront)",
-        "X-Amz-Cf-Pop": "HKG60-C1",
-        "X-Amz-Cf-Id": "APSWbdeJ85Zy2RmwevYYQf-Db04jWAvPSGwNIpCIQztQh3PtE5kRaA=="
+        "Via": "1.1 e74ae1ee8d87215b42aa8a1c59137a49.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "HKG54-C1",
+        "X-Amz-Cf-Id": "_VfagvXLUSRU5hFRMgDyKshtEM2h45lp3GznU8bihbkDCgZ5KlpMvg=="
       },
       "status_code": 200,
       "type": "ok"
