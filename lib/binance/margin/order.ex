@@ -4,6 +4,7 @@ defmodule Binance.Margin.Order do
     :order_id,
     :client_order_id,
     :transact_time,
+    :avg_price,
     :price,
     :orig_qty,
     :executed_qty,

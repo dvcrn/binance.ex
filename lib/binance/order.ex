@@ -7,6 +7,7 @@ defmodule Binance.Order do
     :symbol,
     :order_id,
     :client_order_id,
+    :avg_price,
     :price,
     :orig_qty,
     :executed_qty,
