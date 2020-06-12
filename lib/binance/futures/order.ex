@@ -6,6 +6,7 @@ defmodule Binance.Futures.Order do
     :executed_qty,
     :order_id,
     :orig_qty,
+    :avg_price,
     :price,
     :reduce_only,
     :side,
