@@ -40,7 +40,6 @@ defmodule Binance.WebSocket.WSClient do
   defmacro __using__(_opts) do
     quote do
       use WebSockex
-      alias ExOkex.Config
       @base Application.get_env(:binance, :ws_endpoint, "wss://stream.binance.com:9443")
       @ping_interval Application.get_env(:binance, :ping_interval, 5_000)
       @keep_alive_interval Application.get_env(:binance, :keep_alive_interval, 10 * 60_000)

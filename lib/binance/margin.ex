@@ -41,6 +41,14 @@ defmodule Binance.Margin do
     end
   end
 
+  @spec get_best_ticker(String.t()) :: {:ok, map()} | {:error, error()}
+  def get_best_ticker(instrument) do
+    case HTTPClient.get_binance("/api/v3/ticker/bookTicker?symbol=#{instrument}") do
+      {:ok, data} -> {:ok, data}
+      err -> err
+    end
+  end
+
   def create_order(
         %{symbol: symbol, side: side, type: type, quantity: quantity} = params,
         config \\ nil

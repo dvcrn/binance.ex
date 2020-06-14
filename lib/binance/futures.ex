@@ -34,6 +34,14 @@ defmodule Binance.Futures do
     end
   end
 
+  @spec get_best_ticker(String.t()) :: {:ok, map()} | {:error, error()}
+  def get_best_ticker(instrument) do
+    case HTTPClient.get_binance("/fapi/v1/ticker/bookTicker?symbol=#{instrument}") do
+      {:ok, data} -> {:ok, data}
+      err -> err
+    end
+  end
+
   @spec get_exchange_info() :: {:ok, %Binance.ExchangeInfo{}} | {:error, error()}
   def get_exchange_info() do
     case HTTPClient.get_binance("/fapi/v1/exchangeInfo") do
@@ -418,7 +426,7 @@ defmodule Binance.Futures do
   @doc """
   Cancel all orders for a symbol (params[:symbol])
 
-  Weight: 1 
+  Weight: 1
 
   ## Example
   ```
