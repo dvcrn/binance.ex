@@ -1,0 +1,45 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": [],
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.binance.com/api/v3/ticker/bookTicker?symbol=BTCUSDT"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"symbol\":\"BTCUSDT\",\"bidPrice\":\"9043.50000000\",\"bidQty\":\"0.48752700\",\"askPrice\":\"9043.75000000\",\"askQty\":\"0.46000000\"}",
+      "headers": {
+        "Content-Type": "application/json;charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Date": "Mon, 15 Jun 2020 07:15:59 GMT",
+        "Server": "nginx",
+        "Vary": "Accept-Encoding",
+        "X-MBX-UUID": "9c64b6c5-2d19-4916-9339-339f646227b4",
+        "X-MBX-USED-WEIGHT": "1",
+        "X-MBX-USED-WEIGHT-1M": "1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'self'",
+        "X-Content-Security-Policy": "default-src 'self'",
+        "X-WebKit-CSP": "default-src 'self'",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 b40b141612d2524f7581e8975888d2b0.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "HKG60-C1",
+        "X-Amz-Cf-Id": "NtCPQW3uleY7QEgkF9idtWFuXFiVhP_xtq4fssrc6Y4XxeF-mIHhWg=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
