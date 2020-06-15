@@ -42,6 +42,14 @@ defmodule Binance do
     end
   end
 
+  @spec get_best_ticker(String.t()) :: {:ok, map()} | {:error, error()}
+  def get_best_ticker(instrument) do
+    case HTTPClient.get_binance("/api/v3/ticker/bookTicker?symbol=#{instrument}") do
+      {:ok, data} -> {:ok, data}
+      err -> err
+    end
+  end
+
   @doc """
   Start a new user data stream. The stream will close after 60 minutes unless a keepalive is sent.
 
