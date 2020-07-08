@@ -158,6 +158,10 @@ defmodule Binance.Futures.Rest.HTTPClient do
     end
   end
 
+  defp parse_response({:error, err}) do
+    {:error, {:http_error, err}}
+  end
+
   defp parse_response({:ok, %{status_code: status_code} = response})
        when status_code not in 200..299 do
     response.body
