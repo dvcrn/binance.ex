@@ -509,16 +509,15 @@ defmodule BinanceTest do
   describe "get" do
     test "best ticker" do
       use_cassette "get_best_ticker" do
-        assert Binance.Margin.get_best_ticker("BTCUSDT")
-          == {:ok,
-                %{
-                  "symbol" => "BTCUSDT",
-                  "askPrice" => "9017.33000000",
-                  "askQty" => "0.14430800",
-                  "bidPrice" => "9015.11000000",
-                  "bidQty" => "0.06305200"
-                }
-              }
+        assert Binance.Margin.get_best_ticker("BTCUSDT") ==
+                 {:ok,
+                  %{
+                    "symbol" => "BTCUSDT",
+                    "askPrice" => "9017.33000000",
+                    "askQty" => "0.14430800",
+                    "bidPrice" => "9015.11000000",
+                    "bidQty" => "0.06305200"
+                  }}
       end
     end
   end

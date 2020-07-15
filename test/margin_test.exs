@@ -83,16 +83,29 @@ defmodule MarginTest do
   describe "get" do
     test "best ticker" do
       use_cassette "margin/get_best_ticker" do
-        assert Binance.Margin.get_best_ticker("BTCUSDT")
-          == {:ok,
-                %{
-                  "askPrice" => "9046.59000000",
-                  "askQty" => "0.49950000",
-                  "bidPrice" => "9046.03000000",
-                  "bidQty" => "0.62312800",
-                  "symbol" => "BTCUSDT"
-                }
-              }
+        assert Binance.Margin.get_best_ticker("BTCUSDT") ==
+                 {:ok,
+                  %{
+                    "askPrice" => "9046.59000000",
+                    "askQty" => "0.49950000",
+                    "bidPrice" => "9046.03000000",
+                    "bidQty" => "0.62312800",
+                    "symbol" => "BTCUSDT"
+                  }}
+      end
+    end
+
+    test "index price" do
+      use_cassette "margin/get_index_price" do
+        assert Binance.Futures.get_index_price("BTCUSDT") ==
+                 {:ok,
+                  %{
+                    "symbol" => "BTCUSDT",
+                    "lastFundingRate" => "0.00010000",
+                    "markPrice" => "9232.76984706",
+                    "nextFundingTime" => 1_594_800_000_000,
+                    "time" => 1_594_799_785_001
+                  }}
       end
     end
   end
