@@ -4,8 +4,6 @@ defmodule MarginTest do
   doctest Binance
 
   setup_all do
-    System.put_env("BINANCE_API_KEY", "fake_api_key")
-    System.put_env("BINANCE_API_SECRET", "fake_secret_key")
     HTTPoison.start()
   end
 
@@ -97,15 +95,13 @@ defmodule MarginTest do
 
     test "index price" do
       use_cassette "margin/get_index_price" do
-        assert Binance.Futures.get_index_price("BTCUSDT") ==
-                 {:ok,
-                  %{
-                    "symbol" => "BTCUSDT",
-                    "lastFundingRate" => "0.00010000",
-                    "markPrice" => "9232.76984706",
-                    "nextFundingTime" => 1_594_800_000_000,
-                    "time" => 1_594_799_785_001
-                  }}
+        assert Binance.Margin.get_index_price("BTCUSDT") ==
+          {:ok,
+            %{
+            "price" => "9180.25954545",
+            "symbol" => "BTCUSDT",
+            "calcTime" => 1595227975000
+          }}
       end
     end
   end
