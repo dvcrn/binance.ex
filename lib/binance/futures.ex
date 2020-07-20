@@ -34,6 +34,14 @@ defmodule Binance.Futures do
     end
   end
 
+  @spec get_index_price(String.t()) :: {:ok, map()} | {:error, error()}
+  def get_index_price(instrument) do
+    case HTTPClient.get_binance("/fapi/v1/premiumIndex?symbol=#{instrument}") do
+      {:ok, data} -> {:ok, data}
+      err -> err
+    end
+  end
+
   @spec get_best_ticker(String.t()) :: {:ok, map()} | {:error, error()}
   def get_best_ticker(instrument) do
     case HTTPClient.get_binance("/fapi/v1/ticker/bookTicker?symbol=#{instrument}") do
@@ -405,11 +413,11 @@ defmodule Binance.Futures do
         symbol: params[:symbol]
       }
       |> Map.merge(
-        if(!!(params[:order_id_list]), do: %{"orderIdList": params[:order_id_list]}, else: %{})
+        if(!!params[:order_id_list], do: %{orderIdList: params[:order_id_list]}, else: %{})
       )
       |> Map.merge(
         if(
-          !!(params[:orig_client_order_id_list]),
+          !!params[:orig_client_order_id_list],
           do: %{origClientOrderIdList: params[:orig_client_order_id_list]},
           else: %{}
         )
@@ -421,7 +429,6 @@ defmodule Binance.Futures do
       err -> err
     end
   end
-
 
   @doc """
   Cancel all orders for a symbol (params[:symbol])

@@ -41,6 +41,13 @@ defmodule Binance.Margin do
     end
   end
 
+  def get_index_price(instrument, config \\ nil) do
+    case HTTPClient.get_binance("/sapi/v1/margin/priceIndex", %{symbol: instrument}, config) do
+      {:ok, data} -> {:ok, data}
+      err -> err
+    end
+  end
+
   @spec get_best_ticker(String.t()) :: {:ok, map()} | {:error, error()}
   def get_best_ticker(instrument) do
     case HTTPClient.get_binance("/api/v3/ticker/bookTicker?symbol=#{instrument}") do
