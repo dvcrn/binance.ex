@@ -96,12 +96,12 @@ defmodule MarginTest do
     test "index price" do
       use_cassette "margin/get_index_price" do
         assert Binance.Margin.get_index_price("BTCUSDT") ==
-          {:ok,
-            %{
-            "price" => "9180.25954545",
-            "symbol" => "BTCUSDT",
-            "calcTime" => 1595227975000
-          }}
+                 {:ok,
+                  %{
+                    "price" => "9180.25954545",
+                    "symbol" => "BTCUSDT",
+                    "calcTime" => 1_595_227_975_000
+                  }}
       end
     end
   end
