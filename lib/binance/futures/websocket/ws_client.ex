@@ -74,10 +74,6 @@ defmodule Binance.Futures.WebSocket.WSClient do
         @base <> "/stream?streams=" <> Enum.join(stream_names, "/")
       end
 
-      def manual_close(pid) do
-        GenServer.cast(pid, {:manual_close})
-      end
-
       # Callbacks
 
       def handle_pong(:pong, state) do
