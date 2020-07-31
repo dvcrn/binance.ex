@@ -77,12 +77,12 @@ defmodule Binance.Futures.WebSocket.WSClient do
       # Callbacks
 
       def handle_pong(:pong, state) do
-        {:ok, inc_heartbeat(state)}
+        {:ok, state}
       end
 
       def handle_connect(_conn, state) do
         :ok = info("Binance Futures Connected!")
-        send_after(self(), {:heartbeat, :ping, 1}, 20_000)
+        send_after(self(), {:heartbeat, :ping}, 20_000)
 
         # If this is User Data stream, schedule a process to keepalive the stream every 10mins (see @keep_alive_interval)
         if state.listen_key do
@@ -103,30 +103,14 @@ defmodule Binance.Futures.WebSocket.WSClient do
         {:reply, frame, state}
       end
 
-      def handle_info(
-            {:heartbeat, :ping, expected_heartbeat},
-            %{heartbeat: heartbeat} = state
-          ) do
-        if heartbeat >= expected_heartbeat do
-          send_after(self(), {:heartbeat, :ping, heartbeat + 1}, 1_000)
-          {:ok, state}
-        else
-          send_after(self(), {:heartbeat, :pong, heartbeat + 1}, 4_000)
-          {:reply, :ping, state}
-        end
+      def handle_info({:heartbeat, :ping}, state) do
+        send_after(self(), {:heartbeat, :ping}, 4_000)
+        {:reply, :ping, state}
       end
 
-      def handle_info(
-            {:heartbeat, :pong, expected_heartbeat},
-            %{heartbeat: heartbeat} = state
-          ) do
-        if heartbeat >= expected_heartbeat do
-          send_after(self(), {:heartbeat, :ping, heartbeat + 1}, 1_000)
-          {:ok, state}
-        else
-          :ok = warn("#{__MODULE__} terminated due to " <> "no heartbeat ##{heartbeat}")
-          {:close, state}
-        end
+      def handle_info({:manual_close}, state) do
+        :ok = info("Manual close Binance Futures WS. #{inspect(state)}")
+        {:close, state}
       end
 
       @doc """
