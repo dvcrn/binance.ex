@@ -50,30 +50,59 @@ defmodule MarginTest do
   end
 
   describe ".create_order limit sell" do
-    test "creates an order with a duration of good til cancel by default" do
+    test "creates a cross margin order with a duration of good til cancel by default" do
       use_cassette "margin/order_limit_buy_good_til_cancel_default_duration_success" do
         assert {:ok, %Binance.Margin.Order{} = response} =
                  Binance.Margin.create_order(%{
                    symbol: "BTCUSDT",
-                   side: "SELL",
+                   side: "BUY",
                    type: "LIMIT",
-                   quantity: 0.004,
-                   price: 10_000,
+                   quantity: 0.001,
+                   price: 11_500,
                    time_in_force: "GTC"
                  })
 
-        assert response.client_order_id == "r0YoPSDp4T5yYnn6fLxeYX"
+        assert response.client_order_id == "7LUhU148oDLyZBEekAVrMu"
         assert response.cummulative_quote_qty == "0.00000000"
         assert response.executed_qty == "0.00000000"
-        assert response.order_id == 746_180_871
-        assert response.orig_qty == "0.00400000"
-        assert response.price == "10000.00000000"
-        assert response.side == "SELL"
+        assert response.order_id == 2_868_628_287
+        assert response.orig_qty == "0.00100000"
+        assert response.price == "11500.00000000"
+        assert response.side == "BUY"
         assert response.status == "NEW"
         assert response.symbol == "BTCUSDT"
         assert response.time_in_force == "GTC"
-        assert response.transact_time == 1_572_355_225_711
+        assert response.transact_time == 1_596_776_743_032
         assert response.type == "LIMIT"
+        assert response.is_isolated == false
+      end
+    end
+
+    test "creates an isolated margin order with a duration of good til cancel by default" do
+      use_cassette "margin/isolated_order_limit_buy_good_til_cancel_default_duration_success" do
+        assert {:ok, %Binance.Margin.Order{} = response} =
+                 Binance.Margin.create_order(%{
+                   symbol: "BTCUSDT",
+                   side: "BUY",
+                   type: "LIMIT",
+                   quantity: 0.001,
+                   price: 11_500,
+                   time_in_force: "GTC",
+                   is_isolated: "TRUE"
+                 })
+
+        assert response.client_order_id == "default_9b2ca0e5bc314d59abe3f6073bf9"
+        assert response.executed_qty == "0.00000000"
+        assert response.order_id == 2_868_591_128
+        assert response.orig_qty == "0.00100000"
+        assert response.price == "11500.00000000"
+        assert response.side == "BUY"
+        assert response.status == "NEW"
+        assert response.symbol == "BTCUSDT"
+        assert response.time_in_force == "GTC"
+        assert response.transact_time == 1_596_776_295_366
+        assert response.type == "LIMIT"
+        assert response.is_isolated == true
       end
     end
   end

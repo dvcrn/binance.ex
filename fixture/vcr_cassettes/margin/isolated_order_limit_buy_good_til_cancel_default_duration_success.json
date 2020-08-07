@@ -1,7 +1,7 @@
 [
   {
     "request": {
-      "body": "price=11500&quantity=0.001&side=BUY&symbol=BTCUSDT&timeInForce=GTC&timestamp=1596776742604&type=LIMIT&signature=***",
+      "body": "isIsolated=TRUE&price=11500&quantity=0.001&side=BUY&symbol=BTCUSDT&timeInForce=GTC&timestamp=1596776294919&type=LIMIT&signature=***",
       "headers": {
         "X-MBX-APIKEY": "***",
         "Content-Type": "application/x-www-form-urlencoded"
@@ -13,15 +13,15 @@
     },
     "response": {
       "binary": false,
-      "body": "{\"symbol\":\"BTCUSDT\",\"orderId\":2868628287,\"clientOrderId\":\"7LUhU148oDLyZBEekAVrMu\",\"transactTime\":1596776743032,\"price\":\"11500.00000000\",\"origQty\":\"0.00100000\",\"executedQty\":\"0.00000000\",\"cummulativeQuoteQty\":\"0.00000000\",\"status\":\"NEW\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"side\":\"BUY\",\"fills\":[],\"isIsolated\":false}",
+      "body": "{\"symbol\":\"BTCUSDT\",\"orderId\":2868591128,\"clientOrderId\":\"default_9b2ca0e5bc314d59abe3f6073bf9\",\"transactTime\":1596776295366,\"price\":\"11500.00000000\",\"origQty\":\"0.00100000\",\"executedQty\":\"0.00000000\",\"status\":\"NEW\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"side\":\"BUY\",\"isIsolated\":true}",
       "headers": {
         "Content-Type": "application/json;charset=UTF-8",
-        "Content-Length": "314",
+        "Content-Length": "281",
         "Connection": "keep-alive",
-        "Date": "Fri, 07 Aug 2020 05:05:43 GMT",
+        "Date": "Fri, 07 Aug 2020 04:58:15 GMT",
         "Server": "nginx",
         "Vary": "Accept-Encoding",
-        "Set-Cookie": "JSESSIONID=7DB015C339F17F110A6932E811CD247D; Path=/; HttpOnly",
+        "Set-Cookie": "JSESSIONID=E1111C09CDE5E621210DFB11E10D11CF; Path=/; HttpOnly",
         "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
         "X-Frame-Options": "SAMEORIGIN",
         "X-Xss-Protection": "1; mode=block",
@@ -35,9 +35,9 @@
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
         "X-Cache": "Miss from cloudfront",
-        "Via": "1.1 f107b24da261bbf401e3e585531086ef.cloudfront.net (CloudFront)",
+        "Via": "1.1 acb6ba809a3df0f2d67cfe85b2c4cc18.cloudfront.net (CloudFront)",
         "X-Amz-Cf-Pop": "KUL50-C1",
-        "X-Amz-Cf-Id": "awLY-ngju7L2GNpg665i5HhsmyohVu5mDQNZArAVMPvzr16sZiFfkg=="
+        "X-Amz-Cf-Id": "3c4RSvIZbyx_WCNanRXLW3PQwSS1rQ5dDGkNK3CdmyO5bMmYZU4kFA=="
       },
       "status_code": 200,
       "type": "ok"
