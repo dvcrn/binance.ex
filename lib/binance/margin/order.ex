@@ -12,7 +12,8 @@ defmodule Binance.Margin.Order do
     :status,
     :time_in_force,
     :type,
-    :side
+    :side,
+    :is_isolated
   ]
 
   use ExConstructor
