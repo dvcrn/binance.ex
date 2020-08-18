@@ -4,7 +4,7 @@ defmodule Binance.MixProject do
   def project do
     [
       app: :binance,
-      version: "0.7.4",
+      version: "0.7.5",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       description: description(),
@@ -16,8 +16,6 @@ defmodule Binance.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      mod: {Binance.Supervisor, []},
-      applications: [:exconstructor, :poison, :httpoison],
       extra_applications: [:logger]
     ]
   end

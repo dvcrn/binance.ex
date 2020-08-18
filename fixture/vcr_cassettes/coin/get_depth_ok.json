@@ -1,0 +1,44 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": [],
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://dapi.binance.com/dapi/v1/depth?symbol=BTCUSD_PERP&limit=5"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"lastUpdateId\":1816773996,\"E\":1597746328061,\"T\":1597746328050,\"symbol\":\"BTCUSD_PERP\",\"pair\":\"BTCUSD\",\"bids\":[[\"12241.5\",\"82\"],[\"12240.5\",\"11\"],[\"12239.4\",\"33\"],[\"12237.7\",\"29\"],[\"12237.6\",\"27\"]],\"asks\":[[\"12245.1\",\"46\"],[\"12245.8\",\"62\"],[\"12245.9\",\"807\"],[\"12246.0\",\"25\"],[\"12247.5\",\"75\"]]}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "291",
+        "Connection": "keep-alive",
+        "Date": "Tue, 18 Aug 2020 10:25:28 GMT",
+        "Server": "Tengine",
+        "Vary": "Accept-Encoding",
+        "X-MBX-USED-WEIGHT-1M": "2",
+        "x-response-time": "0ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "*,clienttype,Content-Type,lang,x-ui-request-trace",
+        "Content-Security-Policy": "default-src 'self'",
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "expires": "0",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000; includeSubdomains",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-xss-protection": "1; mode=block",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 23632109ecb3eb8245f17822f97fa88f.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "SIN5-C1",
+        "X-Amz-Cf-Id": "6IpFuzuBEKM1u-qjR87Et7HT9wDNEDz8pN1Pfsq-S0kTFJArsGDWdw=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

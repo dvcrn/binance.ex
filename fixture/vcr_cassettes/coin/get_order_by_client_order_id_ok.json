@@ -1,0 +1,39 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://dapi.binance.com/dapi/v1/order?origClientOrderId=czZw552jagTERPreGivCeK&symbol=BTCUSD_PERP&timestamp=1597748499570&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"orderId\":23972434,\"symbol\":\"BTCUSD_PERP\",\"pair\":\"BTCUSD\",\"status\":\"NEW\",\"clientOrderId\":\"czZw552jagTERPreGivCeK\",\"price\":\"11000\",\"avgPrice\":\"0.0\",\"origQty\":\"1\",\"executedQty\":\"0\",\"cumBase\":\"0\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"reduceOnly\":false,\"closePosition\":false,\"side\":\"BUY\",\"positionSide\":\"BOTH\",\"stopPrice\":\"0\",\"workingType\":\"CONTRACT_PRICE\",\"priceProtect\":false,\"origType\":\"LIMIT\",\"time\":1597747080425,\"updateTime\":1597747080425}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "440",
+        "Connection": "keep-alive",
+        "Date": "Tue, 18 Aug 2020 11:01:39 GMT",
+        "Server": "Tengine",
+        "Vary": "Accept-Encoding",
+        "X-MBX-USED-WEIGHT-1M": "1",
+        "x-response-time": "2ms",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "origin-when-cross-origin",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 6d36c152fb03264b8a63a78cd38728c6.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "SIN5-C1",
+        "X-Amz-Cf-Id": "19WhE4YwpIF3tJ07UXvbjqkgfCtBnfJIO_1Q-_YeomZxePH3OTOTMA=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

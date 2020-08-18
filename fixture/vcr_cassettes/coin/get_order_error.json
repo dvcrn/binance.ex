@@ -1,0 +1,38 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://dapi.binance.com/dapi/v1/order?orderId=123456789&symbol=BTCUSD_PERP&timestamp=1597748523126&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"code\":-2013,\"msg\":\"Order does not exist.\"}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "44",
+        "Connection": "keep-alive",
+        "Date": "Tue, 18 Aug 2020 11:02:03 GMT",
+        "Server": "Tengine",
+        "X-MBX-USED-WEIGHT-1M": "1",
+        "x-response-time": "1ms",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "origin-when-cross-origin",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Cache": "Error from cloudfront",
+        "Via": "1.1 4bc700d87dc12c5b9fe83b91ddd63beb.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "SIN5-C1",
+        "X-Amz-Cf-Id": "TiZO3xgqxmo1CaKPe1X7aBrOOnQG3vycmOqBcCYHL5eHaLSN0lEqgQ=="
+      },
+      "status_code": 400,
+      "type": "ok"
+    }
+  }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": [],
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://dapi.binance.com/dapi/v1/ticker/bookTicker?symbol=BTCUSD_PERP"
+    },
+    "response": {
+      "binary": false,
+      "body": "[{\"symbol\":\"BTCUSD_PERP\",\"pair\":\"BTCUSD\",\"bidPrice\":\"12279.7\",\"bidQty\":\"33\",\"askPrice\":\"12281.0\",\"askQty\":\"30\",\"time\":1597749105782}]",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "133",
+        "Connection": "keep-alive",
+        "Date": "Tue, 18 Aug 2020 11:11:45 GMT",
+        "Server": "Tengine",
+        "Vary": "Accept-Encoding",
+        "X-MBX-USED-WEIGHT-1M": "3",
+        "x-response-time": "0ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "*,clienttype,Content-Type,lang,x-ui-request-trace",
+        "Content-Security-Policy": "default-src 'self'",
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "expires": "0",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000; includeSubdomains",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-xss-protection": "1; mode=block",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 65572e59b8765f5b1f17936c65131ad7.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "SIN5-C1",
+        "X-Amz-Cf-Id": "JH67756jDu-ccdoo10Ib-Qbc6Dit-5H1dgmY5xX6huGudEXSzBfj7g=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

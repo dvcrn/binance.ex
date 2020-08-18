@@ -1,0 +1,38 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "delete",
+      "options": [],
+      "request_body": "",
+      "url": "https://dapi.binance.com/dapi/v1/order?orderId=123456&symbol=BTCUSD_PERP&timestamp=1597748769728&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"code\":-2011,\"msg\":\"Unknown order sent.\"}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "42",
+        "Connection": "keep-alive",
+        "Date": "Tue, 18 Aug 2020 11:06:10 GMT",
+        "Server": "Tengine",
+        "X-MBX-USED-WEIGHT-1M": "1",
+        "x-response-time": "2ms",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "origin-when-cross-origin",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Cache": "Error from cloudfront",
+        "Via": "1.1 f2f73edfafc086543441bca742024226.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "SIN5-C1",
+        "X-Amz-Cf-Id": "adTG97wCvkfWLXia9s98NPiptlY3UDbt0BT_ropjUq2i6TnfguKCKQ=="
+      },
+      "status_code": 400,
+      "type": "ok"
+    }
+  }
+]

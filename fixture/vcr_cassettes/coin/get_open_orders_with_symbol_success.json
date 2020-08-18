@@ -1,0 +1,46 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://dapi.binance.com/dapi/v1/openOrders?timestamp=1597747972779&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "[{\"orderId\":23994864,\"symbol\":\"BTCUSD_PERP\",\"pair\":\"BTCUSD\",\"status\":\"NEW\",\"clientOrderId\":\"9OJHLQS6gEhedqn4idsXkc\",\"price\":\"13000\",\"avgPrice\":\"0.0\",\"origQty\":\"1\",\"executedQty\":\"0\",\"cumBase\":\"0\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"reduceOnly\":false,\"closePosition\":false,\"side\":\"SELL\",\"positionSide\":\"BOTH\",\"stopPrice\":\"0\",\"workingType\":\"CONTRACT_PRICE\",\"priceProtect\":false,\"origType\":\"LIMIT\",\"time\":1597747827381,\"updateTime\":1597747973144},{\"orderId\":23994302,\"symbol\":\"BTCUSD_PERP\",\"pair\":\"BTCUSD\",\"status\":\"NEW\",\"clientOrderId\":\"4rBNPqB30jIC6qBrl1CPaR\",\"price\":\"13000\",\"avgPrice\":\"0.0\",\"origQty\":\"1\",\"executedQty\":\"0\",\"cumBase\":\"0\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"reduceOnly\":false,\"closePosition\":false,\"side\":\"SELL\",\"positionSide\":\"BOTH\",\"stopPrice\":\"0\",\"workingType\":\"CONTRACT_PRICE\",\"priceProtect\":false,\"origType\":\"LIMIT\",\"time\":1597747795900,\"updateTime\":1597747973144},{\"orderId\":23972434,\"symbol\":\"BTCUSD_PERP\",\"pair\":\"BTCUSD\",\"status\":\"NEW\",\"clientOrderId\":\"czZw552jagTERPreGivCeK\",\"price\":\"11000\",\"avgPrice\":\"0.0\",\"origQty\":\"1\",\"executedQty\":\"0\",\"cumBase\":\"0\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"reduceOnly\":false,\"closePosition\":false,\"side\":\"BUY\",\"positionSide\":\"BOTH\",\"stopPrice\":\"0\",\"workingType\":\"CONTRACT_PRICE\",\"priceProtect\":false,\"origType\":\"LIMIT\",\"time\":1597747080425,\"updateTime\":1597747973144}]",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "1326",
+        "Connection": "keep-alive",
+        "Date": "Tue, 18 Aug 2020 10:52:53 GMT",
+        "Server": "Tengine",
+        "Vary": "Accept-Encoding",
+        "X-MBX-USED-WEIGHT-1M": "40",
+        "x-response-time": "0ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "*,clienttype,Content-Type,lang,x-ui-request-trace",
+        "Content-Security-Policy": "default-src 'self'",
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "expires": "0",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000; includeSubdomains",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-xss-protection": "1; mode=block",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 fa00891de7530b64fd59452dc928b0b7.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "SIN5-C1",
+        "X-Amz-Cf-Id": "slRbE64mU_kzBTv5FsGpwSiAHBu6Li5Nl1qvVXY9JMKRP8On0EBa6A=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
