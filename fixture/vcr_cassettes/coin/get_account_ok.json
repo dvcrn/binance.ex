@@ -1,0 +1,46 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://dapi.binance.com/dapi/v1/account?timestamp=1597746604793&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"feeTier\":0,\"canTrade\":true,\"canDeposit\":true,\"canWithdraw\":true,\"updateTime\":0,\"assets\":[{\"asset\":\"BTC\",\"walletBalance\":\"0.01689600\",\"unrealizedProfit\":\"0.00000000\",\"marginBalance\":\"0.01689600\",\"maintMargin\":\"0.00000000\",\"initialMargin\":\"0.00000000\",\"positionInitialMargin\":\"0.00000000\",\"openOrderInitialMargin\":\"0.00000000\",\"maxWithdrawAmount\":\"0.01689600\",\"crossWalletBalance\":\"0.01689600\",\"crossUnPnl\":\"0.00000000\",\"availableBalance\":\"0.01689600\"},{\"asset\":\"ADA\",\"walletBalance\":\"0.00000000\",\"unrealizedProfit\":\"0.00000000\",\"marginBalance\":\"0.00000000\",\"maintMargin\":\"0.00000000\",\"initialMargin\":\"0.00000000\",\"positionInitialMargin\":\"0.00000000\",\"openOrderInitialMargin\":\"0.00000000\",\"maxWithdrawAmount\":\"0.00000000\",\"crossWalletBalance\":\"0.00000000\",\"crossUnPnl\":\"0.00000000\",\"availableBalance\":\"0.00000000\"},{\"asset\":\"LINK\",\"walletBalance\":\"0.00000000\",\"unrealizedProfit\":\"0.00000000\",\"marginBalance\":\"0.00000000\",\"maintMargin\":\"0.00000000\",\"initialMargin\":\"0.00000000\",\"positionInitialMargin\":\"0.00000000\",\"openOrderInitialMargin\":\"0.00000000\",\"maxWithdrawAmount\":\"0.00000000\",\"crossWalletBalance\":\"0.00000000\",\"crossUnPnl\":\"0.00000000\",\"availableBalance\":\"0.00000000\"},{\"asset\":\"ETH\",\"walletBalance\":\"0.00000000\",\"unrealizedProfit\":\"0.00000000\",\"marginBalance\":\"0.00000000\",\"maintMargin\":\"0.00000000\",\"initialMargin\":\"0.00000000\",\"positionInitialMargin\":\"0.00000000\",\"openOrderInitialMargin\":\"0.00000000\",\"maxWithdrawAmount\":\"0.00000000\",\"crossWalletBalance\":\"0.00000000\",\"crossUnPnl\":\"0.00000000\",\"availableBalance\":\"0.00000000\"}],\"positions\":[{\"symbol\":\"BTCUSD_201225\",\"initialMargin\":\"0\",\"maintMargin\":\"0\",\"unrealizedProfit\":\"0.00000000\",\"positionInitialMargin\":\"0\",\"openOrderInitialMargin\":\"0\",\"leverage\":\"20\",\"isolated\":false,\"positionSide\":\"BOTH\",\"entryPrice\":\"0.0\",\"maxQty\":\"250\"},{\"symbol\":\"ETHUSD_200925\",\"initialMargin\":\"0\",\"maintMargin\":\"0\",\"unrealizedProfit\":\"0.00000000\",\"positionInitialMargin\":\"0\",\"openOrderInitialMargin\":\"0\",\"leverage\":\"20\",\"isolated\":false,\"positionSide\":\"BOTH\",\"entryPrice\":\"0.0\",\"maxQty\":\"5000\"},{\"symbol\":\"ADAUSD_200925\",\"initialMargin\":\"0\",\"maintMargin\":\"0\",\"unrealizedProfit\":\"0.00000000\",\"positionInitialMargin\":\"0\",\"openOrderInitialMargin\":\"0\",\"leverage\":\"20\",\"isolated\":false,\"positionSide\":\"BOTH\",\"entryPrice\":\"0.0\",\"maxQty\":\"5000000\"},{\"symbol\":\"BTCUSD_PERP\",\"initialMargin\":\"0\",\"maintMargin\":\"0\",\"unrealizedProfit\":\"0.00000000\",\"positionInitialMargin\":\"0\",\"openOrderInitialMargin\":\"0\",\"leverage\":\"20\",\"isolated\":false,\"positionSide\":\"BOTH\",\"entryPrice\":\"0.0\",\"maxQty\":\"250\"},{\"symbol\":\"BTCUSD_200925\",\"initialMargin\":\"0\",\"maintMargin\":\"0\",\"unrealizedProfit\":\"0.00000000\",\"positionInitialMargin\":\"0\",\"openOrderInitialMargin\":\"0\",\"leverage\":\"20\",\"isolated\":false,\"positionSide\":\"BOTH\",\"entryPrice\":\"0.0\",\"maxQty\":\"250\"},{\"symbol\":\"LINKUSD_200925\",\"initialMargin\":\"0\",\"maintMargin\":\"0\",\"unrealizedProfit\":\"0.00000000\",\"positionInitialMargin\":\"0\",\"openOrderInitialMargin\":\"0\",\"leverage\":\"20\",\"isolated\":false,\"positionSide\":\"BOTH\",\"entryPrice\":\"0.0\",\"maxQty\":\"1000000\"},{\"symbol\":\"ETHUSD_201225\",\"initialMargin\":\"0\",\"maintMargin\":\"0\",\"unrealizedProfit\":\"0.00000000\",\"positionInitialMargin\":\"0\",\"openOrderInitialMargin\":\"0\",\"leverage\":\"20\",\"isolated\":false,\"positionSide\":\"BOTH\",\"entryPrice\":\"0.0\",\"maxQty\":\"5000\"},{\"symbol\":\"ETHUSD_PERP\",\"initialMargin\":\"0\",\"maintMargin\":\"0\",\"unrealizedProfit\":\"0.00000000\",\"positionInitialMargin\":\"0\",\"openOrderInitialMargin\":\"0\",\"leverage\":\"20\",\"isolated\":false,\"positionSide\":\"BOTH\",\"entryPrice\":\"0.0\",\"maxQty\":\"5000\"},{\"symbol\":\"ADAUSD_201225\",\"initialMargin\":\"0\",\"maintMargin\":\"0\",\"unrealizedProfit\":\"0.00000000\",\"positionInitialMargin\":\"0\",\"openOrderInitialMargin\":\"0\",\"leverage\":\"20\",\"isolated\":false,\"positionSide\":\"BOTH\",\"entryPrice\":\"0.0\",\"maxQty\":\"5000000\"}]}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "3754",
+        "Connection": "keep-alive",
+        "Date": "Tue, 18 Aug 2020 10:30:05 GMT",
+        "Server": "Tengine",
+        "Vary": "Accept-Encoding",
+        "X-MBX-USED-WEIGHT-1M": "5",
+        "x-response-time": "1ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "*,clienttype,Content-Type,lang,x-ui-request-trace",
+        "Content-Security-Policy": "default-src 'self'",
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "expires": "0",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000; includeSubdomains",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-xss-protection": "1; mode=block",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 23632109ecb3eb8245f17822f97fa88f.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "SIN5-C1",
+        "X-Amz-Cf-Id": "rDzIwTp_45QBvJOsPsmGX3Ku6GItUj1tBDeTFqvCHT7dp3iuhgVe_A=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

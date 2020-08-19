@@ -1,0 +1,39 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "delete",
+      "options": [],
+      "request_body": "",
+      "url": "https://dapi.binance.com/dapi/v1/allOpenOrders?symbol=BTCUSD_PERP&timestamp=1597749062542&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"code\": 200,\"msg\": \"The operation of cancel all open order is done.\"}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "70",
+        "Connection": "keep-alive",
+        "Date": "Tue, 18 Aug 2020 11:11:02 GMT",
+        "Server": "Tengine",
+        "Vary": "Accept-Encoding",
+        "X-MBX-USED-WEIGHT-1M": "1",
+        "x-response-time": "1ms",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "origin-when-cross-origin",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 c80894e963b5f57e896af7185deecf7e.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "SIN5-C1",
+        "X-Amz-Cf-Id": "GerUBZ6imv0zP-gRVeRjzZiKse9-aznWaYvJqbGeiMpDs0IlyHY3Pg=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

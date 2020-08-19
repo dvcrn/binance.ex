@@ -1,0 +1,43 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": [],
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://dapi.binance.com/dapi/v1/time"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"serverTime\":1597745352553}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "28",
+        "Connection": "keep-alive",
+        "Date": "Tue, 18 Aug 2020 10:09:12 GMT",
+        "Server": "Tengine",
+        "X-MBX-USED-WEIGHT-1M": "1",
+        "x-response-time": "0ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "*,clienttype,Content-Type,lang,x-ui-request-trace",
+        "Content-Security-Policy": "default-src 'self'",
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "expires": "0",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000; includeSubdomains",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-xss-protection": "1; mode=block",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 f448aba82e4fd70230de47f9a261511c.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "SIN5-C1",
+        "X-Amz-Cf-Id": "X7n3LqYA2cFaYJLOTVrT5M0L25AjTCBg3LY0_9d0ciCW9kkZsN7Z3g=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

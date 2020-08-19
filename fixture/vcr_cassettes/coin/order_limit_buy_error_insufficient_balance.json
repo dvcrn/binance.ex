@@ -1,0 +1,40 @@
+[
+  {
+    "request": {
+      "body": "price=11000&quantity=50&side=BUY&symbol=BTCUSD_PERP&timeInForce=GTC&timestamp=1597747580615&type=LIMIT&signature=***",
+      "headers": {
+        "X-MBX-APIKEY": "***",
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://dapi.binance.com/dapi/v1/order"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"code\":-2019,\"msg\":\"Margin is insufficient.\"}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "46",
+        "Connection": "keep-alive",
+        "Date": "Tue, 18 Aug 2020 10:46:20 GMT",
+        "Server": "Tengine",
+        "X-MBX-USED-WEIGHT-1M": "0",
+        "X-MBX-ORDER-COUNT-1M": "1",
+        "x-response-time": "2ms",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "origin-when-cross-origin",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Cache": "Error from cloudfront",
+        "Via": "1.1 ae495479ab117e6473f411eb6dd0ba98.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "SIN5-C1",
+        "X-Amz-Cf-Id": "4jFvnF4qNb2zgfUAQLLKNkiqYpQrJgo2ISxoGQuiGwgxGekLZJzRRA=="
+      },
+      "status_code": 400,
+      "type": "ok"
+    }
+  }
+]

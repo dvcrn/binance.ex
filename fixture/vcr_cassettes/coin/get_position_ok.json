@@ -1,0 +1,46 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://dapi.binance.com/dapi/v1/positionRisk?timestamp=1597746985196&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "[{\"symbol\":\"BTCUSD_201225\",\"positionAmt\":\"0\",\"entryPrice\":\"0.0\",\"markPrice\":\"0.00000000\",\"unRealizedProfit\":\"0.00000000\",\"liquidationPrice\":\"0\",\"leverage\":\"20\",\"maxQty\":\"250\",\"marginType\":\"cross\",\"isolatedMargin\":\"0.00000000\",\"isAutoAddMargin\":\"false\",\"positionSide\":\"BOTH\"},{\"symbol\":\"ETHUSD_200925\",\"positionAmt\":\"0\",\"entryPrice\":\"0.0\",\"markPrice\":\"0.00000000\",\"unRealizedProfit\":\"0.00000000\",\"liquidationPrice\":\"0\",\"leverage\":\"20\",\"maxQty\":\"5000\",\"marginType\":\"cross\",\"isolatedMargin\":\"0.00000000\",\"isAutoAddMargin\":\"false\",\"positionSide\":\"BOTH\"},{\"symbol\":\"ADAUSD_200925\",\"positionAmt\":\"0\",\"entryPrice\":\"0.0\",\"markPrice\":\"0.00000000\",\"unRealizedProfit\":\"0.00000000\",\"liquidationPrice\":\"0\",\"leverage\":\"20\",\"maxQty\":\"5000000\",\"marginType\":\"cross\",\"isolatedMargin\":\"0.00000000\",\"isAutoAddMargin\":\"false\",\"positionSide\":\"BOTH\"},{\"symbol\":\"BTCUSD_PERP\",\"positionAmt\":\"0\",\"entryPrice\":\"0.0\",\"markPrice\":\"12277.17934167\",\"unRealizedProfit\":\"0.00000000\",\"liquidationPrice\":\"0\",\"leverage\":\"20\",\"maxQty\":\"250\",\"marginType\":\"cross\",\"isolatedMargin\":\"0.00000000\",\"isAutoAddMargin\":\"false\",\"positionSide\":\"BOTH\"},{\"symbol\":\"BTCUSD_200925\",\"positionAmt\":\"0\",\"entryPrice\":\"0.0\",\"markPrice\":\"0.00000000\",\"unRealizedProfit\":\"0.00000000\",\"liquidationPrice\":\"0\",\"leverage\":\"20\",\"maxQty\":\"250\",\"marginType\":\"cross\",\"isolatedMargin\":\"0.00000000\",\"isAutoAddMargin\":\"false\",\"positionSide\":\"BOTH\"},{\"symbol\":\"LINKUSD_200925\",\"positionAmt\":\"0\",\"entryPrice\":\"0.0\",\"markPrice\":\"0.00000000\",\"unRealizedProfit\":\"0.00000000\",\"liquidationPrice\":\"0\",\"leverage\":\"20\",\"maxQty\":\"1000000\",\"marginType\":\"cross\",\"isolatedMargin\":\"0.00000000\",\"isAutoAddMargin\":\"false\",\"positionSide\":\"BOTH\"},{\"symbol\":\"ETHUSD_201225\",\"positionAmt\":\"0\",\"entryPrice\":\"0.0\",\"markPrice\":\"0.00000000\",\"unRealizedProfit\":\"0.00000000\",\"liquidationPrice\":\"0\",\"leverage\":\"20\",\"maxQty\":\"5000\",\"marginType\":\"cross\",\"isolatedMargin\":\"0.00000000\",\"isAutoAddMargin\":\"false\",\"positionSide\":\"BOTH\"},{\"symbol\":\"ETHUSD_PERP\",\"positionAmt\":\"0\",\"entryPrice\":\"0.0\",\"markPrice\":\"0.00000000\",\"unRealizedProfit\":\"0.00000000\",\"liquidationPrice\":\"0\",\"leverage\":\"20\",\"maxQty\":\"5000\",\"marginType\":\"cross\",\"isolatedMargin\":\"0.00000000\",\"isAutoAddMargin\":\"false\",\"positionSide\":\"BOTH\"},{\"symbol\":\"ADAUSD_201225\",\"positionAmt\":\"0\",\"entryPrice\":\"0.0\",\"markPrice\":\"0.00000000\",\"unRealizedProfit\":\"0.00000000\",\"liquidationPrice\":\"0\",\"leverage\":\"20\",\"maxQty\":\"5000000\",\"marginType\":\"cross\",\"isolatedMargin\":\"0.00000000\",\"isAutoAddMargin\":\"false\",\"positionSide\":\"BOTH\"}]",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "2483",
+        "Connection": "keep-alive",
+        "Date": "Tue, 18 Aug 2020 10:36:25 GMT",
+        "Server": "Tengine",
+        "Vary": "Accept-Encoding",
+        "X-MBX-USED-WEIGHT-1M": "1",
+        "x-response-time": "1ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "*,clienttype,Content-Type,lang,x-ui-request-trace",
+        "Content-Security-Policy": "default-src 'self'",
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "expires": "0",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000; includeSubdomains",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-xss-protection": "1; mode=block",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 47f0d09d9d5d7d899c2e467cfbfb08e0.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "SIN5-C1",
+        "X-Amz-Cf-Id": "3EWHc-f9nywUd6SmItQ8xX-j7je6KlGgQGbGNrF7PFV6Y3Sf8DcSwQ=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
