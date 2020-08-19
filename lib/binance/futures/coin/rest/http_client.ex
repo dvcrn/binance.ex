@@ -1,4 +1,4 @@
-defmodule Binance.Coin.Rest.HTTPClient do
+defmodule Binance.Futures.Coin.Rest.HTTPClient do
   @endpoint "https://dapi.binance.com"
 
   alias Binance.{Config, Util}

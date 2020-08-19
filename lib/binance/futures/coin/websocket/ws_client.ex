@@ -1,4 +1,4 @@
-defmodule Binance.Coin.WebSocket.WSClient do
+defmodule Binance.Futures.Coin.WebSocket.WSClient do
   @moduledoc """
   WebSocket client for Binance Coin Futures
 

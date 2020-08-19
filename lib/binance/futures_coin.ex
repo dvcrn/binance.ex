@@ -1,5 +1,5 @@
-defmodule Binance.Coin do
-  alias Binance.Coin.Rest.HTTPClient
+defmodule Binance.FuturesCoin do
+  alias Binance.Futures.Coin.Rest.HTTPClient
 
   @type error ::
           {:binance_error, %{code: integer(), message: String.t()}}
