@@ -17,12 +17,42 @@ defmodule Binance.Margin do
     end
   end
 
+  def create_isolated_listen_key(symbol, config \\ nil) do
+    case HTTPClient.post_binance(
+           "/sapi/v1/userDataStream/isolated",
+           %{symbol: symbol},
+           config,
+           false
+         ) do
+      {:ok, %{"code" => code, "msg" => msg}} ->
+        {:error, {:binance_error, %{code: code, msg: msg}}}
+
+      data ->
+        data
+    end
+  end
+
   def keep_alive_listen_key(listen_key, config \\ nil) do
     arguments = %{
       listenKey: listen_key
     }
 
     case HTTPClient.put_binance("/sapi/v1/userDataStream", arguments, config, false) do
+      {:ok, %{"code" => code, "msg" => msg}} ->
+        {:error, {:binance_error, %{code: code, msg: msg}}}
+
+      data ->
+        data
+    end
+  end
+
+  def keep_alive_isolated_listen_key(symbol, listen_key, config \\ nil) do
+    arguments = %{
+      symbol: symbol,
+      listenKey: listen_key
+    }
+
+    case HTTPClient.put_binance("/sapi/v1/userDataStream/isolated", arguments, config, false) do
       {:ok, %{"code" => code, "msg" => msg}} ->
         {:error, {:binance_error, %{code: code, msg: msg}}}
 
