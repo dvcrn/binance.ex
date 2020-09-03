@@ -1,36 +1,6 @@
-defmodule Binance.WebSocket.WSClient do
+defmodule Binance.Margin.WebSocket.WsIsolatedClient do
   @moduledoc """
-  WebSocket client for Binance Spot
-
-  There are 2 types of WebSocket channels/streams for Spot trading on Binance:
-
-  - [Public streams](https://github.com/binance-exchange/binance-official-api-docs/blob/master/web-socket-streams.md)
-  - [User Data stream](https://github.com/binance-exchange/binance-official-api-docs/blob/master/user-data-stream.md)
-
-  Use the `require_auth` option to indicate if we're going to subscribe to User Data stream or not.
-  If we're not, use `public_channels` to list out channels/streams we would like to subscribe to.
-  Or said it in other way, `public_channels` will be ignored when `require_auth` is `true`.
-
-  Note: User Data stream requires to have a listen key created beforehand. A listen key needs
-  to be keepalive every 30 mins otherwise the stream would be closed after 30mins. This WebSocket client
-  by default sets the interval time for keepalive the stream to be 10mins (see @keep_alive_interval)
-
-  Also, this WebSocket client maintains a heartbeat mechanism by sending a ping every 5_000ms (see @ping interval)
-  to check if the WebSocket server is in connected and to decide whether to continue to keep the connection or
-  terminate the current one and start a new one.
-
-  Usage example:
-
-  defmodule A do
-    use Binance.WebSocket.WSClient
-  end
-
-  # Public channels/streams
-  A.start_link(%{name: :"btcusdt-depth-stream", public_channels: ["btcusdt@depth"]})
-
-  # User Data stream
-  config = %{access_keys: ["XXX_BINANCE_API_KEY", "XXX_BINANCE_SECRET_KEY"]}
-  A.start_link(%{name: :"user-data-stream", require_auth: true, config: config})
+  WebSocket client for Binance Margin
   """
 
   import Logger, only: [info: 1, warn: 1]
@@ -52,7 +22,9 @@ defmodule Binance.WebSocket.WSClient do
         state = Map.merge(args, %{heartbeat: 0, listen_key: nil})
 
         if require_auth == true do
-          {:ok, %{"listenKey" => listen_key}} = Binance.create_listen_key(config)
+          {:ok, %{"listenKey" => listen_key}} =
+            Binance.Margin.create_isolated_listen_key(args[:symbol], config)
+
           state = Map.merge(state, %{listen_key: listen_key})
           endpoint_url = prepare_endpoint_url(listen_key)
           WebSockex.start_link(endpoint_url, __MODULE__, state, name: name)
@@ -77,11 +49,11 @@ defmodule Binance.WebSocket.WSClient do
       # Callbacks
 
       def handle_pong(:pong, state) do
-        {:ok, inc_heartbeat(state)}
+        {:ok, state}
       end
 
       def handle_connect(_conn, state) do
-        :ok = info("Binance Spot Connected!")
+        :ok = info("Binance Isolated Margin Connected!")
         send_after(self(), {:heartbeat, :ping}, 20_000)
 
         # If this is User Data stream, schedule a process to keepalive the stream every 10mins (see @keep_alive_interval)
@@ -92,9 +64,12 @@ defmodule Binance.WebSocket.WSClient do
         {:ok, state}
       end
 
-      def handle_info(:keep_alive, %{listen_key: listen_key, config: config} = state) do
-        {:ok, _} = Binance.keep_alive_listen_key(listen_key, config)
-        :ok = info("Keepalive Binance's User Data stream done!")
+      def handle_info(
+            :keep_alive,
+            %{listen_key: listen_key, config: config, symbol: symbol} = state
+          ) do
+        Binance.Margin.keep_alive_isolated_listen_key(symbol, listen_key, config)
+        :ok = info("Keepalive Isolated Binance's User Data stream done!")
         schedule_keep_alive_stream()
         {:ok, state}
       end
@@ -128,7 +103,7 @@ defmodule Binance.WebSocket.WSClient do
       end
 
       def handle_disconnect(resp, state) do
-        :ok = info("Binance Spot Disconnected! #{inspect(resp)}")
+        :ok = info("Binance Isolated Margin Disconnected! #{inspect(resp)}")
         {:ok, state}
       end
 

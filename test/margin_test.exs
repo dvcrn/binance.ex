@@ -20,11 +20,35 @@ defmodule MarginTest do
     end
   end
 
+  describe ".create_isolated_listen_key" do
+    test "returns a isolated listen key which could be used to subscrbe to a User Data stream" do
+      use_cassette "margin/create_isolated_listen_key_ok" do
+        assert Binance.Margin.create_isolated_listen_key("BTCUSDT") == {
+                 :ok,
+                 %{
+                   "listenKey" => "JkPSgD5Eok8TdqkZeejhMyZDSGoFVuKakbdnCAeJxYO1E5swXs0M2KnKwkZH"
+                 }
+               }
+      end
+    end
+  end
+
   describe ".keep_alive_listen_key" do
     test "returns empty indicating the given listen key has been keepalive successfully" do
       use_cassette "margin/keep_alive_listen_key_ok" do
         assert Binance.Margin.keep_alive_listen_key(
                  "cqcFKuqCCRv1QNnhiA4gsdMLSRgTz4qyd0l5JWryjaAxjQlr8JAcyksNt1Ct"
+               ) == {:ok, %{}}
+      end
+    end
+  end
+
+  describe ".keep_alive_isolated_listen_key" do
+    test "returns empty indicating the given isolated listen key has been keepalive successfully" do
+      use_cassette "margin/keep_alive_isolated_listen_key_ok" do
+        assert Binance.Margin.keep_alive_isolated_listen_key(
+                 "BTCUSDT",
+                 "JkPSgD5Eok8TdqkZeejhMyZDSGoFVuKakbdnCAeJxYO1E5swXs0M2KnKwkZH"
                ) == {:ok, %{}}
       end
     end

@@ -779,7 +779,8 @@ defmodule CoinTest do
                   "type" => "LIMIT",
                   "updateTime" => 1_597_748_582_738,
                   "workingType" => "CONTRACT_PRICE"
-                }} = Binance.FuturesCoin.cancel_order(%{symbol: "BTCUSD_PERP", order_id: 23_972_434})
+                }} =
+                 Binance.FuturesCoin.cancel_order(%{symbol: "BTCUSD_PERP", order_id: 23_972_434})
       end
     end
 
