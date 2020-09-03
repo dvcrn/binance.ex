@@ -69,7 +69,7 @@ defmodule Binance.Margin.WebSocket.WsIsolatedClient do
             %{listen_key: listen_key, config: config, symbol: symbol} = state
           ) do
         Binance.Margin.keep_alive_isolated_listen_key(symbol, listen_key, config)
-        :ok = info("Keepalive Binance's User Data stream done!")
+        :ok = info("Keepalive Isolated Binance's User Data stream done!")
         schedule_keep_alive_stream()
         {:ok, state}
       end
