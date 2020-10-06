@@ -163,4 +163,31 @@ defmodule Binance.Margin do
       err -> err
     end
   end
+
+  @doc """
+  https://binance-docs.github.io/apidocs/spot/en/#margin-account-borrow-margin
+
+  is_isolated: can be either "TRUE" or "FALSE". If "TRUE", symbol must be present.
+  symbol: instrument like BTCUSDT, etc
+  asset: currency like USDT or BTC, etc
+  amount: how many tokens to borrow
+
+  """
+  def borrow(params, config \\ nil) do
+    arguments =
+      %{
+        asset: params[:asset],
+        amount: params[:amount],
+        timestamp: params[:timestamp] || :os.system_time(:millisecond)
+      }
+      |> Map.merge(
+        unless(is_nil(params[:is_isolated]), do: %{isIsolated: params[:is_isolated]}, else: %{})
+      )
+      |> Map.merge(unless(is_nil(params[:symbol]), do: %{symbol: params[:symbol]}, else: %{}))
+      |> Map.merge(
+        unless(is_nil(params[:recv_window]), do: %{recvWindow: params[:recv_window]}, else: %{})
+      )
+
+    HTTPClient.post_binance("/sapi/v1/margin/loan", arguments, config)
+  end
 end
