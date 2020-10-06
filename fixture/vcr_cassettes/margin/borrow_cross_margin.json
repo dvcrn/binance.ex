@@ -1,0 +1,43 @@
+[
+  {
+    "request": {
+      "body": "amount=2.0&asset=USDT&timestamp=1601922418110&signature=4C3BD2876E4BBB734777BAF27BA99D565BF5D4A5D1314D9D261E85A23FCD32BE",
+      "headers": [],
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.binance.com/sapi/v1/margin/loan"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"tranId\":11329912333}",
+      "headers": {
+        "Content-Type": "application/json;charset=utf-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Date": "Fri, 08 Nov 2019 09:24:17 GMT",
+        "Server": "nginx",
+        "Vary": "Accept-Encoding",
+        "X-MBX-UUID": "7ee24844-ed7c-4e0f-a06f-8dcc584cec96",
+        "X-MBX-USED-WEIGHT": "1",
+        "X-MBX-USED-WEIGHT-1M": "1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'self'",
+        "X-Content-Security-Policy": "default-src 'self'",
+        "X-WebKit-CSP": "default-src 'self'",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 632ca9875c25dbcff60b54139f83cb7a.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "HKG54-C1",
+        "X-Amz-Cf-Id": "i7T0ZVHnMT_gR9WqccfkDbNrFhWTdPfB_zC96BBvnnN9_At5v7sNnQ=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

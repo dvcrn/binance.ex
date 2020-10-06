@@ -158,4 +158,28 @@ defmodule MarginTest do
       end
     end
   end
+
+  describe ".borrow" do
+    test "borrow token (cross margin)" do
+      use_cassette "margin/borrow_cross_margin" do
+        assert {:ok, %{"tranId" => _}} =
+                 Binance.Margin.borrow(%{
+                   asset: "USDT",
+                   amount: 2
+                 })
+      end
+    end
+
+    test "borrow token (isolated margin)" do
+      use_cassette "margin/borrow_isolated_margin" do
+        assert {:ok, %{"tranId" => _}} =
+                 Binance.Margin.borrow(%{
+                   is_isolated: "TRUE",
+                   symbol: "BTCUSDT",
+                   asset: "USDT",
+                   amount: 2
+                 })
+      end
+    end
+  end
 end
