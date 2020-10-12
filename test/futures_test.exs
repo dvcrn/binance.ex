@@ -97,7 +97,8 @@ defmodule FuturesTest do
                  %{
                    "listenKey" =>
                      "SHKiq1MSr119hfs4ZB6EZWkdikAPq8RGVuQGdGMnvvUUmaeZygVcoO1CchfzXeCd"
-                 }
+                 },
+                 %{}
                }
       end
     end
@@ -211,7 +212,8 @@ defmodule FuturesTest do
   describe ".create_order limit buy" do
     test "creates an order with a duration of good til cancel by default" do
       use_cassette "futures/order_limit_buy_good_til_cancel_default_duration_success" do
-        assert {:ok, %Binance.Futures.Order{} = response} =
+        assert {:ok, %Binance.Futures.Order{} = response,
+                %{used_order_limit: "1", used_weight_limit: "0"}} =
                  Binance.Futures.create_order(%{
                    symbol: "BTCUSDT",
                    side: "BUY",
@@ -259,7 +261,7 @@ defmodule FuturesTest do
                   %{
                     code: -1000,
                     msg: "You don't have enough margin for this new order"
-                  }}
+                  }, %{}}
       end
     end
   end
@@ -267,7 +269,7 @@ defmodule FuturesTest do
   describe ".create_order limit sell" do
     test "creates an order with a duration of good til cancel by default" do
       use_cassette "futures/order_limit_sell_good_til_cancel_default_duration_success" do
-        assert {:ok, %Binance.Futures.Order{} = response} =
+        assert {:ok, %Binance.Futures.Order{} = response, %{}} =
                  Binance.Futures.create_order(%{
                    symbol: "BTCUSDT",
                    side: "SELL",
@@ -312,7 +314,7 @@ defmodule FuturesTest do
                   %{
                     code: -1000,
                     msg: "You don't have enough margin for this new order"
-                  }}
+                  }, %{}}
       end
     end
   end
@@ -442,7 +444,7 @@ defmodule FuturesTest do
   describe ".cancel_order" do
     test "cancel an order by exchange order id" do
       use_cassette "futures/cancel_order_by_exchange_order_id_ok" do
-        assert {:ok, %Binance.Futures.Order{} = response} =
+        assert {:ok, %Binance.Futures.Order{} = response, %{}} =
                  Binance.Futures.cancel_order(%{symbol: "BTCUSDT", order_id: 11_257_530})
 
         assert response.client_order_id == "wgQyWAlBFCCWinOy7yPFDu"
@@ -464,7 +466,7 @@ defmodule FuturesTest do
 
     test "cancel an order by client order id" do
       use_cassette "futures/cancel_order_by_client_order_id_ok" do
-        assert {:ok, %Binance.Futures.Order{} = response} =
+        assert {:ok, %Binance.Futures.Order{} = response, %{}} =
                  Binance.Futures.cancel_order(%{
                    symbol: "BTCUSDT",
                    orig_client_order_id: "Slo0A5UDDOWK7cdUNVUsfO"
@@ -495,13 +497,13 @@ defmodule FuturesTest do
                   "rejectReason" => "UNKNOWN_ORDER",
                   "status" => "REJECTED",
                   "updateTime" => 1_568_995_698_674_402_579
-                }} = Binance.Futures.cancel_order(%{symbol: "BTCUSDT", order_id: 123_456})
+                }, %{}} = Binance.Futures.cancel_order(%{symbol: "BTCUSDT", order_id: 123_456})
       end
     end
 
     test "cancel batch order by exchange order id" do
       use_cassette "futures/cancel_batch_order_by_exchange_order_id_ok" do
-        assert {:ok, [order1, order2]} =
+        assert {:ok, [order1, order2], %{used_weight_limit: "1"}} =
                  Binance.Futures.cancel_batch_order(%{
                    symbol: "BTCUSDT",
                    order_id_list: [1_853_071_596, 1_853_071_597]
@@ -516,7 +518,8 @@ defmodule FuturesTest do
 
     test "should cancel all open orders by symbol" do
       use_cassette "futures/cancel_all_orders_by_symbol" do
-        {:ok, response} = Binance.Futures.cancel_all_orders(%{symbol: "BTCUSDT"})
+        {:ok, response, %{used_weight_limit: "1"}} =
+          Binance.Futures.cancel_all_orders(%{symbol: "BTCUSDT"})
 
         assert response == %{
                  "code" => 200,
@@ -527,7 +530,7 @@ defmodule FuturesTest do
 
     test "should return error when cancel all open orders without sending symbol param" do
       use_cassette "futures/cancel_all_orders_by_symbol_error" do
-        {:error, response} = Binance.Futures.cancel_all_orders(%{})
+        {:error, response, %{used_weight_limit: "1"}} = Binance.Futures.cancel_all_orders(%{})
 
         assert response ==
                  {:binance_error,
