@@ -20,7 +20,7 @@ defmodule Binance.Futures.Coin.WebSocket.WSClient do
   defmacro __using__(_opts) do
     quote do
       use WebSockex
-      @base Application.get_env(:binance, :ws_endpoint, "wss://dstream.binance.com")
+      @base Application.get_env(:binance, :ws_futures_coin_endpoint, "wss://dstream.binance.com")
       @ping_interval Application.get_env(:binance, :ping_interval, 5_000)
       @keep_alive_interval Application.get_env(:binance, :keep_alive_interval, 10 * 60_000)
 
