@@ -244,7 +244,7 @@ defmodule FuturesTest do
 
     test "returns an insufficient margin error tuple" do
       use_cassette "futures/order_limit_buy_error_insufficient_balance" do
-        assert {:error, reason} =
+        assert {:error, reason, rate_limit} =
                  Binance.Futures.create_order(%{
                    symbol: "BTCUSDT",
                    side: "BUY",
@@ -261,7 +261,9 @@ defmodule FuturesTest do
                   %{
                     code: -1000,
                     msg: "You don't have enough margin for this new order"
-                  }, %{}}
+                  }}
+
+        assert rate_limit = %{}
       end
     end
   end
@@ -299,7 +301,7 @@ defmodule FuturesTest do
 
     test "returns an insufficient margin error tuple" do
       use_cassette "futures/order_limit_buy_error_insufficient_balance" do
-        assert {:error, reason} =
+        assert {:error, reason, rate_limit} =
                  Binance.Futures.create_order(%{
                    symbol: "BTCUSDT",
                    side: "SELL",
@@ -314,7 +316,9 @@ defmodule FuturesTest do
                   %{
                     code: -1000,
                     msg: "You don't have enough margin for this new order"
-                  }, %{}}
+                  }}
+
+        assert rate_limit == %{}
       end
     end
   end
