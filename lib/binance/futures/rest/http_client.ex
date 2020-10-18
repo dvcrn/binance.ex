@@ -51,7 +51,7 @@ defmodule Binance.Futures.Rest.HTTPClient do
 
             case Poison.decode(response.body) do
               {:ok, %{"code" => code, "msg" => msg}} ->
-                {:error, {:binance_error, %{code: code, msg: msg}, rate_limit}}
+                {:error, {:binance_error, %{code: code, msg: msg}}, rate_limit}
 
               {:error, err} ->
                 {:error, {:poison_decode_error, err}, rate_limit}
@@ -80,6 +80,10 @@ defmodule Binance.Futures.Rest.HTTPClient do
         end
       end
     )
+  end
+
+  defp parse_rate_limits(_error) do
+    %{}
   end
 
   def put_binance(url, params, config, signed? \\ true) do
