@@ -69,21 +69,20 @@ defmodule Binance.Futures.Rest.HTTPClient do
   end
 
   defp parse_rate_limits(%HTTPoison.Response{headers: headers}) do
-    headers
-    |> Enum.reduce(
-      %{},
-      fn {k, v}, acc ->
-        case String.upcase(k) do
-          @used_order_limit -> Map.put(acc, :used_order_limit, v)
-          @used_weight_limit -> Map.put(acc, :used_weight_limit, v)
-          _ -> acc
+    rates =
+      headers
+      |> Enum.reduce(
+        %{},
+        fn {k, v}, acc ->
+          case String.upcase(k) do
+            @used_order_limit -> Map.put(acc, :used_order_limit, v)
+            @used_weight_limit -> Map.put(acc, :used_weight_limit, v)
+            _ -> acc
+          end
         end
-      end
-    )
-  end
+      )
 
-  defp parse_rate_limits(_error) do
-    %{}
+    if map_size(rates) != 0, do: rates, else: nil
   end
 
   def put_binance(url, params, config, signed? \\ true) do

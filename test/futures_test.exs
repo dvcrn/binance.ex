@@ -98,7 +98,7 @@ defmodule FuturesTest do
                    "listenKey" =>
                      "SHKiq1MSr119hfs4ZB6EZWkdikAPq8RGVuQGdGMnvvUUmaeZygVcoO1CchfzXeCd"
                  },
-                 %{}
+                 nil
                }
       end
     end
@@ -263,7 +263,7 @@ defmodule FuturesTest do
                     msg: "You don't have enough margin for this new order"
                   }}
 
-        assert rate_limit = %{}
+        assert rate_limit == nil
       end
     end
   end
@@ -271,7 +271,7 @@ defmodule FuturesTest do
   describe ".create_order limit sell" do
     test "creates an order with a duration of good til cancel by default" do
       use_cassette "futures/order_limit_sell_good_til_cancel_default_duration_success" do
-        assert {:ok, %Binance.Futures.Order{} = response, %{}} =
+        assert {:ok, %Binance.Futures.Order{} = response, nil} =
                  Binance.Futures.create_order(%{
                    symbol: "BTCUSDT",
                    side: "SELL",
@@ -318,7 +318,7 @@ defmodule FuturesTest do
                     msg: "You don't have enough margin for this new order"
                   }}
 
-        assert rate_limit == %{}
+        assert rate_limit == nil
       end
     end
   end
@@ -448,7 +448,7 @@ defmodule FuturesTest do
   describe ".cancel_order" do
     test "cancel an order by exchange order id" do
       use_cassette "futures/cancel_order_by_exchange_order_id_ok" do
-        assert {:ok, %Binance.Futures.Order{} = response, %{}} =
+        assert {:ok, %Binance.Futures.Order{} = response, nil} =
                  Binance.Futures.cancel_order(%{symbol: "BTCUSDT", order_id: 11_257_530})
 
         assert response.client_order_id == "wgQyWAlBFCCWinOy7yPFDu"
@@ -470,7 +470,7 @@ defmodule FuturesTest do
 
     test "cancel an order by client order id" do
       use_cassette "futures/cancel_order_by_client_order_id_ok" do
-        assert {:ok, %Binance.Futures.Order{} = response, %{}} =
+        assert {:ok, %Binance.Futures.Order{} = response, nil} =
                  Binance.Futures.cancel_order(%{
                    symbol: "BTCUSDT",
                    orig_client_order_id: "Slo0A5UDDOWK7cdUNVUsfO"
@@ -501,7 +501,7 @@ defmodule FuturesTest do
                   "rejectReason" => "UNKNOWN_ORDER",
                   "status" => "REJECTED",
                   "updateTime" => 1_568_995_698_674_402_579
-                }, %{}} = Binance.Futures.cancel_order(%{symbol: "BTCUSDT", order_id: 123_456})
+                }, nil} = Binance.Futures.cancel_order(%{symbol: "BTCUSDT", order_id: 123_456})
       end
     end
 
