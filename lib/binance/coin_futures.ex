@@ -1,4 +1,4 @@
-defmodule Binance.FuturesCoin do
+defmodule Binance.CoinFutures do
   alias Binance.Futures.Coin.Rest.HTTPClient
 
   @type error ::
@@ -72,8 +72,8 @@ defmodule Binance.FuturesCoin do
       )
 
     case HTTPClient.post_binance("/dapi/v1/listenKey", arguments, config) do
-      {:ok, %{"code" => code, "msg" => msg}} ->
-        {:error, {:binance_error, %{code: code, msg: msg}}}
+      {:ok, %{"code" => code, "msg" => msg}, rate_limit} ->
+        {:error, {:binance_error, %{code: code, msg: msg}}, rate_limit}
 
       data ->
         data
@@ -215,8 +215,8 @@ defmodule Binance.FuturesCoin do
       )
 
     case HTTPClient.post_binance("/dapi/v1/order", arguments, config) do
-      {:ok, data} ->
-        {:ok, data}
+      {:ok, data, rate_limit} ->
+        {:ok, data, rate_limit}
 
       error ->
         error
@@ -368,8 +368,8 @@ defmodule Binance.FuturesCoin do
       )
 
     case HTTPClient.delete_binance("/dapi/v1/order", arguments, config) do
-      {:ok, %{"rejectReason" => _} = err} -> {:error, err}
-      {:ok, data} -> {:ok, data}
+      {:ok, %{"rejectReason" => _} = err, rate_limit} -> {:error, err, rate_limit}
+      {:ok, data, rate_limit} -> {:ok, data, rate_limit}
       err -> err
     end
   end
@@ -424,8 +424,8 @@ defmodule Binance.FuturesCoin do
       )
 
     case HTTPClient.delete_binance("/dapi/v1/batchOrders", arguments, config) do
-      {:ok, %{"rejectReason" => _} = err} -> {:error, err}
-      {:ok, data} -> {:ok, data}
+      {:ok, %{"rejectReason" => _} = err, rate_limit} -> {:error, err, rate_limit}
+      {:ok, data, rate_limit} -> {:ok, data, rate_limit}
       err -> err
     end
   end
@@ -444,8 +444,8 @@ defmodule Binance.FuturesCoin do
   @spec cancel_all_orders(map(), map() | nil) :: {:ok, any()} | {:error, any()}
   def cancel_all_orders(params, config \\ nil) do
     case HTTPClient.delete_binance("/dapi/v1/allOpenOrders", params, config) do
-      {:ok, %{"rejectReason" => _} = err} -> {:error, err}
-      {:ok, data} -> {:ok, data}
+      {:ok, %{"rejectReason" => _} = err, rate_limit} -> {:error, err, rate_limit}
+      {:ok, data, rate_limit} -> {:ok, data, rate_limit}
       err -> err
     end
   end

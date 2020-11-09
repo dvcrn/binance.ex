@@ -2,27 +2,27 @@ defmodule CoinTest do
   use ExUnit.Case
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
-  # setup_all do
-  #   System.put_env("BINANCE_API_KEY", "fake_api_key")
-  #   System.put_env("BINANCE_API_SECRET", "fake_secret_key")
-  #   HTTPoison.start()
-  # end
+  setup_all do
+    System.put_env("BINANCE_API_KEY", "fake_api_key")
+    System.put_env("BINANCE_API_SECRET", "fake_secret_key")
+    HTTPoison.start()
+  end
 
   test "ping returns an empty map" do
     use_cassette "coin/ping_ok" do
-      assert Binance.FuturesCoin.ping() == {:ok, %{}}
+      assert Binance.CoinFutures.ping() == {:ok, %{}}
     end
   end
 
   test "get_server_time success return an ok, time tuple" do
     use_cassette "coin/get_server_time_ok" do
-      assert Binance.FuturesCoin.get_server_time() == {:ok, 1_597_745_352_553}
+      assert Binance.CoinFutures.get_server_time() == {:ok, 1_597_745_352_553}
     end
   end
 
   test "get_exchange_info success returns the trading rules and symbol information" do
     use_cassette "coin/get_exchange_info_ok" do
-      assert {:ok, info} = Binance.FuturesCoin.get_exchange_info()
+      assert {:ok, info} = Binance.CoinFutures.get_exchange_info()
       assert info.timezone == "UTC"
       assert info.server_time != nil
 
@@ -107,12 +107,13 @@ defmodule CoinTest do
   describe ".create_listen_key" do
     test "returns a listen key which could be used to subscrbe to a User Data stream" do
       use_cassette "coin/create_listen_key_ok" do
-        assert Binance.FuturesCoin.create_listen_key(%{}, nil) == {
+        assert Binance.CoinFutures.create_listen_key(%{}, nil) == {
                  :ok,
                  %{
                    "listenKey" =>
                      "IxySvyspnRKR3Ehx8PSicH6ZirxM5qabauLthZuLIKiGFT4NNnYRX4fRwc2MuGwC"
-                 }
+                 },
+                 %{used_weight_limit: "1"}
                }
       end
     end
@@ -121,7 +122,7 @@ defmodule CoinTest do
   describe ".keep_alive_listen_key" do
     test "returns empty indicating the given listen key has been keepalive successfully" do
       use_cassette "coin/keep_alive_listen_key_ok" do
-        assert Binance.FuturesCoin.keep_alive_listen_key(%{}) == {:ok, %{}}
+        assert Binance.CoinFutures.keep_alive_listen_key(%{}) == {:ok, %{}}
       end
     end
   end
@@ -129,7 +130,7 @@ defmodule CoinTest do
   describe ".get_depth" do
     test "returns the bids & asks up to the given depth" do
       use_cassette "coin/get_depth_ok" do
-        assert Binance.FuturesCoin.get_depth("BTCUSD_PERP", 5) == {
+        assert Binance.CoinFutures.get_depth("BTCUSD_PERP", 5) == {
                  :ok,
                  %Binance.OrderBook{
                    asks: [
@@ -154,7 +155,7 @@ defmodule CoinTest do
 
     test "returns an error tuple when the symbol doesn't exist" do
       use_cassette "coin/get_depth_error" do
-        assert Binance.FuturesCoin.get_depth("IDONTEXIST", 1000) ==
+        assert Binance.CoinFutures.get_depth("IDONTEXIST", 1000) ==
                  {:error, {:binance_error, %{code: -1121, msg: "Invalid symbol."}}}
       end
     end
@@ -163,7 +164,7 @@ defmodule CoinTest do
   describe ".get_account" do
     test "returns current account information" do
       use_cassette "coin/get_account_ok" do
-        assert Binance.FuturesCoin.get_account() ==
+        assert Binance.CoinFutures.get_account() ==
                  {:ok,
                   %{
                     "assets" => [
@@ -356,7 +357,7 @@ defmodule CoinTest do
   describe ".get_position" do
     test "returns current position information" do
       use_cassette "coin/get_position_ok" do
-        assert Binance.FuturesCoin.get_position() ==
+        assert Binance.CoinFutures.get_position() ==
                  {:ok,
                   [
                     %{
@@ -493,8 +494,8 @@ defmodule CoinTest do
   describe ".create_order limit buy" do
     test "creates an order with a duration of good til cancel by default" do
       use_cassette "coin/order_limit_buy_good_til_cancel_default_duration_success" do
-        assert {:ok, response} =
-                 Binance.FuturesCoin.create_order(%{
+        assert {:ok, response, %{used_order_limit: "1", used_weight_limit: "0"}} =
+                 Binance.CoinFutures.create_order(%{
                    symbol: "BTCUSD_PERP",
                    side: "BUY",
                    type: "LIMIT",
@@ -523,8 +524,8 @@ defmodule CoinTest do
 
     test "returns an insufficient margin error tuple" do
       use_cassette "coin/order_limit_buy_error_insufficient_balance" do
-        assert {:error, reason} =
-                 Binance.FuturesCoin.create_order(%{
+        assert {:error, reason, %{used_order_limit: "1", used_weight_limit: "0"}} =
+                 Binance.CoinFutures.create_order(%{
                    symbol: "BTCUSD_PERP",
                    side: "BUY",
                    type: "LIMIT",
@@ -548,8 +549,8 @@ defmodule CoinTest do
   describe ".create_order limit sell" do
     test "creates an order with a duration of good til cancel by default" do
       use_cassette "coin/order_limit_sell_good_til_cancel_default_duration_success" do
-        assert {:ok, response} =
-                 Binance.FuturesCoin.create_order(%{
+        assert {:ok, response, %{used_order_limit: "1", used_weight_limit: "0"}} =
+                 Binance.CoinFutures.create_order(%{
                    symbol: "BTCUSD_PERP",
                    side: "SELL",
                    type: "LIMIT",
@@ -577,8 +578,8 @@ defmodule CoinTest do
 
     test "returns an insufficient margin error tuple" do
       use_cassette "coin/order_limit_buy_error_insufficient_balance" do
-        assert {:error, reason} =
-                 Binance.FuturesCoin.create_order(%{
+        assert {:error, reason, %{used_order_limit: "1", used_weight_limit: "0"}} =
+                 Binance.CoinFutures.create_order(%{
                    symbol: "BTCUSD_PERP",
                    side: "SELL",
                    type: "LIMIT",
@@ -674,7 +675,7 @@ defmodule CoinTest do
                     "updateTime" => 1_597_747_973_144,
                     "workingType" => "CONTRACT_PRICE"
                   }
-                ]} = Binance.FuturesCoin.get_open_orders()
+                ]} = Binance.CoinFutures.get_open_orders()
       end
     end
   end
@@ -706,7 +707,7 @@ defmodule CoinTest do
                   "type" => "LIMIT",
                   "updateTime" => 1_597_747_080_425,
                   "workingType" => "CONTRACT_PRICE"
-                }} = Binance.FuturesCoin.get_order(%{symbol: "BTCUSD_PERP", order_id: 23_972_434})
+                }} = Binance.CoinFutures.get_order(%{symbol: "BTCUSD_PERP", order_id: 23_972_434})
       end
     end
 
@@ -737,7 +738,7 @@ defmodule CoinTest do
                   "updateTime" => 1_597_747_080_425,
                   "workingType" => "CONTRACT_PRICE"
                 }} =
-                 Binance.FuturesCoin.get_order(%{
+                 Binance.CoinFutures.get_order(%{
                    symbol: "BTCUSD_PERP",
                    orig_client_order_id: "czZw552jagTERPreGivCeK"
                  })
@@ -746,7 +747,7 @@ defmodule CoinTest do
 
     test "returns an insufficient margin error tuple" do
       use_cassette "coin/get_order_error" do
-        assert Binance.FuturesCoin.get_order(%{symbol: "BTCUSD_PERP", order_id: 123_456_789}) ==
+        assert Binance.CoinFutures.get_order(%{symbol: "BTCUSD_PERP", order_id: 123_456_789}) ==
                  {:error, {:binance_error, %{code: -2013, msg: "Order does not exist."}}}
       end
     end
@@ -780,7 +781,7 @@ defmodule CoinTest do
                   "updateTime" => 1_597_748_582_738,
                   "workingType" => "CONTRACT_PRICE"
                 }} =
-                 Binance.FuturesCoin.cancel_order(%{symbol: "BTCUSD_PERP", order_id: 23_972_434})
+                 Binance.CoinFutures.cancel_order(%{symbol: "BTCUSD_PERP", order_id: 23_972_434})
       end
     end
 
@@ -811,7 +812,7 @@ defmodule CoinTest do
                   "updateTime" => 1_597_748_715_345,
                   "workingType" => "CONTRACT_PRICE"
                 }} =
-                 Binance.FuturesCoin.cancel_order(%{
+                 Binance.CoinFutures.cancel_order(%{
                    symbol: "BTCUSD_PERP",
                    orig_client_order_id: "9OJHLQS6gEhedqn4idsXkc"
                  })
@@ -821,14 +822,14 @@ defmodule CoinTest do
     test "return errors when cancel an non-existing order" do
       use_cassette "coin/cancel_non_existing_order" do
         assert {:error, {:binance_error, %{code: -2011, msg: "Unknown order sent."}}} =
-                 Binance.FuturesCoin.cancel_order(%{symbol: "BTCUSD_PERP", order_id: 123_456})
+                 Binance.CoinFutures.cancel_order(%{symbol: "BTCUSD_PERP", order_id: 123_456})
       end
     end
 
     test "cancel batch order by exchange order id" do
       use_cassette "coin/cancel_batch_order_by_exchange_order_id_ok" do
         assert {:ok, [order1]} =
-                 Binance.FuturesCoin.cancel_batch_order(%{
+                 Binance.CoinFutures.cancel_batch_order(%{
                    symbol: "BTCUSD_PERP",
                    order_id_list: [23_994_302]
                  })
@@ -840,7 +841,7 @@ defmodule CoinTest do
 
     test "should cancel all open orders by symbol" do
       use_cassette "coin/cancel_all_orders_by_symbol" do
-        {:ok, response} = Binance.FuturesCoin.cancel_all_orders(%{symbol: "BTCUSD_PERP"})
+        {:ok, response} = Binance.CoinFutures.cancel_all_orders(%{symbol: "BTCUSD_PERP"})
 
         assert response == %{
                  "code" => 200,
@@ -851,7 +852,7 @@ defmodule CoinTest do
 
     test "should return error when cancel all open orders without sending symbol param" do
       use_cassette "coin/cancel_all_orders_by_symbol_error" do
-        {:error, response} = Binance.FuturesCoin.cancel_all_orders(%{})
+        {:error, response} = Binance.CoinFutures.cancel_all_orders(%{})
 
         assert response ==
                  {:binance_error,
@@ -867,7 +868,7 @@ defmodule CoinTest do
   describe "get" do
     test "best ticker" do
       use_cassette "coin/get_best_ticker" do
-        assert Binance.FuturesCoin.get_best_ticker("BTCUSD_PERP") ==
+        assert Binance.CoinFutures.get_best_ticker("BTCUSD_PERP") ==
                  {:ok,
                   [
                     %{
@@ -885,7 +886,7 @@ defmodule CoinTest do
 
     test "mark price" do
       use_cassette "coin/get_index_price" do
-        assert Binance.FuturesCoin.get_index_price("BTCUSD_PERP") ==
+        assert Binance.CoinFutures.get_index_price("BTCUSD_PERP") ==
                  {:ok,
                   [
                     %{
