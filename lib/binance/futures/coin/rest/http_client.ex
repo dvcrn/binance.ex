@@ -12,7 +12,7 @@ defmodule Binance.Futures.Coin.Rest.HTTPClient do
 
   def delete_binance(url, headers \\ []) when is_list(headers) do
     HTTPoison.delete("#{@endpoint}#{url}", headers)
-    |> parse_response
+    |> parse_response(:rate_limit)
   end
 
   def get_binance(url, params, config) do

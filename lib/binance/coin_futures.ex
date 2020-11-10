@@ -150,7 +150,7 @@ defmodule Binance.CoinFutures do
   def get_account(config \\ nil) do
     case HTTPClient.get_binance("/dapi/v1/account", %{}, config) do
       {:ok, data} ->
-        {:ok, data}
+        {:ok, Binance.Futures.Account.new(data)}
 
       error ->
         error
@@ -161,7 +161,7 @@ defmodule Binance.CoinFutures do
   def get_position(config \\ nil) do
     case HTTPClient.get_binance("/dapi/v1/positionRisk", %{}, config) do
       {:ok, data} ->
-        {:ok, data}
+        {:ok, Enum.map(data, &Binance.Futures.Position.new(&1))}
 
       error ->
         error
@@ -216,7 +216,7 @@ defmodule Binance.CoinFutures do
 
     case HTTPClient.post_binance("/dapi/v1/order", arguments, config) do
       {:ok, data, rate_limit} ->
-        {:ok, data, rate_limit}
+        {:ok, Binance.Futures.Order.new(data), rate_limit}
 
       error ->
         error
@@ -299,7 +299,7 @@ defmodule Binance.CoinFutures do
           {:ok, list() | {:error, error()}}
   def get_open_orders(params \\ %{}, config \\ nil) do
     case HTTPClient.get_binance("/dapi/v1/openOrders", params, config) do
-      {:ok, data} -> {:ok, data}
+      {:ok, data} -> {:ok, Enum.map(data, &Binance.Futures.Order.new(&1))}
       err -> err
     end
   end
@@ -334,7 +334,7 @@ defmodule Binance.CoinFutures do
       )
 
     case HTTPClient.get_binance("/dapi/v1/order", arguments, config) do
-      {:ok, data} -> {:ok, data}
+      {:ok, data} -> {:ok, Binance.Futures.Order.new(data)}
       err -> err
     end
   end
@@ -369,7 +369,7 @@ defmodule Binance.CoinFutures do
 
     case HTTPClient.delete_binance("/dapi/v1/order", arguments, config) do
       {:ok, %{"rejectReason" => _} = err, rate_limit} -> {:error, err, rate_limit}
-      {:ok, data, rate_limit} -> {:ok, data, rate_limit}
+      {:ok, data, rate_limit} -> {:ok, Binance.Futures.Order.new(data), rate_limit}
       err -> err
     end
   end
