@@ -33,7 +33,7 @@ defmodule Binance.Futures.Coin.WebSocket.WSClient do
 
         if require_auth == true do
           {:ok, %{"listenKey" => listen_key}, _rate_limit} =
-            Binance.Coin.create_listen_key(%{}, config)
+            Binance.CoinFutures.create_listen_key(%{}, config)
 
           state = Map.merge(state, %{listen_key: listen_key})
           endpoint_url = prepare_endpoint_url(listen_key)
@@ -75,7 +75,7 @@ defmodule Binance.Futures.Coin.WebSocket.WSClient do
       end
 
       def handle_info(:keep_alive, %{config: config} = state) do
-        {:ok, _} = Binance.Coin.keep_alive_listen_key(%{}, config)
+        {:ok, _} = Binance.CoinFutures.keep_alive_listen_key(%{}, config)
         :ok = info("Keepalive Binance's User Data stream done!")
         schedule_keep_alive_stream()
         {:ok, state}
