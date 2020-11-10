@@ -2,27 +2,27 @@ defmodule CoinTest do
   use ExUnit.Case
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
-  # setup_all do
-  #   System.put_env("BINANCE_API_KEY", "fake_api_key")
-  #   System.put_env("BINANCE_API_SECRET", "fake_secret_key")
-  #   HTTPoison.start()
-  # end
+  setup_all do
+    System.put_env("BINANCE_API_KEY", "fake_api_key")
+    System.put_env("BINANCE_API_SECRET", "fake_secret_key")
+    HTTPoison.start()
+  end
 
   test "ping returns an empty map" do
     use_cassette "coin/ping_ok" do
-      assert Binance.FuturesCoin.ping() == {:ok, %{}}
+      assert Binance.CoinFutures.ping() == {:ok, %{}}
     end
   end
 
   test "get_server_time success return an ok, time tuple" do
     use_cassette "coin/get_server_time_ok" do
-      assert Binance.FuturesCoin.get_server_time() == {:ok, 1_597_745_352_553}
+      assert Binance.CoinFutures.get_server_time() == {:ok, 1_597_745_352_553}
     end
   end
 
   test "get_exchange_info success returns the trading rules and symbol information" do
     use_cassette "coin/get_exchange_info_ok" do
-      assert {:ok, info} = Binance.FuturesCoin.get_exchange_info()
+      assert {:ok, info} = Binance.CoinFutures.get_exchange_info()
       assert info.timezone == "UTC"
       assert info.server_time != nil
 
@@ -107,12 +107,13 @@ defmodule CoinTest do
   describe ".create_listen_key" do
     test "returns a listen key which could be used to subscrbe to a User Data stream" do
       use_cassette "coin/create_listen_key_ok" do
-        assert Binance.FuturesCoin.create_listen_key(%{}, nil) == {
+        assert Binance.CoinFutures.create_listen_key(%{}, nil) == {
                  :ok,
                  %{
                    "listenKey" =>
                      "IxySvyspnRKR3Ehx8PSicH6ZirxM5qabauLthZuLIKiGFT4NNnYRX4fRwc2MuGwC"
-                 }
+                 },
+                 %{used_weight_limit: "1"}
                }
       end
     end
@@ -121,7 +122,7 @@ defmodule CoinTest do
   describe ".keep_alive_listen_key" do
     test "returns empty indicating the given listen key has been keepalive successfully" do
       use_cassette "coin/keep_alive_listen_key_ok" do
-        assert Binance.FuturesCoin.keep_alive_listen_key(%{}) == {:ok, %{}}
+        assert Binance.CoinFutures.keep_alive_listen_key(%{}) == {:ok, %{}}
       end
     end
   end
@@ -129,7 +130,7 @@ defmodule CoinTest do
   describe ".get_depth" do
     test "returns the bids & asks up to the given depth" do
       use_cassette "coin/get_depth_ok" do
-        assert Binance.FuturesCoin.get_depth("BTCUSD_PERP", 5) == {
+        assert Binance.CoinFutures.get_depth("BTCUSD_PERP", 5) == {
                  :ok,
                  %Binance.OrderBook{
                    asks: [
@@ -154,7 +155,7 @@ defmodule CoinTest do
 
     test "returns an error tuple when the symbol doesn't exist" do
       use_cassette "coin/get_depth_error" do
-        assert Binance.FuturesCoin.get_depth("IDONTEXIST", 1000) ==
+        assert Binance.CoinFutures.get_depth("IDONTEXIST", 1000) ==
                  {:error, {:binance_error, %{code: -1121, msg: "Invalid symbol."}}}
       end
     end
@@ -163,10 +164,10 @@ defmodule CoinTest do
   describe ".get_account" do
     test "returns current account information" do
       use_cassette "coin/get_account_ok" do
-        assert Binance.FuturesCoin.get_account() ==
+        assert Binance.CoinFutures.get_account() ==
                  {:ok,
-                  %{
-                    "assets" => [
+                  %Binance.Futures.Account{
+                    assets: [
                       %{
                         "asset" => "BTC",
                         "availableBalance" => "0.01689600",
@@ -224,130 +225,11 @@ defmodule CoinTest do
                         "walletBalance" => "0.00000000"
                       }
                     ],
-                    "canDeposit" => true,
-                    "canTrade" => true,
-                    "canWithdraw" => true,
-                    "feeTier" => 0,
-                    "positions" => [
-                      %{
-                        "entryPrice" => "0.0",
-                        "initialMargin" => "0",
-                        "isolated" => false,
-                        "leverage" => "20",
-                        "maintMargin" => "0",
-                        "maxQty" => "250",
-                        "openOrderInitialMargin" => "0",
-                        "positionInitialMargin" => "0",
-                        "positionSide" => "BOTH",
-                        "symbol" => "BTCUSD_201225",
-                        "unrealizedProfit" => "0.00000000"
-                      },
-                      %{
-                        "entryPrice" => "0.0",
-                        "initialMargin" => "0",
-                        "isolated" => false,
-                        "leverage" => "20",
-                        "maintMargin" => "0",
-                        "maxQty" => "5000",
-                        "openOrderInitialMargin" => "0",
-                        "positionInitialMargin" => "0",
-                        "positionSide" => "BOTH",
-                        "symbol" => "ETHUSD_200925",
-                        "unrealizedProfit" => "0.00000000"
-                      },
-                      %{
-                        "entryPrice" => "0.0",
-                        "initialMargin" => "0",
-                        "isolated" => false,
-                        "leverage" => "20",
-                        "maintMargin" => "0",
-                        "maxQty" => "5000000",
-                        "openOrderInitialMargin" => "0",
-                        "positionInitialMargin" => "0",
-                        "positionSide" => "BOTH",
-                        "symbol" => "ADAUSD_200925",
-                        "unrealizedProfit" => "0.00000000"
-                      },
-                      %{
-                        "entryPrice" => "0.0",
-                        "initialMargin" => "0",
-                        "isolated" => false,
-                        "leverage" => "20",
-                        "maintMargin" => "0",
-                        "maxQty" => "250",
-                        "openOrderInitialMargin" => "0",
-                        "positionInitialMargin" => "0",
-                        "positionSide" => "BOTH",
-                        "symbol" => "BTCUSD_PERP",
-                        "unrealizedProfit" => "0.00000000"
-                      },
-                      %{
-                        "entryPrice" => "0.0",
-                        "initialMargin" => "0",
-                        "isolated" => false,
-                        "leverage" => "20",
-                        "maintMargin" => "0",
-                        "maxQty" => "250",
-                        "openOrderInitialMargin" => "0",
-                        "positionInitialMargin" => "0",
-                        "positionSide" => "BOTH",
-                        "symbol" => "BTCUSD_200925",
-                        "unrealizedProfit" => "0.00000000"
-                      },
-                      %{
-                        "entryPrice" => "0.0",
-                        "initialMargin" => "0",
-                        "isolated" => false,
-                        "leverage" => "20",
-                        "maintMargin" => "0",
-                        "maxQty" => "1000000",
-                        "openOrderInitialMargin" => "0",
-                        "positionInitialMargin" => "0",
-                        "positionSide" => "BOTH",
-                        "symbol" => "LINKUSD_200925",
-                        "unrealizedProfit" => "0.00000000"
-                      },
-                      %{
-                        "entryPrice" => "0.0",
-                        "initialMargin" => "0",
-                        "isolated" => false,
-                        "leverage" => "20",
-                        "maintMargin" => "0",
-                        "maxQty" => "5000",
-                        "openOrderInitialMargin" => "0",
-                        "positionInitialMargin" => "0",
-                        "positionSide" => "BOTH",
-                        "symbol" => "ETHUSD_201225",
-                        "unrealizedProfit" => "0.00000000"
-                      },
-                      %{
-                        "entryPrice" => "0.0",
-                        "initialMargin" => "0",
-                        "isolated" => false,
-                        "leverage" => "20",
-                        "maintMargin" => "0",
-                        "maxQty" => "5000",
-                        "openOrderInitialMargin" => "0",
-                        "positionInitialMargin" => "0",
-                        "positionSide" => "BOTH",
-                        "symbol" => "ETHUSD_PERP",
-                        "unrealizedProfit" => "0.00000000"
-                      },
-                      %{
-                        "entryPrice" => "0.0",
-                        "initialMargin" => "0",
-                        "isolated" => false,
-                        "leverage" => "20",
-                        "maintMargin" => "0",
-                        "maxQty" => "5000000",
-                        "openOrderInitialMargin" => "0",
-                        "positionInitialMargin" => "0",
-                        "positionSide" => "BOTH",
-                        "symbol" => "ADAUSD_201225",
-                        "unrealizedProfit" => "0.00000000"
-                      }
-                    ],
-                    "updateTime" => 0
+                    update_time: 0,
+                    can_deposit: true,
+                    can_trade: true,
+                    can_withdraw: true,
+                    fee_tier: 0
                   }}
       end
     end
@@ -356,134 +238,97 @@ defmodule CoinTest do
   describe ".get_position" do
     test "returns current position information" do
       use_cassette "coin/get_position_ok" do
-        assert Binance.FuturesCoin.get_position() ==
+        assert Binance.CoinFutures.get_position() ==
                  {:ok,
                   [
-                    %{
-                      "entryPrice" => "0.0",
-                      "isAutoAddMargin" => "false",
-                      "isolatedMargin" => "0.00000000",
-                      "leverage" => "20",
-                      "liquidationPrice" => "0",
-                      "marginType" => "cross",
-                      "markPrice" => "0.00000000",
-                      "maxQty" => "250",
-                      "positionAmt" => "0",
-                      "positionSide" => "BOTH",
-                      "symbol" => "BTCUSD_201225",
-                      "unRealizedProfit" => "0.00000000"
+                    %Binance.Futures.Position{
+                      entry_price: "0.0",
+                      leverage: "20",
+                      liquidation_price: "0",
+                      mark_price: "0.00000000",
+                      position_amt: "0",
+                      symbol: "BTCUSD_201225",
+                      unRealized_profit: "0.00000000"
                     },
-                    %{
-                      "entryPrice" => "0.0",
-                      "isAutoAddMargin" => "false",
-                      "isolatedMargin" => "0.00000000",
-                      "leverage" => "20",
-                      "liquidationPrice" => "0",
-                      "marginType" => "cross",
-                      "markPrice" => "0.00000000",
-                      "maxQty" => "5000",
-                      "positionAmt" => "0",
-                      "positionSide" => "BOTH",
-                      "symbol" => "ETHUSD_200925",
-                      "unRealizedProfit" => "0.00000000"
+                    %Binance.Futures.Position{
+                      entry_price: "0.0",
+                      leverage: "20",
+                      liquidation_price: "0",
+                      mark_price: "0.00000000",
+                      max_notional_value: nil,
+                      position_amt: "0",
+                      symbol: "ETHUSD_200925",
+                      unRealized_profit: "0.00000000"
                     },
-                    %{
-                      "entryPrice" => "0.0",
-                      "isAutoAddMargin" => "false",
-                      "isolatedMargin" => "0.00000000",
-                      "leverage" => "20",
-                      "liquidationPrice" => "0",
-                      "marginType" => "cross",
-                      "markPrice" => "0.00000000",
-                      "maxQty" => "5000000",
-                      "positionAmt" => "0",
-                      "positionSide" => "BOTH",
-                      "symbol" => "ADAUSD_200925",
-                      "unRealizedProfit" => "0.00000000"
+                    %Binance.Futures.Position{
+                      entry_price: "0.0",
+                      leverage: "20",
+                      liquidation_price: "0",
+                      mark_price: "0.00000000",
+                      max_notional_value: nil,
+                      position_amt: "0",
+                      symbol: "ADAUSD_200925",
+                      unRealized_profit: "0.00000000"
                     },
-                    %{
-                      "entryPrice" => "0.0",
-                      "isAutoAddMargin" => "false",
-                      "isolatedMargin" => "0.00000000",
-                      "leverage" => "20",
-                      "liquidationPrice" => "0",
-                      "marginType" => "cross",
-                      "markPrice" => "12277.17934167",
-                      "maxQty" => "250",
-                      "positionAmt" => "0",
-                      "positionSide" => "BOTH",
-                      "symbol" => "BTCUSD_PERP",
-                      "unRealizedProfit" => "0.00000000"
+                    %Binance.Futures.Position{
+                      entry_price: "0.0",
+                      leverage: "20",
+                      liquidation_price: "0",
+                      mark_price: "12277.17934167",
+                      max_notional_value: nil,
+                      position_amt: "0",
+                      symbol: "BTCUSD_PERP",
+                      unRealized_profit: "0.00000000"
                     },
-                    %{
-                      "entryPrice" => "0.0",
-                      "isAutoAddMargin" => "false",
-                      "isolatedMargin" => "0.00000000",
-                      "leverage" => "20",
-                      "liquidationPrice" => "0",
-                      "marginType" => "cross",
-                      "markPrice" => "0.00000000",
-                      "maxQty" => "250",
-                      "positionAmt" => "0",
-                      "positionSide" => "BOTH",
-                      "symbol" => "BTCUSD_200925",
-                      "unRealizedProfit" => "0.00000000"
+                    %Binance.Futures.Position{
+                      entry_price: "0.0",
+                      leverage: "20",
+                      liquidation_price: "0",
+                      mark_price: "0.00000000",
+                      max_notional_value: nil,
+                      position_amt: "0",
+                      symbol: "BTCUSD_200925",
+                      unRealized_profit: "0.00000000"
                     },
-                    %{
-                      "entryPrice" => "0.0",
-                      "isAutoAddMargin" => "false",
-                      "isolatedMargin" => "0.00000000",
-                      "leverage" => "20",
-                      "liquidationPrice" => "0",
-                      "marginType" => "cross",
-                      "markPrice" => "0.00000000",
-                      "maxQty" => "1000000",
-                      "positionAmt" => "0",
-                      "positionSide" => "BOTH",
-                      "symbol" => "LINKUSD_200925",
-                      "unRealizedProfit" => "0.00000000"
+                    %Binance.Futures.Position{
+                      entry_price: "0.0",
+                      leverage: "20",
+                      liquidation_price: "0",
+                      mark_price: "0.00000000",
+                      max_notional_value: nil,
+                      position_amt: "0",
+                      symbol: "LINKUSD_200925",
+                      unRealized_profit: "0.00000000"
                     },
-                    %{
-                      "entryPrice" => "0.0",
-                      "isAutoAddMargin" => "false",
-                      "isolatedMargin" => "0.00000000",
-                      "leverage" => "20",
-                      "liquidationPrice" => "0",
-                      "marginType" => "cross",
-                      "markPrice" => "0.00000000",
-                      "maxQty" => "5000",
-                      "positionAmt" => "0",
-                      "positionSide" => "BOTH",
-                      "symbol" => "ETHUSD_201225",
-                      "unRealizedProfit" => "0.00000000"
+                    %Binance.Futures.Position{
+                      entry_price: "0.0",
+                      leverage: "20",
+                      liquidation_price: "0",
+                      mark_price: "0.00000000",
+                      max_notional_value: nil,
+                      position_amt: "0",
+                      symbol: "ETHUSD_201225",
+                      unRealized_profit: "0.00000000"
                     },
-                    %{
-                      "entryPrice" => "0.0",
-                      "isAutoAddMargin" => "false",
-                      "isolatedMargin" => "0.00000000",
-                      "leverage" => "20",
-                      "liquidationPrice" => "0",
-                      "marginType" => "cross",
-                      "markPrice" => "0.00000000",
-                      "maxQty" => "5000",
-                      "positionAmt" => "0",
-                      "positionSide" => "BOTH",
-                      "symbol" => "ETHUSD_PERP",
-                      "unRealizedProfit" => "0.00000000"
+                    %Binance.Futures.Position{
+                      entry_price: "0.0",
+                      leverage: "20",
+                      liquidation_price: "0",
+                      mark_price: "0.00000000",
+                      max_notional_value: nil,
+                      position_amt: "0",
+                      symbol: "ETHUSD_PERP",
+                      unRealized_profit: "0.00000000"
                     },
-                    %{
-                      "entryPrice" => "0.0",
-                      "isAutoAddMargin" => "false",
-                      "isolatedMargin" => "0.00000000",
-                      "leverage" => "20",
-                      "liquidationPrice" => "0",
-                      "marginType" => "cross",
-                      "markPrice" => "0.00000000",
-                      "maxQty" => "5000000",
-                      "positionAmt" => "0",
-                      "positionSide" => "BOTH",
-                      "symbol" => "ADAUSD_201225",
-                      "unRealizedProfit" => "0.00000000"
+                    %Binance.Futures.Position{
+                      entry_price: "0.0",
+                      leverage: "20",
+                      liquidation_price: "0",
+                      mark_price: "0.00000000",
+                      max_notional_value: nil,
+                      position_amt: "0",
+                      symbol: "ADAUSD_201225",
+                      unRealized_profit: "0.00000000"
                     }
                   ]}
       end
@@ -493,8 +338,9 @@ defmodule CoinTest do
   describe ".create_order limit buy" do
     test "creates an order with a duration of good til cancel by default" do
       use_cassette "coin/order_limit_buy_good_til_cancel_default_duration_success" do
-        assert {:ok, response} =
-                 Binance.FuturesCoin.create_order(%{
+        assert {:ok, %Binance.Futures.Order{} = response,
+                %{used_order_limit: "1", used_weight_limit: "0"}} =
+                 Binance.CoinFutures.create_order(%{
                    symbol: "BTCUSD_PERP",
                    side: "BUY",
                    type: "LIMIT",
@@ -503,28 +349,28 @@ defmodule CoinTest do
                    time_in_force: "GTC"
                  })
 
-        assert response["clientOrderId"] == "czZw552jagTERPreGivCeK"
-        assert response["cumQty"] == "0"
-        assert response["executedQty"] == "0"
-        assert response["orderId"] == 23_972_434
-        assert response["origQty"] == "1"
-        assert response["price"] == "11000"
-        assert response["reduceOnly"] == false
-        assert response["side"] == "BUY"
-        assert response["status"] == "NEW"
-        assert response["stopPrice"] == "0"
-        assert response["symbol"] == "BTCUSD_PERP"
-        assert response["timeInForce"] == "GTC"
-        assert response["type"] == "LIMIT"
-        assert response["time"] == nil
-        assert response["updateTime"] == 1_597_747_080_425
+        assert response.client_order_id == "czZw552jagTERPreGivCeK"
+        assert response.cum_qty == "0"
+        assert response.executed_qty == "0"
+        assert response.order_id == 23_972_434
+        assert response.orig_qty == "1"
+        assert response.price == "11000"
+        assert response.reduce_only == false
+        assert response.side == "BUY"
+        assert response.status == "NEW"
+        assert response.stop_price == "0"
+        assert response.symbol == "BTCUSD_PERP"
+        assert response.time_in_force == "GTC"
+        assert response.type == "LIMIT"
+        assert response.time == nil
+        assert response.update_time == 1_597_747_080_425
       end
     end
 
     test "returns an insufficient margin error tuple" do
       use_cassette "coin/order_limit_buy_error_insufficient_balance" do
-        assert {:error, reason} =
-                 Binance.FuturesCoin.create_order(%{
+        assert {:error, reason, %{used_order_limit: "1", used_weight_limit: "0"}} =
+                 Binance.CoinFutures.create_order(%{
                    symbol: "BTCUSD_PERP",
                    side: "BUY",
                    type: "LIMIT",
@@ -548,8 +394,9 @@ defmodule CoinTest do
   describe ".create_order limit sell" do
     test "creates an order with a duration of good til cancel by default" do
       use_cassette "coin/order_limit_sell_good_til_cancel_default_duration_success" do
-        assert {:ok, response} =
-                 Binance.FuturesCoin.create_order(%{
+        assert {:ok, %Binance.Futures.Order{} = response,
+                %{used_order_limit: "1", used_weight_limit: "0"}} =
+                 Binance.CoinFutures.create_order(%{
                    symbol: "BTCUSD_PERP",
                    side: "SELL",
                    type: "LIMIT",
@@ -558,27 +405,27 @@ defmodule CoinTest do
                    time_in_force: "GTC"
                  })
 
-        assert response["clientOrderId"] == "9OJHLQS6gEhedqn4idsXkc"
-        assert response["cumQty"] == "0"
-        assert response["executedQty"] == "0"
-        assert response["orderId"] == 23_994_864
-        assert response["origQty"] == "1"
-        assert response["price"] == "13000"
-        assert response["reduceOnly"] == false
-        assert response["side"] == "SELL"
-        assert response["status"] == "NEW"
-        assert response["stopPrice"] == "0"
-        assert response["symbol"] == "BTCUSD_PERP"
-        assert response["timeInForce"] == "GTC"
-        assert response["type"] == "LIMIT"
-        assert response["updateTime"] == 1_597_747_827_381
+        assert response.client_order_id == "9OJHLQS6gEhedqn4idsXkc"
+        assert response.cum_qty == "0"
+        assert response.executed_qty == "0"
+        assert response.order_id == 23_994_864
+        assert response.orig_qty == "1"
+        assert response.price == "13000"
+        assert response.reduce_only == false
+        assert response.side == "SELL"
+        assert response.status == "NEW"
+        assert response.stop_price == "0"
+        assert response.symbol == "BTCUSD_PERP"
+        assert response.time_in_force == "GTC"
+        assert response.type == "LIMIT"
+        assert response.update_time == 1_597_747_827_381
       end
     end
 
     test "returns an insufficient margin error tuple" do
       use_cassette "coin/order_limit_buy_error_insufficient_balance" do
-        assert {:error, reason} =
-                 Binance.FuturesCoin.create_order(%{
+        assert {:error, reason, %{used_order_limit: "1", used_weight_limit: "0"}} =
+                 Binance.CoinFutures.create_order(%{
                    symbol: "BTCUSD_PERP",
                    side: "SELL",
                    type: "LIMIT",
@@ -602,79 +449,31 @@ defmodule CoinTest do
       use_cassette "coin/get_open_orders_with_symbol_success" do
         assert {:ok,
                 [
-                  %{
-                    "avgPrice" => "0.0",
-                    "clientOrderId" => "9OJHLQS6gEhedqn4idsXkc",
-                    "closePosition" => false,
-                    "cumBase" => "0",
-                    "executedQty" => "0",
-                    "orderId" => 23_994_864,
-                    "origQty" => "1",
-                    "origType" => "LIMIT",
-                    "pair" => "BTCUSD",
-                    "positionSide" => "BOTH",
-                    "price" => "13000",
-                    "priceProtect" => false,
-                    "reduceOnly" => false,
-                    "side" => "SELL",
-                    "status" => "NEW",
-                    "stopPrice" => "0",
-                    "symbol" => "BTCUSD_PERP",
-                    "time" => 1_597_747_827_381,
-                    "timeInForce" => "GTC",
-                    "type" => "LIMIT",
-                    "updateTime" => 1_597_747_973_144,
-                    "workingType" => "CONTRACT_PRICE"
-                  },
-                  %{
-                    "avgPrice" => "0.0",
-                    "clientOrderId" => "4rBNPqB30jIC6qBrl1CPaR",
-                    "closePosition" => false,
-                    "cumBase" => "0",
-                    "executedQty" => "0",
-                    "orderId" => 23_994_302,
-                    "origQty" => "1",
-                    "origType" => "LIMIT",
-                    "pair" => "BTCUSD",
-                    "positionSide" => "BOTH",
-                    "price" => "13000",
-                    "priceProtect" => false,
-                    "reduceOnly" => false,
-                    "side" => "SELL",
-                    "status" => "NEW",
-                    "stopPrice" => "0",
-                    "symbol" => "BTCUSD_PERP",
-                    "time" => 1_597_747_795_900,
-                    "timeInForce" => "GTC",
-                    "type" => "LIMIT",
-                    "updateTime" => 1_597_747_973_144,
-                    "workingType" => "CONTRACT_PRICE"
-                  },
-                  %{
-                    "avgPrice" => "0.0",
-                    "clientOrderId" => "czZw552jagTERPreGivCeK",
-                    "closePosition" => false,
-                    "cumBase" => "0",
-                    "executedQty" => "0",
-                    "orderId" => 23_972_434,
-                    "origQty" => "1",
-                    "origType" => "LIMIT",
-                    "pair" => "BTCUSD",
-                    "positionSide" => "BOTH",
-                    "price" => "11000",
-                    "priceProtect" => false,
-                    "reduceOnly" => false,
-                    "side" => "BUY",
-                    "status" => "NEW",
-                    "stopPrice" => "0",
-                    "symbol" => "BTCUSD_PERP",
-                    "time" => 1_597_747_080_425,
-                    "timeInForce" => "GTC",
-                    "type" => "LIMIT",
-                    "updateTime" => 1_597_747_973_144,
-                    "workingType" => "CONTRACT_PRICE"
-                  }
-                ]} = Binance.FuturesCoin.get_open_orders()
+                  %Binance.Futures.Order{} = order_1,
+                  %Binance.Futures.Order{} = order_2,
+                  %Binance.Futures.Order{} = order_3
+                ]} = Binance.CoinFutures.get_open_orders()
+
+        assert order_1.client_order_id == "9OJHLQS6gEhedqn4idsXkc"
+        assert order_1.order_id == 23_994_864
+        assert order_1.side == "SELL"
+        assert order_1.type == "LIMIT"
+        assert order_1.status == "NEW"
+        assert order_1.symbol == "BTCUSD_PERP"
+
+        assert order_2.client_order_id == "4rBNPqB30jIC6qBrl1CPaR"
+        assert order_2.order_id == 23_994_302
+        assert order_2.side == "SELL"
+        assert order_2.type == "LIMIT"
+        assert order_2.status == "NEW"
+        assert order_2.symbol == "BTCUSD_PERP"
+
+        assert order_3.client_order_id == "czZw552jagTERPreGivCeK"
+        assert order_3.order_id == 23_972_434
+        assert order_3.side == "BUY"
+        assert order_3.type == "LIMIT"
+        assert order_3.status == "NEW"
+        assert order_3.symbol == "BTCUSD_PERP"
       end
     end
   end
@@ -683,61 +482,37 @@ defmodule CoinTest do
     test "gets an order information by exchange order id" do
       use_cassette "coin/get_order_by_exchange_order_id_ok" do
         assert {:ok,
-                %{
-                  "avgPrice" => "0.0",
-                  "clientOrderId" => "czZw552jagTERPreGivCeK",
-                  "closePosition" => false,
-                  "cumBase" => "0",
-                  "executedQty" => "0",
-                  "orderId" => 23_972_434,
-                  "origQty" => "1",
-                  "origType" => "LIMIT",
-                  "pair" => "BTCUSD",
-                  "positionSide" => "BOTH",
-                  "price" => "11000",
-                  "priceProtect" => false,
-                  "reduceOnly" => false,
-                  "side" => "BUY",
-                  "status" => "NEW",
-                  "stopPrice" => "0",
-                  "symbol" => "BTCUSD_PERP",
-                  "time" => 1_597_747_080_425,
-                  "timeInForce" => "GTC",
-                  "type" => "LIMIT",
-                  "updateTime" => 1_597_747_080_425,
-                  "workingType" => "CONTRACT_PRICE"
-                }} = Binance.FuturesCoin.get_order(%{symbol: "BTCUSD_PERP", order_id: 23_972_434})
+                %Binance.Futures.Order{
+                  client_order_id: "czZw552jagTERPreGivCeK",
+                  order_id: 23_972_434,
+                  price: "11000",
+                  side: "BUY",
+                  status: "NEW",
+                  symbol: "BTCUSD_PERP",
+                  time: 1_597_747_080_425,
+                  time_in_force: "GTC",
+                  type: "LIMIT",
+                  update_time: 1_597_747_080_425
+                }} = Binance.CoinFutures.get_order(%{symbol: "BTCUSD_PERP", order_id: 23_972_434})
       end
     end
 
     test "gets an order information by client order id" do
       use_cassette "coin/get_order_by_client_order_id_ok" do
         assert {:ok,
-                %{
-                  "avgPrice" => "0.0",
-                  "clientOrderId" => "czZw552jagTERPreGivCeK",
-                  "closePosition" => false,
-                  "cumBase" => "0",
-                  "executedQty" => "0",
-                  "orderId" => 23_972_434,
-                  "origQty" => "1",
-                  "origType" => "LIMIT",
-                  "pair" => "BTCUSD",
-                  "positionSide" => "BOTH",
-                  "price" => "11000",
-                  "priceProtect" => false,
-                  "reduceOnly" => false,
-                  "side" => "BUY",
-                  "status" => "NEW",
-                  "stopPrice" => "0",
-                  "symbol" => "BTCUSD_PERP",
-                  "time" => 1_597_747_080_425,
-                  "timeInForce" => "GTC",
-                  "type" => "LIMIT",
-                  "updateTime" => 1_597_747_080_425,
-                  "workingType" => "CONTRACT_PRICE"
+                %Binance.Futures.Order{
+                  client_order_id: "czZw552jagTERPreGivCeK",
+                  order_id: 23_972_434,
+                  price: "11000",
+                  side: "BUY",
+                  status: "NEW",
+                  symbol: "BTCUSD_PERP",
+                  time: 1_597_747_080_425,
+                  time_in_force: "GTC",
+                  type: "LIMIT",
+                  update_time: 1_597_747_080_425
                 }} =
-                 Binance.FuturesCoin.get_order(%{
+                 Binance.CoinFutures.get_order(%{
                    symbol: "BTCUSD_PERP",
                    orig_client_order_id: "czZw552jagTERPreGivCeK"
                  })
@@ -746,7 +521,7 @@ defmodule CoinTest do
 
     test "returns an insufficient margin error tuple" do
       use_cassette "coin/get_order_error" do
-        assert Binance.FuturesCoin.get_order(%{symbol: "BTCUSD_PERP", order_id: 123_456_789}) ==
+        assert Binance.CoinFutures.get_order(%{symbol: "BTCUSD_PERP", order_id: 123_456_789}) ==
                  {:error, {:binance_error, %{code: -2013, msg: "Order does not exist."}}}
       end
     end
@@ -756,62 +531,38 @@ defmodule CoinTest do
     test "cancel an order by exchange order id" do
       use_cassette "coin/cancel_order_by_exchange_order_id_ok" do
         assert {:ok,
-                %{
-                  "avgPrice" => "0.0",
-                  "clientOrderId" => "czZw552jagTERPreGivCeK",
-                  "closePosition" => false,
-                  "cumBase" => "0",
-                  "cumQty" => "0",
-                  "executedQty" => "0",
-                  "orderId" => 23_972_434,
-                  "origQty" => "1",
-                  "origType" => "LIMIT",
-                  "pair" => "BTCUSD",
-                  "positionSide" => "BOTH",
-                  "price" => "11000",
-                  "priceProtect" => false,
-                  "reduceOnly" => false,
-                  "side" => "BUY",
-                  "status" => "CANCELED",
-                  "stopPrice" => "0",
-                  "symbol" => "BTCUSD_PERP",
-                  "timeInForce" => "GTC",
-                  "type" => "LIMIT",
-                  "updateTime" => 1_597_748_582_738,
-                  "workingType" => "CONTRACT_PRICE"
-                }} =
-                 Binance.FuturesCoin.cancel_order(%{symbol: "BTCUSD_PERP", order_id: 23_972_434})
+                %Binance.Futures.Order{
+                  client_order_id: "czZw552jagTERPreGivCeK",
+                  order_id: 23_972_434,
+                  price: "11000",
+                  side: "BUY",
+                  status: "CANCELED",
+                  symbol: "BTCUSD_PERP",
+                  time_in_force: "GTC",
+                  type: "LIMIT",
+                  update_time: 1_597_748_582_738
+                },
+                %{used_weight_limit: "1"}} =
+                 Binance.CoinFutures.cancel_order(%{symbol: "BTCUSD_PERP", order_id: 23_972_434})
       end
     end
 
     test "cancel an order by client order id" do
       use_cassette "coin/cancel_order_by_client_order_id_ok" do
         assert {:ok,
-                %{
-                  "avgPrice" => "0.0",
-                  "clientOrderId" => "9OJHLQS6gEhedqn4idsXkc",
-                  "closePosition" => false,
-                  "cumBase" => "0",
-                  "cumQty" => "0",
-                  "executedQty" => "0",
-                  "orderId" => 23_994_864,
-                  "origQty" => "1",
-                  "origType" => "LIMIT",
-                  "pair" => "BTCUSD",
-                  "positionSide" => "BOTH",
-                  "price" => "13000",
-                  "priceProtect" => false,
-                  "reduceOnly" => false,
-                  "side" => "SELL",
-                  "status" => "CANCELED",
-                  "stopPrice" => "0",
-                  "symbol" => "BTCUSD_PERP",
-                  "timeInForce" => "GTC",
-                  "type" => "LIMIT",
-                  "updateTime" => 1_597_748_715_345,
-                  "workingType" => "CONTRACT_PRICE"
-                }} =
-                 Binance.FuturesCoin.cancel_order(%{
+                %Binance.Futures.Order{
+                  client_order_id: "9OJHLQS6gEhedqn4idsXkc",
+                  order_id: 23_994_864,
+                  price: "13000",
+                  side: "SELL",
+                  status: "CANCELED",
+                  symbol: "BTCUSD_PERP",
+                  time_in_force: "GTC",
+                  type: "LIMIT",
+                  update_time: 1_597_748_715_345
+                },
+                %{used_weight_limit: "1"}} =
+                 Binance.CoinFutures.cancel_order(%{
                    symbol: "BTCUSD_PERP",
                    orig_client_order_id: "9OJHLQS6gEhedqn4idsXkc"
                  })
@@ -820,15 +571,16 @@ defmodule CoinTest do
 
     test "return errors when cancel an non-existing order" do
       use_cassette "coin/cancel_non_existing_order" do
-        assert {:error, {:binance_error, %{code: -2011, msg: "Unknown order sent."}}} =
-                 Binance.FuturesCoin.cancel_order(%{symbol: "BTCUSD_PERP", order_id: 123_456})
+        assert {:error, {:binance_error, %{code: -2011, msg: "Unknown order sent."}},
+                %{used_weight_limit: "1"}} =
+                 Binance.CoinFutures.cancel_order(%{symbol: "BTCUSD_PERP", order_id: 123_456})
       end
     end
 
     test "cancel batch order by exchange order id" do
       use_cassette "coin/cancel_batch_order_by_exchange_order_id_ok" do
-        assert {:ok, [order1]} =
-                 Binance.FuturesCoin.cancel_batch_order(%{
+        assert {:ok, [order1], %{used_weight_limit: "1"}} =
+                 Binance.CoinFutures.cancel_batch_order(%{
                    symbol: "BTCUSD_PERP",
                    order_id_list: [23_994_302]
                  })
@@ -840,7 +592,8 @@ defmodule CoinTest do
 
     test "should cancel all open orders by symbol" do
       use_cassette "coin/cancel_all_orders_by_symbol" do
-        {:ok, response} = Binance.FuturesCoin.cancel_all_orders(%{symbol: "BTCUSD_PERP"})
+        {:ok, response, %{used_weight_limit: "1"}} =
+          Binance.CoinFutures.cancel_all_orders(%{symbol: "BTCUSD_PERP"})
 
         assert response == %{
                  "code" => 200,
@@ -851,7 +604,7 @@ defmodule CoinTest do
 
     test "should return error when cancel all open orders without sending symbol param" do
       use_cassette "coin/cancel_all_orders_by_symbol_error" do
-        {:error, response} = Binance.FuturesCoin.cancel_all_orders(%{})
+        {:error, response, %{used_weight_limit: "2"}} = Binance.CoinFutures.cancel_all_orders(%{})
 
         assert response ==
                  {:binance_error,
@@ -867,7 +620,7 @@ defmodule CoinTest do
   describe "get" do
     test "best ticker" do
       use_cassette "coin/get_best_ticker" do
-        assert Binance.FuturesCoin.get_best_ticker("BTCUSD_PERP") ==
+        assert Binance.CoinFutures.get_best_ticker("BTCUSD_PERP") ==
                  {:ok,
                   [
                     %{
@@ -885,7 +638,7 @@ defmodule CoinTest do
 
     test "mark price" do
       use_cassette "coin/get_index_price" do
-        assert Binance.FuturesCoin.get_index_price("BTCUSD_PERP") ==
+        assert Binance.CoinFutures.get_index_price("BTCUSD_PERP") ==
                  {:ok,
                   [
                     %{

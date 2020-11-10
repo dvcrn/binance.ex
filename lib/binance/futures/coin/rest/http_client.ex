@@ -1,5 +1,7 @@
 defmodule Binance.Futures.Coin.Rest.HTTPClient do
   @endpoint "https://dapi.binance.com"
+  @used_order_limit "X-MBX-ORDER-COUNT-1M"
+  @used_weight_limit "X-MBX-USED-WEIGHT-1M"
 
   alias Binance.{Config, Util}
 
@@ -10,7 +12,7 @@ defmodule Binance.Futures.Coin.Rest.HTTPClient do
 
   def delete_binance(url, headers \\ []) when is_list(headers) do
     HTTPoison.delete("#{@endpoint}#{url}", headers)
-    |> parse_response
+    |> parse_response(:rate_limit)
   end
 
   def get_binance(url, params, config) do
@@ -41,24 +43,46 @@ defmodule Binance.Futures.Coin.Rest.HTTPClient do
       {:ok, url, headers, body} ->
         case HTTPoison.post("#{@endpoint}#{url}", body, headers) do
           {:error, err} ->
+            rate_limit = parse_rate_limits(err)
             {:error, {:http_error, err}}
 
           {:ok, %{status_code: status_code} = response} when status_code not in 200..299 ->
+            rate_limit = parse_rate_limits(response)
+
             case Poison.decode(response.body) do
               {:ok, %{"code" => code, "msg" => msg}} ->
-                {:error, {:binance_error, %{code: code, msg: msg}}}
+                {:error, {:binance_error, %{code: code, msg: msg}}, rate_limit}
 
               {:error, err} ->
-                {:error, {:poison_decode_error, err}}
+                {:error, {:poison_decode_error, err}, rate_limit}
             end
 
           {:ok, response} ->
+            rate_limit = parse_rate_limits(response)
+
             case Poison.decode(response.body) do
-              {:ok, data} -> {:ok, data}
-              {:error, err} -> {:error, {:poison_decode_error, err}}
+              {:ok, data} -> {:ok, data, rate_limit}
+              {:error, err} -> {:error, {:poison_decode_error, err}, rate_limit}
             end
         end
     end
+  end
+
+  defp parse_rate_limits(%HTTPoison.Response{headers: headers}) do
+    rates =
+      headers
+      |> Enum.reduce(
+        %{},
+        fn {k, v}, acc ->
+          case String.upcase(k) do
+            @used_order_limit -> Map.put(acc, :used_order_limit, v)
+            @used_weight_limit -> Map.put(acc, :used_weight_limit, v)
+            _ -> acc
+          end
+        end
+      )
+
+    if map_size(rates) != 0, do: rates, else: nil
   end
 
   def put_binance(url, params, config, signed? \\ true) do
@@ -163,6 +187,36 @@ defmodule Binance.Futures.Coin.Rest.HTTPClient do
 
       _ ->
         {:error, {:config_missing, "Secret or API key missing"}}
+    end
+  end
+
+  defp parse_response({:error, err}, :rate_limit) do
+    {:error, {:http_error, err}, parse_rate_limits(err)}
+  end
+
+  defp parse_response({:ok, %{status_code: status_code} = response}, :rate_limit)
+       when status_code not in 200..299 do
+    response.body
+    |> Poison.decode()
+    |> case do
+      {:ok, %{"code" => code, "msg" => msg}} ->
+        {:error, {:binance_error, %{code: code, msg: msg}}, parse_rate_limits(response)}
+
+      {:error, error} ->
+        {:error, {:poison_decode_error, error}, parse_rate_limits(response)}
+    end
+  end
+
+  defp parse_response({:error, err}, :rate_limit) do
+    {:error, {:http_error, err}, parse_rate_limits(err)}
+  end
+
+  defp parse_response({:ok, response}, :rate_limit) do
+    response.body
+    |> Poison.decode()
+    |> case do
+      {:ok, data} -> {:ok, data, parse_rate_limits(response)}
+      {:error, error} -> {:error, {:poison_decode_error, error}, parse_rate_limits(response)}
     end
   end
 
