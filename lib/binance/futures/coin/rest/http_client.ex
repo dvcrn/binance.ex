@@ -85,6 +85,10 @@ defmodule Binance.Futures.Coin.Rest.HTTPClient do
     if map_size(rates) != 0, do: rates, else: nil
   end
 
+  defp parse_rate_limits(_) do
+    nil
+  end
+
   def put_binance(url, params, config, signed? \\ true) do
     case prepare_request(:put, url, params, config, signed?) do
       {:error, _} = error ->
