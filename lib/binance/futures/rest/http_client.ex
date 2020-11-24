@@ -211,10 +211,6 @@ defmodule Binance.Futures.Rest.HTTPClient do
     end
   end
 
-  defp parse_response({:error, err}, :rate_limit) do
-    {:error, {:http_error, err}, parse_rate_limits(err)}
-  end
-
   defp parse_response({:ok, response}, :rate_limit) do
     response.body
     |> Poison.decode()

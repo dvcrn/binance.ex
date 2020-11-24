@@ -44,7 +44,7 @@ defmodule Binance.Futures.Coin.Rest.HTTPClient do
         case HTTPoison.post("#{@endpoint}#{url}", body, headers) do
           {:error, err} ->
             rate_limit = parse_rate_limits(err)
-            {:error, {:http_error, err}}
+            {:error, {:http_error, err}, rate_limit}
 
           {:ok, %{status_code: status_code} = response} when status_code not in 200..299 ->
             rate_limit = parse_rate_limits(response)
@@ -209,10 +209,6 @@ defmodule Binance.Futures.Coin.Rest.HTTPClient do
       {:error, error} ->
         {:error, {:poison_decode_error, error}, parse_rate_limits(response)}
     end
-  end
-
-  defp parse_response({:error, err}, :rate_limit) do
-    {:error, {:http_error, err}, parse_rate_limits(err)}
   end
 
   defp parse_response({:ok, response}, :rate_limit) do
