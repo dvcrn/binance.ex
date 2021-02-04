@@ -141,6 +141,15 @@ defmodule Binance.Margin do
     end
   end
 
+  @spec get_open_orders(map(), map() | nil) ::
+          {:ok, list() | {:error, error()}}
+  def get_open_orders(params \\ %{}, config \\ nil) do
+    case HTTPClient.get_binance("/sapi/v1/margin/openOrders", params, config) do
+      {:ok, data} -> {:ok, Enum.map(data, &Binance.Margin.Order.new(&1))}
+      err -> err
+    end
+  end
+
   def cancel_order(params, config \\ nil) do
     arguments =
       %{
