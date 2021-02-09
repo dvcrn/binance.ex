@@ -11,6 +11,8 @@ defmodule Binance.Margin.Order do
     :cummulative_quote_qty,
     :status,
     :time_in_force,
+    :time,
+    :update_time,
     :type,
     :side,
     :is_isolated
