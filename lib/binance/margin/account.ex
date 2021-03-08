@@ -10,7 +10,8 @@ defmodule Binance.Margin.Account do
     :total_liability_of_btc,
     :total_net_asset_of_btc,
     :trade_enabled,
-    :transfer_enabled
+    :transfer_enabled,
+    :user_assets
   ]
 
   use ExConstructor
