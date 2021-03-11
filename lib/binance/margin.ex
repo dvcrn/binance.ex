@@ -165,6 +165,13 @@ defmodule Binance.Margin do
           else: %{}
         )
       )
+      |> Map.merge(
+        unless(
+          is_nil(params[:is_isolated]),
+          do: %{isIsolated: params[:is_isolated]},
+          else: %{}
+        )
+      )
 
     case HTTPClient.delete_binance("/sapi/v1/margin/order", arguments, config) do
       {:ok, %{"rejectReason" => _} = err} -> {:error, err}
