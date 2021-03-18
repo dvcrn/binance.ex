@@ -1,0 +1,91 @@
+[
+  {
+    "request": {
+      "body": "price=0.00000100&quantity=100&recvWindow=1000&side=BUY&symbol=DOGEBTC&timeInForce=GTC&timestamp=1616078020854&type=LIMIT&signature=***",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.binance.com/api/v3/order"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"symbol\":\"DOGEBTC\",\"orderId\":71845546,\"orderListId\":-1,\"clientOrderId\":\"cyNmMk8rcgunB0REmUlbyv\",\"transactTime\":1616078021041,\"price\":\"0.00000100\",\"origQty\":\"100.00000000\",\"executedQty\":\"0.00000000\",\"cummulativeQuoteQty\":\"0.00000000\",\"status\":\"NEW\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"side\":\"BUY\",\"fills\":[]}",
+      "headers": {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Content-Length": "308",
+        "Connection": "keep-alive",
+        "Date": "Thu, 18 Mar 2021 14:33:41 GMT",
+        "Server": "nginx",
+        "Vary": "Accept-Encoding",
+        "x-mbx-uuid": "96b2626a-ef8b-4acb-8e9d-d9be9fb8015b",
+        "x-mbx-used-weight": "2",
+        "x-mbx-used-weight-1m": "2",
+        "x-mbx-order-count-10s": "1",
+        "x-mbx-order-count-1d": "2",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'self'",
+        "X-Content-Security-Policy": "default-src 'self'",
+        "X-WebKit-CSP": "default-src 'self'",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 ecaa40073bdefd3aeab35205d96e7782.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "AMS50-C1",
+        "X-Amz-Cf-Id": "oEG1SOwjjbbn69nF5DIS-OLL8LGDCietCe9p84LasPsQVJg0zBbk5w=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "price=1.0e-6&quantity=100&recvWindow=1000&side=BUY&symbol=DOGEBTC&timeInForce=GTC&timestamp=1616079294199&type=LIMIT&signature=***",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.binance.com/api/v3/order"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"code\":-1100,\"msg\":\"Illegal characters found in parameter 'price'; legal range is '^([0-9]{1,20})(\\\\.[0-9]{1,20})?$'.\"}",
+      "headers": {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Content-Length": "120",
+        "Connection": "keep-alive",
+        "Date": "Thu, 18 Mar 2021 14:54:56 GMT",
+        "Server": "nginx",
+        "x-mbx-uuid": "4fd90da0-9b2f-4d49-9bfd-732f5cd45d49",
+        "x-mbx-used-weight": "2",
+        "x-mbx-used-weight-1m": "2",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'self'",
+        "X-Content-Security-Policy": "default-src 'self'",
+        "X-WebKit-CSP": "default-src 'self'",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-Cache": "Error from cloudfront",
+        "Via": "1.1 d8c5e23736c47a3e5184b0a78042898f.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "AMS50-C1",
+        "X-Amz-Cf-Id": "GfcWqCuwBeF9My8picPaBdLmQ8FKeyZzZqdUPwVqARACJIFJsi6jWg=="
+      },
+      "status_code": 400,
+      "type": "ok"
+    }
+  }
+]
