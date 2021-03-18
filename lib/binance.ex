@@ -204,12 +204,14 @@ defmodule Binance do
           else: %{}
         )
       )
-      |> Map.merge(unless(is_nil(stop_price), do: %{stopPrice: stop_price}, else: %{}))
+      |> Map.merge(
+        unless(is_nil(stop_price), do: %{stopPrice: format_price(stop_price)}, else: %{})
+      )
       |> Map.merge(
         unless(is_nil(new_client_order_id), do: %{icebergQty: iceberg_quantity}, else: %{})
       )
       |> Map.merge(unless(is_nil(time_in_force), do: %{timeInForce: time_in_force}, else: %{}))
-      |> Map.merge(unless(is_nil(price), do: %{price: price}, else: %{}))
+      |> Map.merge(unless(is_nil(price), do: %{price: format_price(price)}, else: %{}))
 
     case HTTPClient.post_binance("/api/v3/order", arguments) do
       {:ok, %{"code" => code, "msg" => msg}} ->
@@ -347,6 +349,9 @@ defmodule Binance do
   end
 
   # Misc
+
+  defp format_price(num) when is_float(num), do: :erlang.float_to_binary(num, [{:decimals, 8}])
+  defp format_price(num) when is_integer(num), do: inspect(num)
 
   @doc """
   Searches and normalizes the symbol as it is listed on binance.

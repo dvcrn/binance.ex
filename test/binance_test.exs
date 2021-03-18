@@ -434,7 +434,7 @@ defmodule BinanceTest do
         assert order.executed_qty == "0.00000000"
         assert order.iceberg_qty == nil
         assert order.is_working == nil
-        assert order.order_id == 212217782
+        assert order.order_id == 212_217_782
         assert order.orig_qty == "100.00000000"
         assert order.price == "0.30000000"
         assert order.side == "BUY"
