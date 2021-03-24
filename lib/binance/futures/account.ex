@@ -30,6 +30,7 @@ defmodule Binance.Futures.Account do
     :can_withdraw,
     :can_deposit,
     :assets,
+    :positions,
     :update_time
   ]
 
