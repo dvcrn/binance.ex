@@ -157,6 +157,25 @@ defmodule BinanceTest do
       end
     end
 
+    test "creates an order with a duration of good til cancel by default(string quantity and price)" do
+      use_cassette "order_limit_buy_good_til_cancel_default_duration_success" do
+        assert {:ok, %Binance.OrderResponse{} = response} =
+                 Binance.order_limit_buy("LTCBTC", "0.1", "0.01")
+
+        assert response.client_order_id == "9kITBshSwrClye1HJcLM3j"
+        assert response.executed_qty == "0.00000000"
+        assert response.order_id == 47_511_548
+        assert response.orig_qty == "0.10000000"
+        assert response.price == "0.01000000"
+        assert response.side == "BUY"
+        assert response.status == "NEW"
+        assert response.symbol == "LTCBTC"
+        assert response.time_in_force == "GTC"
+        assert response.transact_time == 1_527_278_150_709
+        assert response.type == "LIMIT"
+      end
+    end
+
     test "can create an order with a fill or kill duration" do
       use_cassette "order_limit_buy_fill_or_kill_success" do
         assert {:ok, %Binance.OrderResponse{} = response} =
