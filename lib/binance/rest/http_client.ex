@@ -1,5 +1,5 @@
 defmodule Binance.Rest.HTTPClient do
-  @endpoint Application.get_env(:binance, :end_point)
+  @endpoint Application.get_env(:binance, :end_point, "https://api.binance.com")
 
   def get_binance(url, headers \\ []) do
     HTTPoison.get("#{@endpoint}#{url}", headers)

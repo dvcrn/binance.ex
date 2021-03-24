@@ -7,7 +7,7 @@ defmodule Binance do
   Pings binance API. Returns `{:ok, %{}}` if successful, `{:error, reason}` otherwise
   """
   def ping() do
-    HTTPClient.get_binance("/api/v1/ping")
+    HTTPClient.get_binance("/api/v3/ping")
   end
 
   @doc """
@@ -22,7 +22,7 @@ defmodule Binance do
 
   """
   def get_server_time() do
-    case HTTPClient.get_binance("/api/v1/time") do
+    case HTTPClient.get_binance("/api/v3/time") do
       {:ok, %{"serverTime" => time}} -> {:ok, time}
       err -> err
     end
@@ -55,7 +55,7 @@ defmodule Binance do
   ```
   """
   def get_all_prices() do
-    case HTTPClient.get_binance("/api/v1/ticker/allPrices") do
+    case HTTPClient.get_binance("/api/v3/ticker/price") do
       {:ok, data} ->
         {:ok, Enum.map(data, &Binance.SymbolPrice.new(&1))}
 
@@ -91,7 +91,7 @@ defmodule Binance do
   end
 
   def get_ticker(symbol) when is_binary(symbol) do
-    case HTTPClient.get_binance("/api/v1/ticker/24hr?symbol=#{symbol}") do
+    case HTTPClient.get_binance("/api/v3/ticker/24hr?symbol=#{symbol}") do
       {:ok, data} -> {:ok, Binance.Ticker.new(data)}
       err -> err
     end
@@ -126,7 +126,7 @@ defmodule Binance do
   ```
   """
   def get_depth(symbol, limit) do
-    case HTTPClient.get_binance("/api/v1/depth?symbol=#{symbol}&limit=#{limit}") do
+    case HTTPClient.get_binance("/api/v3/depth?symbol=#{symbol}&limit=#{limit}") do
       {:ok, data} -> {:ok, Binance.OrderBook.new(data)}
       err -> err
     end
@@ -352,6 +352,7 @@ defmodule Binance do
 
   defp format_price(num) when is_float(num), do: :erlang.float_to_binary(num, [{:decimals, 8}])
   defp format_price(num) when is_integer(num), do: inspect(num)
+  defp format_price(num) when is_binary(num), do: num
 
   @doc """
   Searches and normalizes the symbol as it is listed on binance.
