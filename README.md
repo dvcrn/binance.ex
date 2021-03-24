@@ -11,7 +11,7 @@ Elixir wrapper for interacting with the [Binance API](https://github.com/binance
 ```elixir
 def deps do
   [
-    {:binance, "~> 0.7.2"}
+    {:binance, "~> 0.7.3"}
   ]
 end
 ```
@@ -25,7 +25,7 @@ end
 ```
 
 3. Add your Binance API credentials to your `config.exs` file, like so (you can create a new API
-key [here](https://www.binance.com/userCenter/createApi.html)):
+   key [here](https://www.binance.com/userCenter/createApi.html)):
 
 ```
 config :binance,
@@ -39,6 +39,7 @@ config :binance,
 Documentation available at [https://hexdocs.pm/binance](https://hexdocs.pm/binance).
 
 Get all prices
+
 ```
 iex> Binance.get_all_prices
 {:ok,
