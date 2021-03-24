@@ -6,18 +6,20 @@
       "method": "get",
       "options": [],
       "request_body": "",
-      "url": "https://api.binance.com/api/v1/ping"
+      "url": "https://api.binance.com/api/v3/ping"
     },
     "response": {
       "binary": false,
       "body": "{}",
       "headers": {
-        "Date": "Fri, 23 Mar 2018 05:35:13 GMT",
-        "Content-Type": "application/json",
-        "Transfer-Encoding": "chunked",
+        "Content-Type": "application/json;charset=UTF-8",
+        "Content-Length": "2",
         "Connection": "keep-alive",
+        "Date": "Wed, 24 Mar 2021 13:23:04 GMT",
         "Server": "nginx",
-        "Vary": "Accept-Encoding",
+        "x-mbx-uuid": "72177691-412c-4ad8-9aa7-e4dc13c6d262",
+        "x-mbx-used-weight": "1",
+        "x-mbx-used-weight-1m": "1",
         "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
         "X-Frame-Options": "SAMEORIGIN",
         "X-Xss-Protection": "1; mode=block",
@@ -27,7 +29,13 @@
         "X-WebKit-CSP": "default-src 'self'",
         "Cache-Control": "no-cache, no-store, must-revalidate",
         "Pragma": "no-cache",
-        "Expires": "0"
+        "Expires": "0",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 024e0eb7c8dbc0f1008d8bc14f1acebf.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "LHR61-C1",
+        "X-Amz-Cf-Id": "xbzeTwvOiQ906Q6nF_VL_-EmsDzmXFk8HiyAnmcV4kOSZPlPGhA36Q=="
       },
       "status_code": 200,
       "type": "ok"

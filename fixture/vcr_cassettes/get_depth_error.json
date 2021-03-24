@@ -6,7 +6,7 @@
       "method": "get",
       "options": [],
       "request_body": "",
-      "url": "https://api.binance.com/api/v1/depth?symbol=IDONTEXIST&limit=1000"
+      "url": "https://api.binance.com/api/v3/depth?symbol=IDONTEXIST&limit=1000"
     },
     "response": {
       "binary": false,

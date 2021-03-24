@@ -6,18 +6,21 @@
       "method": "get",
       "options": [],
       "request_body": "",
-      "url": "https://api.binance.com/api/v1/depth?symbol=BTCUSDT&limit=5"
+      "url": "https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=5"
     },
     "response": {
       "binary": false,
-      "body": "{\"lastUpdateId\":113634395,\"bids\":[[\"8393.00000000\",\"0.20453200\",[]],[\"8392.57000000\",\"0.02639000\",[]],[\"8392.00000000\",\"1.40893300\",[]],[\"8390.09000000\",\"0.07047100\",[]],[\"8388.72000000\",\"0.04577400\",[]]],\"asks\":[[\"8400.00000000\",\"2.04078100\",[]],[\"8405.35000000\",\"0.50354700\",[]],[\"8406.00000000\",\"0.32769800\",[]],[\"8406.33000000\",\"0.00239000\",[]],[\"8406.51000000\",\"0.03241000\",[]]]}",
+      "body": "{\"lastUpdateId\":9699548377,\"bids\":[[\"56902.15000000\",\"0.00371500\"],[\"56900.01000000\",\"0.00144100\"],[\"56888.97000000\",\"0.26976200\"],[\"56888.96000000\",\"0.55709100\"],[\"56888.38000000\",\"0.16033500\"]],\"asks\":[[\"56905.88000000\",\"0.01215200\"],[\"56906.08000000\",\"0.52000000\"],[\"56910.50000000\",\"0.07710900\"],[\"56912.73000000\",\"0.01494300\"],[\"56914.61000000\",\"0.67202300\"]]}",
       "headers": {
-        "Date": "Fri, 23 Mar 2018 05:38:26 GMT",
-        "Content-Type": "application/json",
-        "Transfer-Encoding": "chunked",
+        "Content-Type": "application/json;charset=UTF-8",
+        "Content-Length": "365",
         "Connection": "keep-alive",
+        "Date": "Wed, 24 Mar 2021 13:41:07 GMT",
         "Server": "nginx",
         "Vary": "Accept-Encoding",
+        "x-mbx-uuid": "e4ba3911-c1ea-40be-befc-ee2894532189",
+        "x-mbx-used-weight": "1",
+        "x-mbx-used-weight-1m": "1",
         "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
         "X-Frame-Options": "SAMEORIGIN",
         "X-Xss-Protection": "1; mode=block",
@@ -27,7 +30,13 @@
         "X-WebKit-CSP": "default-src 'self'",
         "Cache-Control": "no-cache, no-store, must-revalidate",
         "Pragma": "no-cache",
-        "Expires": "0"
+        "Expires": "0",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 750c4cd5855cda8293959637bece163c.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "LHR61-C1",
+        "X-Amz-Cf-Id": "TVTvtGNr7KTpm8tKpR-oTN36ov_PRHgitvb4KAk6sS_IZchJHbHhzQ=="
       },
       "status_code": 200,
       "type": "ok"

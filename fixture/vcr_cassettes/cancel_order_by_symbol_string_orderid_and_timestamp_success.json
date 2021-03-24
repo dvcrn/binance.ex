@@ -6,7 +6,7 @@
       "method": "get",
       "options": [],
       "request_body": "",
-      "url": "https://api.binance.com/api/v1/ticker/allPrices"
+      "url": "https://api.binance.com/api/v3/ticker/price"
     },
     "response": {
       "binary": false,
