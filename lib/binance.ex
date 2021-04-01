@@ -162,6 +162,15 @@ defmodule Binance do
 
   Returns `{:ok, %Binance.DataStream{}}` or `{:error, reason}`.
 
+  ## Example
+  ```
+  {:ok,
+    %Binance.DataStream{
+      listen_key: "pqia91ma19a5s61cv6a81va65sdf19v8a65a1a5s61cv6a81va65sdf19v8a65a1"
+    }
+  }
+  ```
+
   For more context please read https://github.com/binance/binance-spot-api-docs/blob/master/user-data-stream.md#create-a-listenkey
 
   """
