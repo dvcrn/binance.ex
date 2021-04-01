@@ -61,7 +61,7 @@ defmodule Binance.Rest.HTTPClient do
     end
   end
 
-  def post_binance(url, params) do
+  def signed_request_binance(url, params, method) do
     argument_string =
       params
       |> Map.to_list()
@@ -79,8 +79,12 @@ defmodule Binance.Rest.HTTPClient do
 
     body = "#{argument_string}&signature=#{signature}"
 
-    case HTTPoison.post("#{@endpoint}#{url}", body, [
-           {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
+    case apply(HTTPoison, method, [
+           "#{@endpoint}#{url}",
+           body,
+           [
+             {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
+           ]
          ]) do
       {:error, err} ->
         {:error, {:http_error, err}}
@@ -91,6 +95,43 @@ defmodule Binance.Rest.HTTPClient do
           {:error, err} -> {:error, {:poison_decode_error, err}}
         end
     end
+  end
+
+  @doc """
+  This is only for post, you need to send an empty body and the api key
+  to be able to create a new listening key.
+
+  """
+  def unsigned_request_binance(url, body, method) do
+    headers = [
+      {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
+    ]
+
+    case do_unsigned_request(url, body, method, headers) do
+      {:error, err} ->
+        {:error, {:http_error, err}}
+
+      {:ok, response} ->
+        case Poison.decode(response.body) do
+          {:ok, data} -> {:ok, data}
+          {:error, err} -> {:error, {:poison_decode_error, err}}
+        end
+    end
+  end
+
+  defp do_unsigned_request(url, nil, method, headers) do
+    apply(HTTPoison, method, [
+      "#{@endpoint}#{url}",
+      headers
+    ])
+  end
+
+  defp do_unsigned_request(url, body, method, headers) do
+    apply(HTTPoison, method, [
+      "#{@endpoint}#{url}",
+      body,
+      headers
+    ])
   end
 
   defp validate_credentials(nil, nil),
