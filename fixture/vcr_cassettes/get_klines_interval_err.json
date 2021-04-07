@@ -1,0 +1,42 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": [],
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.binance.com/api/v3/klines?symbol=LTCBTC&interval=1"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"code\":-1120,\"msg\":\"Invalid interval.\"}",
+      "headers": {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Content-Length": "40",
+        "Connection": "keep-alive",
+        "Date": "Wed, 07 Apr 2021 19:32:53 GMT",
+        "Server": "nginx",
+        "x-mbx-uuid": "72177691-412c-4ad8-9aa7-e4dc13c6d262",
+        "x-mbx-used-weight": "1",
+        "x-mbx-used-weight-1m": "1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'self'",
+        "X-Content-Security-Policy": "default-src 'self'",
+        "X-WebKit-CSP": "default-src 'self'",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-Cache": "Error from cloudfront",
+        "Via": "1.1 88a6e4649c26b2bcd7453193ab794326.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "ATL56-C1",
+        "X-Amz-Cf-Id": "DEaJcR0HSAdk-LnOR26ZewEAwjkWqD1Za1TUdKosTKEgtOk_cVEnBQ=="
+      },
+      "status_code": 400,
+      "type": "ok"
+    }
+  }
+]

@@ -1,0 +1,45 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": [],
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.binance.com/api/v3/klines?symbol=LTCBTC&interval=1h"
+    },
+    "response": {
+      "binary": false,
+      "body": "[[1616025600000,\"0.00349600\",\"0.00350000\",\"0.00346900\",\"0.00349500\",\"10438.37000000\",1616029199999,\"36.31825436\",2338,\"4847.44000000\",\"16.87297134\",\"0\"],[1616029200000,\"0.00349600\",\"0.00349700\",\"0.00347400\",\"0.00347900\",\"5635.90000000\",1616032799999,\"19.65151327\",1372,\"2796.91000000\",\"9.75640680\",\"0\"]]",
+      "headers": {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Content-Length": "514",
+        "Connection": "keep-alive",
+        "Date": "Wed, 24 Mar 2021 13:38:44 GMT",
+        "Server": "nginx",
+        "Vary": "Accept-Encoding",
+        "x-mbx-uuid": "3586f229-72fd-4444-879c-00d1d411577a",
+        "x-mbx-used-weight": "2",
+        "x-mbx-used-weight-1m": "2",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'self'",
+        "X-Content-Security-Policy": "default-src 'self'",
+        "X-WebKit-CSP": "default-src 'self'",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 fc1b267cd678abf6b6d41947e148c0e1.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "LHR61-C1",
+        "X-Amz-Cf-Id": "4xz5RrgW9Blp2DYl6vjlYMjjteI5yDIbQ_JaKyFWgPqqEqne3Aqriw=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
