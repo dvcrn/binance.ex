@@ -154,6 +154,73 @@ defmodule Binance do
     end
   end
 
+  # User data streams
+
+  @doc """
+  Creates a socket listen key that later can be used as parameter to listen for
+  user related events.
+
+  Returns `{:ok, %Binance.DataStream{}}` or `{:error, reason}`.
+
+  ## Example
+  ```
+  {:ok,
+    %Binance.DataStream{
+      listen_key: "pqia91ma19a5s61cv6a81va65sdf19v8a65a1a5s61cv6a81va65sdf19v8a65a1"
+    }
+  }
+  ```
+
+  For more context please read https://github.com/binance/binance-spot-api-docs/blob/master/user-data-stream.md#create-a-listenkey
+
+  """
+  def create_listen_key() do
+    case HTTPClient.unsigned_request_binance("/api/v3/userDataStream", "", :post) do
+      {:ok, data} -> {:ok, Binance.DataStream.new(data)}
+      error -> error
+    end
+  end
+
+  @doc """
+  Socket listen key expires after 30 minutes withouth a pong response, this
+  allows keeping it alive.
+
+  Returns `{:ok, %{}}` or `{:error, reason}`.
+
+  For more context please read https://github.com/binance/binance-spot-api-docs/blob/master/user-data-stream.md#pingkeep-alive-a-listenkey
+
+  """
+  def keep_alive_listen_key(key) do
+    case HTTPClient.unsigned_request_binance(
+           "/api/v3/userDataStream",
+           "listenKey=#{key}",
+           :put
+         ) do
+      {:ok, data} -> {:ok, data}
+      error -> error
+    end
+  end
+
+  @doc """
+  Closes/disables the listen key. To be used when you stop listening to the
+  stream.
+
+  Returns `{:ok, %{}}` or `{:error, reason}`.
+
+  For more context please read https://github.com/binance/binance-spot-api-docs/blob/master/user-data-stream.md#close-a-listenkey
+
+  """
+  def close_listen_key(key) do
+    case HTTPClient.unsigned_request_binance(
+           "/api/v3/userDataStream?listenKey=#{key}",
+           nil,
+           :delete
+         ) do
+      {:ok, data} -> {:ok, data}
+      error -> error
+    end
+  end
+
   # Order
 
   @doc """
@@ -213,7 +280,7 @@ defmodule Binance do
       |> Map.merge(unless(is_nil(time_in_force), do: %{timeInForce: time_in_force}, else: %{}))
       |> Map.merge(unless(is_nil(price), do: %{price: format_price(price)}, else: %{}))
 
-    case HTTPClient.post_binance("/api/v3/order", arguments) do
+    case HTTPClient.signed_request_binance("/api/v3/order", arguments, :post) do
       {:ok, %{"code" => code, "msg" => msg}} ->
         {:error, {:binance_error, %{code: code, msg: msg}}}
 
