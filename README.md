@@ -1,7 +1,5 @@
 # binance.ex
 
-[![Build Status](https://travis-ci.org/dvcrn/binance.ex.svg?branch=master)](https://travis-ci.org/dvcrn/binance.ex)
-
 Elixir wrapper for interacting with the [Binance API](https://github.com/binance-exchange/binance-official-api-docs).
 
 ## Installation
