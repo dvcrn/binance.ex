@@ -101,8 +101,8 @@ defmodule Binance do
   Retrieves klines for a symbol, provided a given interval
   """
 
-  def get_klines(symbol, interval) when is_binary(symbol) do
-    case HTTPClient.get_binance("/api/v3/klines?symbol=#{symbol}&interval=#{interval}") do
+  def get_klines(symbol, interval, limit \\ 500) when is_binary(symbol) do
+    case HTTPClient.get_binance("/api/v3/klines?symbol=#{symbol}&interval=#{interval}&limit=#{limit}") do
       {:ok, data} ->
         #IO.inspect data
         # opts = [
