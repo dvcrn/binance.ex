@@ -98,6 +98,44 @@ defmodule Binance do
   end
 
   @doc """
+  Retrieves klines for a symbol, provided a given interval, e.g. "1h".
+
+  Function can also take in a 'limit' argument to reduce the number of intervals.
+
+  Returns `{:ok, [%Binance.Kline{}]` or `{:error, reason}`
+
+  ## Example
+  ```
+  {:ok,
+  [
+   %Binance.Kline{
+     close: "0.16527000",
+     close_time: 1617861599999,
+     high: "0.17100000",
+     ignore: "0",
+     low: "0.16352000",
+     number_of_trades: 16167,
+     open: "0.17088000",
+     open_time: 1617858000000,
+     quote_asset_volume: "7713624.32966000",
+     taker_buy_base_asset_volume: "22020677.70000000",
+     taker_buy_quote_asset_volume: "3668705.43042700",
+     volume: "46282422.20000000"
+   },
+   %Binance.Kline{
+   ...
+   ```
+  """
+
+  def get_klines(symbol, interval, limit \\ 500) when is_binary(symbol) do
+    case HTTPClient.get_binance("/api/v3/klines?symbol=#{symbol}&interval=#{interval}&limit=#{limit}") do
+      {:ok, data} ->
+        {:ok, Enum.map(data, &Binance.Kline.new(&1))}
+      err -> err
+    end
+  end
+
+  @doc """
   Retrieves the bids & asks of the order book up to the depth for the given symbol
 
   Returns `{:ok, %{bids: [...], asks: [...], lastUpdateId: 12345}}` or `{:error, reason}`

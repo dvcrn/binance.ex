@@ -101,6 +101,25 @@ defmodule BinanceTest do
     end
   end
 
+  describe ".get_klines" do
+    test "returns the klines for a given symbol and interval" do
+      use_cassette "get_klines_ok" do
+        assert Binance.get_klines("LTCBTC", "1h") ==
+          {
+            :ok,
+            [%Binance.Kline{close: "0.00349500", close_time: 1616029199999, high: "0.00350000", ignore: "0", low: "0.00346900", number_of_trades: 2338, open: "0.00349600", open_time: 1616025600000, quote_asset_volume: "36.31825436", taker_buy_base_asset_volume: "4847.44000000", taker_buy_quote_asset_volume: "16.87297134", volume: "10438.37000000"}, %Binance.Kline{close: "0.00347900", close_time: 1616032799999, high: "0.00349700", ignore: "0", low: "0.00347400", number_of_trades: 1372, open: "0.00349600", open_time: 1616029200000, quote_asset_volume: "19.65151327", taker_buy_base_asset_volume: "2796.91000000", taker_buy_quote_asset_volume: "9.75640680", volume: "5635.90000000"}]
+          }
+      end
+    end
+
+    test "returns error with invalid interval" do
+      use_cassette "get_klines_interval_err" do
+        assert Binance.get_klines("LTCBTC", "1") ==
+          {:error, %{"code" => -1120, "msg" => "Invalid interval."}}
+      end
+    end
+  end
+
   describe ".get_depth" do
     test "returns the bids & asks up to the given depth" do
       use_cassette "get_depth_ok" do
