@@ -19,6 +19,13 @@ defmodule BinanceTest do
     end
   end
 
+  test "get_historical_trades success returns the latest trades" do
+    use_cassette "get_historical_trades_ok" do
+      assert {:ok, response} = Binance.get_historical_trades("XRPUSDT", 1)
+      assert [%Binance.HistoricalTrade{} | _tail] = response
+    end
+  end
+
   test "get_exchange_info success returns the trading rules and symbol information" do
     use_cassette "get_exchange_info_ok" do
       assert {:ok, %Binance.ExchangeInfo{} = info} = Binance.get_exchange_info()
@@ -105,17 +112,46 @@ defmodule BinanceTest do
     test "returns the klines for a given symbol and interval" do
       use_cassette "get_klines_ok" do
         assert Binance.get_klines("LTCBTC", "1h") ==
-          {
-            :ok,
-            [%Binance.Kline{close: "0.00349500", close_time: 1616029199999, high: "0.00350000", ignore: "0", low: "0.00346900", number_of_trades: 2338, open: "0.00349600", open_time: 1616025600000, quote_asset_volume: "36.31825436", taker_buy_base_asset_volume: "4847.44000000", taker_buy_quote_asset_volume: "16.87297134", volume: "10438.37000000"}, %Binance.Kline{close: "0.00347900", close_time: 1616032799999, high: "0.00349700", ignore: "0", low: "0.00347400", number_of_trades: 1372, open: "0.00349600", open_time: 1616029200000, quote_asset_volume: "19.65151327", taker_buy_base_asset_volume: "2796.91000000", taker_buy_quote_asset_volume: "9.75640680", volume: "5635.90000000"}]
-          }
+                 {
+                   :ok,
+                   [
+                     %Binance.Kline{
+                       close: "0.00349500",
+                       close_time: 1_616_029_199_999,
+                       high: "0.00350000",
+                       ignore: "0",
+                       low: "0.00346900",
+                       number_of_trades: 2338,
+                       open: "0.00349600",
+                       open_time: 1_616_025_600_000,
+                       quote_asset_volume: "36.31825436",
+                       taker_buy_base_asset_volume: "4847.44000000",
+                       taker_buy_quote_asset_volume: "16.87297134",
+                       volume: "10438.37000000"
+                     },
+                     %Binance.Kline{
+                       close: "0.00347900",
+                       close_time: 1_616_032_799_999,
+                       high: "0.00349700",
+                       ignore: "0",
+                       low: "0.00347400",
+                       number_of_trades: 1372,
+                       open: "0.00349600",
+                       open_time: 1_616_029_200_000,
+                       quote_asset_volume: "19.65151327",
+                       taker_buy_base_asset_volume: "2796.91000000",
+                       taker_buy_quote_asset_volume: "9.75640680",
+                       volume: "5635.90000000"
+                     }
+                   ]
+                 }
       end
     end
 
     test "returns error with invalid interval" do
       use_cassette "get_klines_interval_err" do
         assert Binance.get_klines("LTCBTC", "1") ==
-          {:error, %{"code" => -1120, "msg" => "Invalid interval."}}
+                 {:error, %{"code" => -1120, "msg" => "Invalid interval."}}
       end
     end
   end
@@ -127,20 +163,20 @@ defmodule BinanceTest do
                  :ok,
                  %Binance.OrderBook{
                    asks: [
-                      ["56905.88000000", "0.01215200"],
-                      ["56906.08000000", "0.52000000"],
-                      ["56910.50000000", "0.07710900"],
-                      ["56912.73000000", "0.01494300"],
-                      ["56914.61000000", "0.67202300"]
-                    ],
-                    bids: [
-                      ["56902.15000000", "0.00371500"],
-                      ["56900.01000000", "0.00144100"],
-                      ["56888.97000000", "0.26976200"],
-                      ["56888.96000000", "0.55709100"],
-                      ["56888.38000000", "0.16033500"]
-                    ],
-                    last_update_id: 9_699_548_377
+                     ["56905.88000000", "0.01215200"],
+                     ["56906.08000000", "0.52000000"],
+                     ["56910.50000000", "0.07710900"],
+                     ["56912.73000000", "0.01494300"],
+                     ["56914.61000000", "0.67202300"]
+                   ],
+                   bids: [
+                     ["56902.15000000", "0.00371500"],
+                     ["56900.01000000", "0.00144100"],
+                     ["56888.97000000", "0.26976200"],
+                     ["56888.96000000", "0.55709100"],
+                     ["56888.38000000", "0.16033500"]
+                   ],
+                   last_update_id: 9_699_548_377
                  }
                }
       end
