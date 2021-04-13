@@ -35,6 +35,13 @@ defmodule Binance do
     end
   end
 
+  def get_historical_trades() do
+    case HTTPClient.get_binance("/api/v3/historicalTrades") do
+      {:ok, data} -> {:ok, Binance.ExchangeInfo.new(data)}
+      err -> err
+    end
+  end
+
   # Ticker
 
   @doc """
@@ -128,10 +135,14 @@ defmodule Binance do
   """
 
   def get_klines(symbol, interval, limit \\ 500) when is_binary(symbol) do
-    case HTTPClient.get_binance("/api/v3/klines?symbol=#{symbol}&interval=#{interval}&limit=#{limit}") do
+    case HTTPClient.get_binance(
+           "/api/v3/klines?symbol=#{symbol}&interval=#{interval}&limit=#{limit}"
+         ) do
       {:ok, data} ->
         {:ok, Enum.map(data, &Binance.Kline.new(&1))}
-      err -> err
+
+      err ->
+        err
     end
   end
 
