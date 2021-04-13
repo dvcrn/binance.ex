@@ -35,10 +35,24 @@ defmodule Binance do
     end
   end
 
+  @doc """
+  Get historical trades
+
+  Returns `{:ok, [%Binance.HistoricalTrade{}]}` or `{:error, reason}`.
+
+  ## Example
+  {:ok,
+    []
+  }
+  """
   def get_historical_trades() do
     case HTTPClient.get_binance("/api/v3/historicalTrades") do
-      {:ok, data} -> {:ok, Binance.ExchangeInfo.new(data)}
-      err -> err
+      {:ok, data} ->
+        IO.inspect(data)
+        {:ok, Binance.HistoricalTrade.new(data)}
+
+      err ->
+        err
     end
   end
 
