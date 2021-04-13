@@ -3,8 +3,8 @@
 use Mix.Config
 
 config :binance,
-  api_key: "",
-  secret_key: "",
+  api_key: "NGC2F2PQBxVc0Ps9xQgySYQPNx23Quc5E3cKJRJMkVOZbt6cWSZ6yzB73F75D9sn",
+  secret_key: "kna1OGhi7bY5GBQNq8OI9CzIWRLr78ETV8GhGPyzQqIWPS0KJzkMhAjn4z6TbxkN",
   end_point: "https://api.binance.com"
 
 config :exvcr,
