@@ -42,16 +42,28 @@ defmodule Binance do
 
   ## Example
   {:ok,
-    []
+    [%Binance.HistoricalTrade{
+     id: 192180149,
+     is_best_match: true,
+     is_buyer_maker: true,
+     price: "1.79878000",
+     qty: "55.50000000",
+     quote_qty: "99.83229000",
+     time: 1618341167715
+   }]
   }
   """
-  def get_historical_trades() do
-    case HTTPClient.get_binance("/api/v3/historicalTrades") do
-      {:ok, data} ->
-        IO.inspect(data)
-        {:ok, Binance.HistoricalTrade.new(data)}
+  def get_historical_trades(symbol, limit) do
+    params = %{
+      symbol: symbol,
+      limit: limit
+    }
 
-      err ->
+    case HTTPClient.request_binance("/api/v3/historicalTrades", params, :get) do
+      {:ok, data} ->
+        {:ok, Enum.map(data, &Binance.HistoricalTrade.new(&1))}
+
+      {:error, err} ->
         err
     end
   end
