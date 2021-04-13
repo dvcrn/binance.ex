@@ -37,6 +37,7 @@ defmodule Binance do
 
   @doc """
   Get historical trades
+  https://binance-docs.github.io/apidocs/spot/en/#old-trade-lookup
 
   Returns `{:ok, [%Binance.HistoricalTrade{}]}` or `{:error, reason}`.
 
@@ -53,19 +54,25 @@ defmodule Binance do
    }]
   }
   """
-  def get_historical_trades(symbol, limit) do
+  def get_historical_trades(symbol, limit)
+      when is_binary(symbol) and is_integer(limit) do
     params = %{
       symbol: symbol,
       limit: limit
     }
 
-    case HTTPClient.request_binance("/api/v3/historicalTrades", params, :get) do
-      {:ok, data} ->
-        {:ok, Enum.map(data, &Binance.HistoricalTrade.new(&1))}
+    request_historical_trades(params)
+  end
 
-      {:error, err} ->
-        err
-    end
+  def get_historical_trades(symbol, limit, from)
+      when is_binary(symbol) and is_integer(limit) and is_integer(from) do
+    params = %{
+      symbol: symbol,
+      limit: limit,
+      from: from
+    }
+
+    request_historical_trades(params)
   end
 
   # Ticker
@@ -755,6 +762,16 @@ defmodule Binance do
     case HTTPClient.delete_binance("/api/v3/order", arguments, secret_key, api_key) do
       {:ok, data} -> {:ok, Binance.Order.new(data)}
       err -> err
+    end
+  end
+
+  defp request_historical_trades(params) do
+    case HTTPClient.request_binance("/api/v3/historicalTrades", params, :get) do
+      {:ok, data} ->
+        {:ok, Enum.map(data, &Binance.HistoricalTrade.new(&1))}
+
+      {:error, err} ->
+        err
     end
   end
 end
