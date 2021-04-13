@@ -24,6 +24,11 @@ defmodule BinanceTest do
       assert {:ok, response} = Binance.get_historical_trades("XRPUSDT", 1)
       assert [%Binance.HistoricalTrade{} | _tail] = response
     end
+
+    use_cassette "get_historical_trades_from_id_ok" do
+      assert {:ok, response} = Binance.get_historical_trades("XRPUSDT", 1, 28457)
+      assert [%Binance.HistoricalTrade{} | _tail] = response
+    end
   end
 
   test "get_exchange_info success returns the trading rules and symbol information" do

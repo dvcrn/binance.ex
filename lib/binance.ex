@@ -64,12 +64,12 @@ defmodule Binance do
     request_historical_trades(params)
   end
 
-  def get_historical_trades(symbol, limit, from)
-      when is_binary(symbol) and is_integer(limit) and is_integer(from) do
+  def get_historical_trades(symbol, limit, fromId)
+      when is_binary(symbol) and is_integer(limit) and is_integer(fromId) do
     params = %{
       symbol: symbol,
       limit: limit,
-      from: from
+      fromId: fromId
     }
 
     request_historical_trades(params)
