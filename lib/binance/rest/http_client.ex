@@ -97,6 +97,30 @@ defmodule Binance.Rest.HTTPClient do
     end
   end
 
+  def request_binance(url, params, method) do
+    argument_string =
+      params
+      |> Map.to_list()
+      |> Enum.map(fn x -> Tuple.to_list(x) |> Enum.join("=") end)
+      |> Enum.join("&")
+
+    case apply(HTTPoison, method, [
+           "#{@endpoint}#{url}?#{argument_string}",
+           [
+             {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
+           ]
+         ]) do
+      {:error, err} ->
+        {:error, {:http_error, err}}
+
+      {:ok, response} ->
+        case Poison.decode(response.body) do
+          {:ok, data} -> {:ok, data}
+          {:error, err} -> {:error, {:poison_decode_error, err}}
+        end
+    end
+  end
+
   @doc """
   This is only for post, you need to send an empty body and the api key
   to be able to create a new listening key.
