@@ -119,24 +119,23 @@ defmodule Binance.Rest.HTTPClient do
     end
   end
 
-  defp do_unsigned_request(url, data, :get, headers) do
+  defp do_unsigned_request(url, nil, method, headers) do
+    apply(HTTPoison, method, [
+      "#{@endpoint}#{url}",
+      headers
+    ])
+  end
+
+  defp do_unsigned_request(url, data, method, headers)
+       when method == :get do
     argument_string =
       data
       |> Map.to_list()
       |> Enum.map(fn x -> Tuple.to_list(x) |> Enum.join("=") end)
       |> Enum.join("&")
 
-    url = url <> "?#{argument_string}"
-
-    apply(HTTPoison, :get, [
-      "#{@endpoint}#{url}",
-      headers
-    ])
-  end
-
-  defp do_unsigned_request(url, nil, method, headers) do
     apply(HTTPoison, method, [
-      "#{@endpoint}#{url}",
+      "#{@endpoint}#{url}" <> "?#{argument_string}",
       headers
     ])
   end
