@@ -71,9 +71,8 @@ defmodule Binance do
 
     case HTTPClient.unsigned_request_binance(
            "/api/v3/historicalTrades",
-           nil,
-           :get,
-           arguments
+           arguments,
+           :get
          ) do
       {:ok, data} ->
         {:ok, Enum.map(data, &Binance.HistoricalTrade.new(&1))}

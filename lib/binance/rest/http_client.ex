@@ -98,20 +98,16 @@ defmodule Binance.Rest.HTTPClient do
   end
 
   @doc """
-  Method used only for GET method
+  You need to send an empty body and the api key
+  to be able to create a new listening key.
+
   """
-  def unsigned_request_binance(url, nil, :get, params) do
+  def unsigned_request_binance(url, data, method) do
     headers = [
       {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
     ]
 
-    argument_string =
-      params
-      |> Map.to_list()
-      |> Enum.map(fn x -> Tuple.to_list(x) |> Enum.join("=") end)
-      |> Enum.join("&")
-
-    case do_unsigned_request(url <> "?#{argument_string}", nil, :get, headers) do
+    case do_unsigned_request(url, data, method, headers) do
       {:error, err} ->
         {:error, {:http_error, err}}
 
@@ -123,26 +119,19 @@ defmodule Binance.Rest.HTTPClient do
     end
   end
 
-  @doc """
-  You need to send an empty body and the api key
-  to be able to create a new listening key.
+  defp do_unsigned_request(url, data, :get, headers) do
+    argument_string =
+      data
+      |> Map.to_list()
+      |> Enum.map(fn x -> Tuple.to_list(x) |> Enum.join("=") end)
+      |> Enum.join("&")
 
-  """
-  def unsigned_request_binance(url, body, method) do
-    headers = [
-      {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
-    ]
+    url = url <> "?#{argument_string}"
 
-    case do_unsigned_request(url, body, method, headers) do
-      {:error, err} ->
-        {:error, {:http_error, err}}
-
-      {:ok, response} ->
-        case Poison.decode(response.body) do
-          {:ok, data} -> {:ok, data}
-          {:error, err} -> {:error, {:poison_decode_error, err}}
-        end
-    end
+    apply(HTTPoison, :get, [
+      "#{@endpoint}#{url}",
+      headers
+    ])
   end
 
   defp do_unsigned_request(url, nil, method, headers) do
