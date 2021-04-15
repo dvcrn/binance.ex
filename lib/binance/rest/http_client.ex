@@ -64,9 +64,7 @@ defmodule Binance.Rest.HTTPClient do
   def signed_request_binance(url, params, method) do
     argument_string =
       params
-      |> Map.to_list()
-      |> Enum.map(fn x -> Tuple.to_list(x) |> Enum.join("=") end)
-      |> Enum.join("&")
+      |> prepare_query_params()
 
     # generate signature
     signature =
@@ -130,9 +128,7 @@ defmodule Binance.Rest.HTTPClient do
        when method == :get do
     argument_string =
       data
-      |> Map.to_list()
-      |> Enum.map(fn x -> Tuple.to_list(x) |> Enum.join("=") end)
-      |> Enum.join("&")
+      |> prepare_query_params()
 
     apply(HTTPoison, method, [
       "#{@endpoint}#{url}" <> "?#{argument_string}",
@@ -179,5 +175,12 @@ defmodule Binance.Rest.HTTPClient do
 
   defp parse_response_body({:error, err}) do
     {:error, {:poison_decode_error, err}}
+  end
+
+  defp prepare_query_params(params) do
+    params
+    |> Map.to_list()
+    |> Enum.map(fn x -> Tuple.to_list(x) |> Enum.join("=") end)
+    |> Enum.join("&")
   end
 end
