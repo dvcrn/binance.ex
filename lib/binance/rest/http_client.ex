@@ -124,13 +124,12 @@ defmodule Binance.Rest.HTTPClient do
     ])
   end
 
-  defp do_unsigned_request(url, data, method, headers)
-       when method == :get do
+  defp do_unsigned_request(url, data, :get, headers) do
     argument_string =
       data
       |> prepare_query_params()
 
-    apply(HTTPoison, method, [
+    apply(HTTPoison, :get, [
       "#{@endpoint}#{url}" <> "?#{argument_string}",
       headers
     ])
