@@ -21,7 +21,7 @@ defmodule BinanceTest do
 
   test "get_historical_trades success returns the latest trades" do
     use_cassette "get_historical_trades_ok" do
-      assert {:ok, response} = Binance.get_historical_trades("XRPUSDT", 1)
+      assert {:ok, response} = Binance.get_historical_trades("XRPUSDT", 1, nil)
       assert [%Binance.HistoricalTrade{} | _tail] = response
     end
 

@@ -54,25 +54,33 @@ defmodule Binance do
    }]
   }
   """
-  def get_historical_trades(symbol, limit)
+  def get_historical_trades(symbol, limit, from_id)
       when is_binary(symbol) and is_integer(limit) do
-    params = %{
-      symbol: symbol,
-      limit: limit
-    }
+    arguments =
+      %{
+        symbol: symbol,
+        limit: limit
+      }
+      |> Map.merge(
+        unless(
+          is_nil(from_id),
+          do: %{fromId: from_id},
+          else: %{}
+        )
+      )
 
-    request_historical_trades(params)
-  end
+    case HTTPClient.unsigned_request_binance(
+           "/api/v3/historicalTrades",
+           nil,
+           :get,
+           arguments
+         ) do
+      {:ok, data} ->
+        {:ok, Enum.map(data, &Binance.HistoricalTrade.new(&1))}
 
-  def get_historical_trades(symbol, limit, fromId)
-      when is_binary(symbol) and is_integer(limit) and is_integer(fromId) do
-    params = %{
-      symbol: symbol,
-      limit: limit,
-      fromId: fromId
-    }
-
-    request_historical_trades(params)
+      {:error, err} ->
+        err
+    end
   end
 
   # Ticker
@@ -762,16 +770,6 @@ defmodule Binance do
     case HTTPClient.delete_binance("/api/v3/order", arguments, secret_key, api_key) do
       {:ok, data} -> {:ok, Binance.Order.new(data)}
       err -> err
-    end
-  end
-
-  defp request_historical_trades(params) do
-    case HTTPClient.request_binance("/api/v3/historicalTrades", params, :get) do
-      {:ok, data} ->
-        {:ok, Enum.map(data, &Binance.HistoricalTrade.new(&1))}
-
-      {:error, err} ->
-        err
     end
   end
 end

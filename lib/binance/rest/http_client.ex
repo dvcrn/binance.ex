@@ -97,19 +97,21 @@ defmodule Binance.Rest.HTTPClient do
     end
   end
 
-  def request_binance(url, params, method) do
+  @doc """
+  Method used only for GET method
+  """
+  def unsigned_request_binance(url, nil, :get, params) do
+    headers = [
+      {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
+    ]
+
     argument_string =
       params
       |> Map.to_list()
       |> Enum.map(fn x -> Tuple.to_list(x) |> Enum.join("=") end)
       |> Enum.join("&")
 
-    case apply(HTTPoison, method, [
-           "#{@endpoint}#{url}?#{argument_string}",
-           [
-             {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
-           ]
-         ]) do
+    case do_unsigned_request(url <> "?#{argument_string}", nil, :get, headers) do
       {:error, err} ->
         {:error, {:http_error, err}}
 
@@ -122,7 +124,7 @@ defmodule Binance.Rest.HTTPClient do
   end
 
   @doc """
-  This is only for post, you need to send an empty body and the api key
+  You need to send an empty body and the api key
   to be able to create a new listening key.
 
   """
