@@ -1,0 +1,46 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.binance.com/api/v3/historicalTrades?fromId=28457&limit=1&symbol=XRPUSDT"
+    },
+    "response": {
+      "binary": false,
+      "body": "[{\"id\":28457,\"price\":\"0.88780000\",\"qty\":\"95.00000000\",\"quoteQty\":\"84.34100000\",\"time\":1525447926543,\"isBuyerMaker\":false,\"isBestMatch\":true}]",
+      "headers": {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Content-Length": "141",
+        "Connection": "keep-alive",
+        "Date": "Tue, 13 Apr 2021 20:22:36 GMT",
+        "Server": "nginx",
+        "x-mbx-uuid": "03f255c8-51d4-427e-9455-8355cd3e92d9",
+        "x-mbx-used-weight": "5",
+        "x-mbx-used-weight-1m": "5",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'self'",
+        "X-Content-Security-Policy": "default-src 'self'",
+        "X-WebKit-CSP": "default-src 'self'",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 6fae8bd757404c66b9999cfeaff203bc.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "LHR61-C1",
+        "X-Amz-Cf-Id": "nn-zv3uMWBjKaLaPgYrRBzmguRWWuiT48Xl5NyWbfyRAMETnjSXlRw=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

@@ -23,7 +23,7 @@ end
 ```
 
 3. Add your Binance API credentials to your `config.exs` file, like so (you can create a new API
-   key [here](https://www.binance.com/userCenter/createApi.html)):
+   key [here](https://www.binance.com/en/my/settings/api-management)):
 
 ```
 config :binance,

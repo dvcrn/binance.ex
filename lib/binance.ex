@@ -35,6 +35,53 @@ defmodule Binance do
     end
   end
 
+  @doc """
+  Get historical trades
+  https://binance-docs.github.io/apidocs/spot/en/#old-trade-lookup
+
+  Returns `{:ok, [%Binance.HistoricalTrade{}]}` or `{:error, reason}`.
+
+  ## Example
+  {:ok,
+    [%Binance.HistoricalTrade{
+     id: 192180149,
+     is_best_match: true,
+     is_buyer_maker: true,
+     price: "1.79878000",
+     qty: "55.50000000",
+     quote_qty: "99.83229000",
+     time: 1618341167715
+   }]
+  }
+  """
+  def get_historical_trades(symbol, limit, from_id)
+      when is_binary(symbol) and is_integer(limit) do
+    arguments =
+      %{
+        symbol: symbol,
+        limit: limit
+      }
+      |> Map.merge(
+        unless(
+          is_nil(from_id),
+          do: %{fromId: from_id},
+          else: %{}
+        )
+      )
+
+    case HTTPClient.unsigned_request_binance(
+           "/api/v3/historicalTrades",
+           arguments,
+           :get
+         ) do
+      {:ok, data} ->
+        {:ok, Enum.map(data, &Binance.HistoricalTrade.new(&1))}
+
+      {:error, err} ->
+        err
+    end
+  end
+
   # Ticker
 
   @doc """
@@ -128,10 +175,14 @@ defmodule Binance do
   """
 
   def get_klines(symbol, interval, limit \\ 500) when is_binary(symbol) do
-    case HTTPClient.get_binance("/api/v3/klines?symbol=#{symbol}&interval=#{interval}&limit=#{limit}") do
+    case HTTPClient.get_binance(
+           "/api/v3/klines?symbol=#{symbol}&interval=#{interval}&limit=#{limit}"
+         ) do
       {:ok, data} ->
         {:ok, Enum.map(data, &Binance.Kline.new(&1))}
-      err -> err
+
+      err ->
+        err
     end
   end
 
