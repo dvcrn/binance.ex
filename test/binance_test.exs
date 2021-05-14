@@ -38,9 +38,24 @@ defmodule BinanceTest do
       assert info.server_time != nil
 
       assert info.rate_limits == [
-               %{"interval" => "MINUTE", "limit" => 1200, "rateLimitType" => "REQUESTS"},
-               %{"interval" => "SECOND", "limit" => 10, "rateLimitType" => "ORDERS"},
-               %{"interval" => "DAY", "limit" => 100_000, "rateLimitType" => "ORDERS"}
+               %{
+                 "interval" => "MINUTE",
+                 "limit" => 1200,
+                 "rateLimitType" => "REQUEST_WEIGHT",
+                 "intervalNum" => 1
+               },
+               %{
+                 "interval" => "SECOND",
+                 "limit" => 50,
+                 "rateLimitType" => "ORDERS",
+                 "intervalNum" => 10
+               },
+               %{
+                 "interval" => "DAY",
+                 "limit" => 160_000,
+                 "rateLimitType" => "ORDERS",
+                 "intervalNum" => 1
+               }
              ]
 
       assert info.exchange_filters == []
@@ -57,14 +72,34 @@ defmodule BinanceTest do
                    "tickSize" => "0.00000100"
                  },
                  %{
+                   "avgPriceMins" => 5,
+                   "filterType" => "PERCENT_PRICE",
+                   "multiplierDown" => "0.2",
+                   "multiplierUp" => "5"
+                 },
+                 %{
                    "filterType" => "LOT_SIZE",
                    "maxQty" => "100000.00000000",
                    "minQty" => "0.00100000",
                    "stepSize" => "0.00100000"
                  },
-                 %{"filterType" => "MIN_NOTIONAL", "minNotional" => "0.00100000"}
+                 %{
+                   "filterType" => "MIN_NOTIONAL",
+                   "minNotional" => "0.00010000",
+                   "applyToMarket" => true,
+                   "avgPriceMins" => 5
+                 },
+                 %{"filterType" => "ICEBERG_PARTS", "limit" => 10},
+                 %{
+                   "filterType" => "MARKET_LOT_SIZE",
+                   "maxQty" => "1262.52824669",
+                   "minQty" => "0.00000000",
+                   "stepSize" => "0.00000000"
+                 },
+                 %{"filterType" => "MAX_NUM_ORDERS", "maxNumOrders" => 200},
+                 %{"filterType" => "MAX_NUM_ALGO_ORDERS", "maxNumAlgoOrders" => 5}
                ],
-               "icebergAllowed" => false,
+               "icebergAllowed" => true,
                "orderTypes" => [
                  "LIMIT",
                  "LIMIT_MAKER",
@@ -75,7 +110,15 @@ defmodule BinanceTest do
                "quoteAsset" => "BTC",
                "quotePrecision" => 8,
                "status" => "TRADING",
-               "symbol" => "ETHBTC"
+               "symbol" => "ETHBTC",
+               "baseCommissionPrecision" => 8,
+               "isMarginTradingAllowed" => true,
+               "isSpotTradingAllowed" => true,
+               "ocoAllowed" => true,
+               "permissions" => ["SPOT", "MARGIN"],
+               "quoteAssetPrecision" => 8,
+               "quoteCommissionPrecision" => 8,
+               "quoteOrderQtyMarketAllowed" => true
              }
     end
   end
