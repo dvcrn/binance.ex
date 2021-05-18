@@ -24,7 +24,7 @@ defmodule Binance.MixProject do
     [
       mod: {Binance.Supervisor, []},
       applications: [:exconstructor, :poison, :httpoison],
-      extra_applications: [:logger, :exvcr]
+      extra_applications: [:logger]
     ]
   end
 
