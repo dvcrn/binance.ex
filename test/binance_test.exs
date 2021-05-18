@@ -83,7 +83,7 @@ defmodule BinanceTest do
   test "get_system_status success returns the system status" do
     use_cassette "get_system_status_ok" do
       assert {:ok, response} = Binance.get_system_status()
-      assert %Binance.SystemStatus{} = response
+      assert %Binance.SystemStatus{status: 0, msg: "normal"} == response
     end
   end
 
