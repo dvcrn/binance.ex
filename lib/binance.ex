@@ -221,6 +221,18 @@ defmodule Binance do
     end
   end
 
+  @doc """
+  Fetches system status.
+
+  Returns `{:ok, %Binance.SystemStatus{}}` or `{:error, reason}`.
+  """
+  def get_system_status() do
+    case HTTPClient.get_binance("/wapi/v3/systemStatus.html") do
+      {:ok, data} -> {:ok, Binance.SystemStatus.new(data)}
+      error -> error
+    end
+  end
+
   # Account
 
   @doc """
