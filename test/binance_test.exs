@@ -80,6 +80,13 @@ defmodule BinanceTest do
     end
   end
 
+  test "get_system_status success returns the system status" do
+    use_cassette "get_system_status_ok" do
+      assert {:ok, response} = Binance.get_system_status()
+      assert %Binance.SystemStatus{status: 0, msg: "normal"} == response
+    end
+  end
+
   test "get_all_prices returns a list of prices for every symbol" do
     use_cassette "get_all_prices_ok" do
       assert {:ok, symbol_prices} = Binance.get_all_prices()
