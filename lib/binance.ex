@@ -29,7 +29,7 @@ defmodule Binance do
   end
 
   def get_exchange_info() do
-    case HTTPClient.get_binance("/api/v1/exchangeInfo") do
+    case HTTPClient.get_binance("/api/v3/exchangeInfo") do
       {:ok, data} -> {:ok, Binance.ExchangeInfo.new(data)}
       err -> err
     end
