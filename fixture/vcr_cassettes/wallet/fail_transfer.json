@@ -1,0 +1,43 @@
+[
+  {
+    "request": {
+      "body": "amount=0.001&asset=BTC&timestamp=1622534776279&type=MARGIN_MAIN&signature=***",
+      "headers": {
+        "X-MBX-APIKEY": "***",
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.binance.com/sapi/v1/asset/transfer"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"code\":-3020,\"msg\":\"Transfer out amount exceeds max amount.\"}",
+      "headers": {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Content-Length": "62",
+        "Connection": "keep-alive",
+        "Date": "Tue, 01 Jun 2021 08:06:17 GMT",
+        "Server": "nginx",
+        "X-SAPI-USED-IP-WEIGHT-1M": "1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'self'",
+        "X-Content-Security-Policy": "default-src 'self'",
+        "X-WebKit-CSP": "default-src 'self'",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "X-Cache": "Error from cloudfront",
+        "Via": "1.1 5d364edd2927236ece76b1ef58ec87da.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "LAX3-C4",
+        "X-Amz-Cf-Id": "hyZffN8MdqYRWOp-qINHHsZzoCQ085c28tNcLoo7yPUYXPK8mYwklA=="
+      },
+      "status_code": 403,
+      "type": "ok"
+    }
+  }
+]
