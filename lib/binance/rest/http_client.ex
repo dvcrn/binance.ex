@@ -50,7 +50,7 @@ defmodule Binance.Rest.HTTPClient do
         argument_string = URI.encode_query(params)
 
         signature =
-          :crypto.hmac(
+          generate_signature(
             :sha256,
             secret_key,
             argument_string
@@ -68,7 +68,7 @@ defmodule Binance.Rest.HTTPClient do
 
     # generate signature
     signature =
-      :crypto.hmac(
+      generate_signature(
         :sha256,
         Application.get_env(:binance, :secret_key),
         argument_string
@@ -182,4 +182,12 @@ defmodule Binance.Rest.HTTPClient do
     |> Enum.map(fn x -> Tuple.to_list(x) |> Enum.join("=") end)
     |> Enum.join("&")
   end
+
+    # TODO: remove when we require OTP 22.1
+    if Code.ensure_loaded?(:crypto) and function_exported?(:crypto, :mac, 4) do
+      defp generate_signature(digest, key, argument_string), do: :crypto.mac(:hmac, digest, key, argument_string)
+    else
+      defp generate_signature(digest, key, argument_string), do: :crypto.hmac(digest, key, argument_string)
+    end
+
 end
