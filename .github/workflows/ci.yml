@@ -9,12 +9,16 @@ on:
 
 jobs:
   test:
+    strategy:
+      matrix:
+        elixir: [1.12.1]
+        otp: [22.2, 24.0.2]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: erlef/setup-beam@v1
         with:
-          otp-version: "22.2"
-          elixir-version: "1.9.4"
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
       - run: mix deps.get
       - run: mix test
