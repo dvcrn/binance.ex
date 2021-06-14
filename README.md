@@ -9,7 +9,7 @@ Elixir wrapper for interacting with the [Binance API](https://github.com/binance
 ```elixir
 def deps do
   [
-    {:binance, "~> 1.0.0"}
+    {:binance, "~> 1.0"}
   ]
 end
 ```
