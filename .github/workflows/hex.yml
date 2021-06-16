@@ -1,0 +1,23 @@
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: 24.0.2
+          elixir-version: 1.12.1
+
+      - run: mix deps.get
+      - run: mix test
+
+      - name: Publish to Hex.pm
+        uses: erlangpack/github-action@v1
+        env:
+          HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
