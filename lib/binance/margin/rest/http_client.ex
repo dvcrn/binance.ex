@@ -181,6 +181,28 @@ defmodule Binance.Margin.Rest.HTTPClient do
     {:error, {:http_error, err}, parse_rate_limits(err)}
   end
 
+  defp parse_response({:ok, %{status_code: status_code} = response}, :rate_limit)
+       when status_code not in 200..299 do
+    response.body
+    |> Poison.decode()
+    |> case do
+      {:ok, %{"code" => code, "msg" => msg}} ->
+        {:error, {:binance_error, %{code: code, msg: msg}}, parse_rate_limits(response)}
+
+      {:error, error} ->
+        {:error, {:poison_decode_error, error}, parse_rate_limits(response)}
+    end
+  end
+
+  defp parse_response({:ok, response}, :rate_limit) do
+    response.body
+    |> Poison.decode()
+    |> case do
+      {:ok, data} -> {:ok, data, parse_rate_limits(response)}
+      {:error, error} -> {:error, {:poison_decode_error, error}, parse_rate_limits(response)}
+    end
+  end
+
   defp parse_response({:error, err}) do
     {:error, {:http_error, err}}
   end
