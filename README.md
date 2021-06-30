@@ -1,6 +1,6 @@
 # binance.ex
 
-Elixir wrapper for interacting with the [Binance API](https://github.com/binance-exchange/binance-official-api-docs).
+Elixir wrapper for interacting with the [Binance API](https://github.com/binance/binance-spot-api-docs).
 
 ## Installation
 
