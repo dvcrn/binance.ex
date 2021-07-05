@@ -96,6 +96,16 @@ defmodule Binance.Margin do
     end
   end
 
+  @spec get_kline_data(String.t(), String.t(), number) :: {:ok, map()} | {:error, error()}
+  def get_kline_data(instrument, interval, limit) do
+    case HTTPClient.get_binance(
+           "/api/v3/klines?symbol=#{instrument}&interval=#{interval}&limit=#{limit}"
+         ) do
+      {:ok, data} -> {:ok, data}
+      err -> err
+    end
+  end
+
   def create_order(
         %{symbol: symbol, side: side, type: type, quantity: quantity} = params,
         config \\ nil
