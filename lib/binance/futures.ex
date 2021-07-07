@@ -50,6 +50,29 @@ defmodule Binance.Futures do
     end
   end
 
+  @spec get_kline_data(String.t(), String.t(), number) :: {:ok, map()} | {:error, error()}
+  def get_kline_data(instrument, interval, limit) do
+    case HTTPClient.get_binance(
+           "/fapi/v1/klines?symbol=#{instrument}&interval=#{interval}&limit=#{limit}"
+         ) do
+      {:ok, data} -> {:ok, data}
+      err -> err
+    end
+  end
+
+  @spec get_continious_kline_data(String.t(), String.t(), String.t(), number) ::
+          {:ok, map()} | {:error, error()}
+  def get_continious_kline_data(instrument, interval, contract_type, limit) do
+    case HTTPClient.get_binance(
+           "/fapi/v1/continuousKlines?pair=#{instrument}&interval=#{interval}&limit=#{limit}&contractType=#{
+             contract_type
+           }"
+         ) do
+      {:ok, data} -> {:ok, data}
+      err -> err
+    end
+  end
+
   @spec get_exchange_info() :: {:ok, %Binance.ExchangeInfo{}} | {:error, error()}
   def get_exchange_info() do
     case HTTPClient.get_binance("/fapi/v1/exchangeInfo") do
