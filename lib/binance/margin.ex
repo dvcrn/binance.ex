@@ -200,6 +200,24 @@ defmodule Binance.Margin do
     end
   end
 
+  def cancel_all_orders(params, config \\ nil) do
+    params =
+      params
+      |> Map.merge(
+        unless(
+          is_nil(params[:is_isolated]),
+          do: %{isIsolated: params[:is_isolated]},
+          else: %{}
+        )
+      )
+
+    case HTTPClient.delete_binance("/sapi/v1/margin/openOrders", params, config) do
+      {:ok, %{"rejectReason" => _} = err} -> {:error, err}
+      {:ok, data} -> {:ok, Binance.Margin.Order.new(data)}
+      err -> err
+    end
+  end
+
   @doc """
   https://binance-docs.github.io/apidocs/spot/en/#margin-account-borrow-margin
 
