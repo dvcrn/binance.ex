@@ -355,4 +355,12 @@ defmodule Binance do
       err -> err
     end
   end
+
+  def cancel_all_orders(params, config \\ nil) do
+    case HTTPClient.delete_binance("/api/v3/openOrders", params, config) do
+      {:ok, %{"rejectReason" => _} = err} -> {:error, err}
+      {:ok, data} -> {:ok, Binance.Order.new(data)}
+      err -> err
+    end
+  end
 end
