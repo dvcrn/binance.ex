@@ -1,0 +1,44 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.binance.com/sapi/v1/account/status?timestamp=1629109272355&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"data\":\"Normal\"}",
+      "headers": {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Content-Length": "17",
+        "Connection": "keep-alive",
+        "Date": "Mon, 16 Aug 2021 10:21:12 GMT",
+        "Server": "nginx",
+        "X-SAPI-USED-IP-WEIGHT-1M": "1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Xss-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "default-src 'self'",
+        "X-Content-Security-Policy": "default-src 'self'",
+        "X-WebKit-CSP": "default-src 'self'",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 3df8c7f69354b0a9eb260d5b28286c92.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "SIN52-C2",
+        "X-Amz-Cf-Id": "KfhLfWRxbqAgVdS8ON_qQq_2mX-iORp2s0xATSqaK78fNTrX5X0IMA=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
