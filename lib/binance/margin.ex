@@ -106,6 +106,13 @@ defmodule Binance.Margin do
     end
   end
 
+  def get_account_status(config \\ nil) do
+    case HTTPClient.get_binance("/sapi/v1/account/status", %{}, config) do
+      {:ok, data} -> {:ok, data}
+      err -> err
+    end
+  end
+
   def create_order(
         %{symbol: symbol, side: side, type: type, quantity: quantity} = params,
         config \\ nil

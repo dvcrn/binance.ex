@@ -7,6 +7,12 @@ defmodule MarginTest do
     HTTPoison.start()
   end
 
+  test "get account status" do
+    use_cassette "get_account_status" do
+      assert Binance.Margin.get_account_status() == {:ok, %{"data" => "Normal"}}
+    end
+  end
+
   describe ".create_listen_key" do
     test "returns a listen key which could be used to subscrbe to a User Data stream" do
       use_cassette "margin/create_listen_key_ok" do
