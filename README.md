@@ -14,14 +14,12 @@ def deps do
 end
 ```
 
-2. Add your Binance API credentials to your `config.exs` file, like so (you can create a new API
+2. Export your Binance API credentials, like so (you can create a new API
    key [here](https://www.binance.com/en/my/settings/api-management)):
 
 ```
-config :binance,
-  api_key: "xxx",
-  secret_key: "xxx",
-  end_point: "https://api.binance.us" # Add for the US API end point. The default is for "https://api.binance.com"
+export BINANCE_API_KEY=****************************************************************
+export BINANCE_SECRET_KEY==************************************************************
 ```
 
 ## Usage
