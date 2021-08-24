@@ -3,8 +3,8 @@
 use Mix.Config
 
 config :binance,
-  api_key: "",
-  secret_key: "",
+  api_key: System.get_env("BINANCE_API_KEY") || raise("BINANCE_API_KEY"),
+  secret_key: System.get_env("BINANCE_SECRET_KEY") || raise("BINANCE_SECRET_KEY"),
   end_point: "https://api.binance.com"
 
 config :exvcr,

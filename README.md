@@ -19,8 +19,8 @@ end
 
 ```
 config :binance,
-  api_key: "xxx",
-  secret_key: "xxx",
+  api_key: System.get_env("BINANCE_API_KEY") || raise("BINANCE_API_KEY"),
+  secret_key: System.get_env("BINANCE_SECRET_KEY") || raise("BINANCE_SECRET_KEY"),
   end_point: "https://api.binance.us" # Add for the US API end point. The default is for "https://api.binance.com"
 ```
 
