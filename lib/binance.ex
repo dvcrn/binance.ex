@@ -783,4 +783,41 @@ defmodule Binance do
       err -> err
     end
   end
+
+  @doc """
+  Cancels all active orders on a symbol. This includes OCO orders.
+
+  Symbol and timestamp must be sent.
+
+  Returns `{:ok, %Binance.Order{}}` or `{:error, reason}`.
+
+  Weight: 1
+
+  Info: https://github.com/binance/binance-spot-api-docs/blob/master/rest-api.md#cancel-all-open-orders-on-a-symbol-trade
+  """
+  def cancel_all_orders(
+        symbol,
+        timestamp,
+        recv_window \\ nil
+      ) do
+    api_key = Application.get_env(:binance, :api_key)
+    secret_key = Application.get_env(:binance, :secret_key)
+
+    arguments =
+      %{
+        symbol: symbol,
+        timestamp: timestamp
+      }
+      |> Map.merge(unless(is_nil(recv_window), do: %{recvWindow: recv_window}, else: %{}))
+
+    case HTTPClient.delete_binance("/api/v3/openOrders", arguments, secret_key, api_key) do
+      {:ok, data} ->
+        # data
+
+        {:ok, Enum.map(data, &Binance.Order.new(&1))}
+
+      err ->
+        err
+    end
+  end
 end
