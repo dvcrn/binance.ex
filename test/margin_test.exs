@@ -188,4 +188,54 @@ defmodule MarginTest do
       end
     end
   end
+
+  describe "get cross collateral" do
+    test "cross collateral wallet" do
+      use_cassette "margin/cross_collateral_wallet_ok" do
+        assert Binance.Margin.get_cross_collateral_wallet() == {
+                 :ok,
+                 %Binance.Margin.CrossCollateralWallet{
+                   interest_free_limit: "0",
+                   total_borrowed: "30.00996504",
+                   total_cross_collateral: "78.87826688",
+                   total_interest: "0.216",
+                   asset: "USD",
+                   cross_collaterals: [
+                     %{
+                       "collateralCoin" => "BTC",
+                       "currentCollateralRate" => "0",
+                       "interest" => "0",
+                       "interestFreeLimitUsed" => "0",
+                       "loanAmount" => "0",
+                       "loanCoin" => "BUSD",
+                       "locked" => "0",
+                       "principalForInterest" => "0"
+                     }
+                   ]
+                 }
+               }
+      end
+    end
+
+    test "cross collateral info" do
+      use_cassette "margin/cross_collateral_info_ok" do
+        assert Binance.Margin.get_cross_collateral_info(%{loanCoin: "USDT", collateralCoin: "BTC"}) ==
+                 {
+                   :ok,
+                   [
+                     %Binance.Margin.CrossCollateralInfo{
+                       collateral_coin: "BTC",
+                       current_collateral_rate: "0.87168984",
+                       interest_grace_period: "0",
+                       interest_rate: "0.0",
+                       liquidation_collateral_rate: "0.98",
+                       loan_coin: "USDT",
+                       margin_call_collateral_rate: "0.95",
+                       rate: "0.9"
+                     }
+                   ]
+                 }
+      end
+    end
+  end
 end

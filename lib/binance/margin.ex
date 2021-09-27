@@ -251,4 +251,55 @@ defmodule Binance.Margin do
 
     HTTPClient.post_binance("/sapi/v1/margin/loan", arguments, config)
   end
+
+  @doc """
+  https://binance-docs.github.io/apidocs/spot/en/#cross-collateral-wallet-v2-user_data
+  Get the cross collateral wallet of a specific account
+  """
+  @spec get_cross_collateral_wallet(map() | nil) ::
+          {:ok, Binance.Margin.CrossCollateralWallet | {:error, error()}}
+  def get_cross_collateral_wallet(config \\ nil) do
+    case HTTPClient.get_binance("/sapi/v2/futures/loan/wallet", %{}, config) do
+      {:ok, data} ->
+        {:ok, Binance.Margin.CrossCollateralWallet.new(data)}
+
+      error ->
+        error
+    end
+  end
+
+  @doc """
+  https://binance-docs.github.io/apidocs/spot/en/#cross-collateral-information-v2-user_data
+  Retrieve the cross collateral information for a specific loan coin and cross collateral coin
+  So, the params will contain the loan coin and cross collateral coin.
+  If the param is empty, it will return the all cross collateral
+  Ex: Binance.Margin.get_cross_collateral_info(
+  %{"loanCoin": "USDT", "collateralCoin": "BTC"},
+  %{access_keys: ["TEST_BIN_API_KEY", "TEST_BIN_API_SECRET"]}
+  )
+  {:ok,
+  [
+   %Binance.Margin.CrossCollateralInfo{
+     collateral_coin: "BTC",
+     current_collateral_rate: "0",
+     interest_grace_period: "2",
+     interest_rate: "0.0024",
+     liquidation_collateral_rate: "0.9",
+     loan_coin: "USDT",
+     margin_call_collateral_rate: "0.8",
+     rate: "0.65"
+   }
+  ]}
+  """
+  @spec get_cross_collateral_info(map(), map() | nil) ::
+          {:ok, list(Binance.Margin.CrossCollateralInfo) | {:error, error()}}
+  def get_cross_collateral_info(params \\ %{}, config \\ nil) do
+    case HTTPClient.get_binance("/sapi/v2/futures/loan/configs", params, config) do
+      {:ok, data} ->
+        {:ok, Enum.map(data, &Binance.Margin.CrossCollateralInfo.new(&1))}
+
+      error ->
+        error
+    end
+  end
 end
