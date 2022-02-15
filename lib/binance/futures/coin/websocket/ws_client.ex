@@ -32,7 +32,7 @@ defmodule Binance.Futures.Coin.WebSocket.WSClient do
         state = Map.merge(args, %{heartbeat: 0, listen_key: nil, config: config})
 
         if require_auth == true do
-          {:ok, %{"listenKey" => listen_key}, _rate_limit} =
+          {:ok, %{"listenKey" => listen_key}, _headers} =
             Binance.CoinFutures.create_listen_key(%{}, config)
 
           state = Map.merge(state, %{listen_key: listen_key})
