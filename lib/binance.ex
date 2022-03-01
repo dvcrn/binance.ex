@@ -12,7 +12,7 @@ defmodule Binance do
   @doc """
   Pings binance API
   """
-  @spec ping() :: {:ok, %{}} | {:error, error()}
+  @spec ping() :: {:ok, %{}, any()} | {:error, error()}
   def ping() do
     HTTPClient.get_binance("/api/v3/ping")
   end
@@ -26,26 +26,26 @@ defmodule Binance do
   ```
 
   """
-  @spec get_server_time() :: {:ok, integer()} | {:error, error()}
+  @spec get_server_time() :: {:ok, integer(), any()} | {:error, error()}
   def get_server_time() do
     case HTTPClient.get_binance("/api/v3/time") do
-      {:ok, %{"serverTime" => time}} -> {:ok, time}
+      {:ok, %{"serverTime" => time}, headers} -> {:ok, time, headers}
       err -> err
     end
   end
 
-  @spec get_exchange_info() :: {:ok, %Binance.ExchangeInfo{}} | {:error, error()}
+  @spec get_exchange_info() :: {:ok, %Binance.ExchangeInfo{}, any()} | {:error, error()}
   def get_exchange_info() do
     case HTTPClient.get_binance("/api/v3/exchangeInfo") do
-      {:ok, data} -> {:ok, Binance.ExchangeInfo.new(data)}
+      {:ok, data, headers} -> {:ok, Binance.ExchangeInfo.new(data), headers}
       err -> err
     end
   end
 
-  @spec get_best_ticker(String.t()) :: {:ok, map()} | {:error, error()}
+  @spec get_best_ticker(String.t()) :: {:ok, map(), any()} | {:error, error()}
   def get_best_ticker(instrument) do
     case HTTPClient.get_binance("/api/v3/ticker/bookTicker?symbol=#{instrument}") do
-      {:ok, data} -> {:ok, data}
+      {:ok, data, headers} -> {:ok, data, headers}
       err -> err
     end
   end
@@ -63,11 +63,11 @@ defmodule Binance do
   Note: Binance Spot does not require us to sign this request body while this very same API on Binance Futures does
 
   """
-  @spec create_listen_key(map() | nil) :: {:ok, map()} | {:error, error()}
+  @spec create_listen_key(map() | nil) :: {:ok, map(), any()} | {:error, error()}
   def create_listen_key(config \\ nil) do
     case HTTPClient.post_binance("/api/v3/userDataStream", %{}, config, false) do
-      {:ok, %{"code" => code, "msg" => msg}} ->
-        {:error, {:binance_error, %{code: code, msg: msg}}}
+      {:ok, %{"code" => code, "msg" => msg}, headers} ->
+        {:error, {:binance_error, %{code: code, msg: msg}}, headers}
 
       data ->
         data
@@ -92,8 +92,8 @@ defmodule Binance do
     }
 
     case HTTPClient.put_binance("/api/v3/userDataStream", arguments, config, false) do
-      {:ok, %{"code" => code, "msg" => msg}} ->
-        {:error, {:binance_error, %{code: code, msg: msg}}}
+      {:ok, %{"code" => code, "msg" => msg}, headers} ->
+        {:error, {:binance_error, %{code: code, msg: msg}}, headers}
 
       data ->
         data
@@ -119,10 +119,10 @@ defmodule Binance do
       weighted_avg_price: "0.06946930"}}
   ```
   """
-  @spec get_ticker(String.t()) :: {:ok, %Binance.Ticker{}} | {:error, error()}
+  @spec get_ticker(String.t()) :: {:ok, %Binance.Ticker{}, any()} | {:error, error()}
   def get_ticker(symbol) when is_binary(symbol) do
     case HTTPClient.get_binance("/api/v3/ticker/24hr?symbol=#{symbol}") do
-      {:ok, data} -> {:ok, Binance.Ticker.new(data)}
+      {:ok, data, headers} -> {:ok, Binance.Ticker.new(data), headers}
       err -> err
     end
   end
@@ -153,10 +153,10 @@ defmodule Binance do
   }
   ```
   """
-  @spec get_depth(String.t(), integer()) :: {:ok, %Binance.OrderBook{}} | {:error, error()}
+  @spec get_depth(String.t(), integer()) :: {:ok, %Binance.OrderBook{}, any()} | {:error, error()}
   def get_depth(symbol, limit) do
     case HTTPClient.get_binance("/api/v3/depth?symbol=#{symbol}&limit=#{limit}") do
-      {:ok, data} -> {:ok, Binance.OrderBook.new(data)}
+      {:ok, data, headers} -> {:ok, Binance.OrderBook.new(data), headers}
       err -> err
     end
   end
@@ -174,7 +174,7 @@ defmodule Binance do
   @spec get_account(map() | nil) :: {:ok, %Binance.Account{}} | {:error, error()}
   def get_account(config \\ nil) do
     case HTTPClient.get_binance("/api/v3/account", %{}, config) do
-      {:ok, data} -> {:ok, Binance.Account.new(data)}
+      {:ok, data, headers} -> {:ok, Binance.Account.new(data), headers}
       error -> error
     end
   end
@@ -186,7 +186,7 @@ defmodule Binance do
 
   Please read https://www.binance.com/restapipub.html#user-content-account-endpoints to understand all the parameters
   """
-  @spec create_order(map(), map() | nil) :: {:ok, map()} | {:error, error()}
+  @spec create_order(map(), map() | nil) :: {:ok, map(), any()} | {:error, error()}
   def create_order(
         %{symbol: symbol, side: side, type: type, quantity: quantity} = params,
         config \\ nil
@@ -231,8 +231,8 @@ defmodule Binance do
       )
 
     case HTTPClient.post_binance("/api/v3/order", arguments, config) do
-      {:ok, data} ->
-        {:ok, Binance.OrderResponse.new(data)}
+      {:ok, data, headers} ->
+        {:ok, Binance.OrderResponse.new(data), headers}
 
       error ->
         error
@@ -260,10 +260,10 @@ defmodule Binance do
      ...]}
   ```
   """
-  @spec get_open_orders(map(), map() | nil) :: {:ok, list(%Binance.Order{})} | {:error, error()}
+  @spec get_open_orders(map(), map() | nil) :: {:ok, list(%Binance.Order{}), any()} | {:error, error()}
   def get_open_orders(params \\ %{}, config \\ nil) do
     case HTTPClient.get_binance("/api/v3/openOrders", params, config) do
-      {:ok, data} -> {:ok, Enum.map(data, &Binance.Order.new(&1))}
+      {:ok, data, headers} -> {:ok, Enum.map(data, &Binance.Order.new(&1)), headers}
       err -> err
     end
   end
@@ -304,7 +304,7 @@ defmodule Binance do
       )
 
     case HTTPClient.get_binance("/api/v3/order", arguments, config) do
-      {:ok, data} -> {:ok, Binance.Order.new(data)}
+      {:ok, data, headers} -> {:ok, Binance.Order.new(data), headers}
       err -> err
     end
   end
@@ -351,15 +351,15 @@ defmodule Binance do
       )
 
     case HTTPClient.delete_binance("/api/v3/order", arguments, config) do
-      {:ok, data} -> {:ok, Binance.Order.new(data)}
+      {:ok, data, headers} -> {:ok, Binance.Order.new(data), headers}
       err -> err
     end
   end
 
   def cancel_all_orders(params, config \\ nil) do
     case HTTPClient.delete_binance("/api/v3/openOrders", params, config) do
-      {:ok, %{"rejectReason" => _} = err} -> {:error, err}
-      {:ok, data} -> {:ok, Binance.Order.new(data)}
+      {:ok, %{"rejectReason" => _} = err, headers} -> {:error, err, headers}
+      {:ok, data, headers} -> {:ok, Binance.Order.new(data), headers}
       err -> err
     end
   end
