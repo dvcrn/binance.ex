@@ -260,7 +260,8 @@ defmodule Binance do
      ...]}
   ```
   """
-  @spec get_open_orders(map(), map() | nil) :: {:ok, list(%Binance.Order{}), any()} | {:error, error()}
+  @spec get_open_orders(map(), map() | nil) ::
+          {:ok, list(%Binance.Order{}), any()} | {:error, error()}
   def get_open_orders(params \\ %{}, config \\ nil) do
     case HTTPClient.get_binance("/api/v3/openOrders", params, config) do
       {:ok, data, headers} -> {:ok, Enum.map(data, &Binance.Order.new(&1)), headers}
@@ -359,7 +360,7 @@ defmodule Binance do
   def cancel_all_orders(params, config \\ nil) do
     case HTTPClient.delete_binance("/api/v3/openOrders", params, config) do
       {:ok, %{"rejectReason" => _} = err, headers} -> {:error, err, headers}
-      {:ok, data, headers} -> {:ok, Binance.Order.new(data), headers}
+      {:ok, data, headers} -> {:ok, data, headers}
       err -> err
     end
   end

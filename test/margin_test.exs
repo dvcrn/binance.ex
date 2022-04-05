@@ -9,19 +9,17 @@ defmodule MarginTest do
 
   test "get account status" do
     use_cassette "get_account_status" do
-      assert Binance.Margin.get_account_status() == {:ok, %{"data" => "Normal"}}
+      assert {:ok, %{"data" => "Normal"}, _rate_limit} = Binance.Margin.get_account_status()
     end
   end
 
   describe ".create_listen_key" do
     test "returns a listen key which could be used to subscrbe to a User Data stream" do
       use_cassette "margin/create_listen_key_ok" do
-        assert Binance.Margin.create_listen_key() == {
-                 :ok,
-                 %{
-                   "listenKey" => "cqcFKuqCCRv1QNnhiA4gsdMLSRgTz4qyd0l5JWryjaAxjQlr8JAcyksNt1Ct"
-                 }
-               }
+        assert {:ok,
+                %{
+                  "listenKey" => "cqcFKuqCCRv1QNnhiA4gsdMLSRgTz4qyd0l5JWryjaAxjQlr8JAcyksNt1Ct"
+                }, _rate_limit} = Binance.Margin.create_listen_key()
       end
     end
   end
@@ -29,12 +27,13 @@ defmodule MarginTest do
   describe ".create_isolated_listen_key" do
     test "returns a isolated listen key which could be used to subscrbe to a User Data stream" do
       use_cassette "margin/create_isolated_listen_key_ok" do
-        assert Binance.Margin.create_isolated_listen_key("BTCUSDT") == {
+        assert {
                  :ok,
                  %{
                    "listenKey" => "JkPSgD5Eok8TdqkZeejhMyZDSGoFVuKakbdnCAeJxYO1E5swXs0M2KnKwkZH"
-                 }
-               }
+                 },
+                 _rate_limit
+               } = Binance.Margin.create_isolated_listen_key("BTCUSDT")
       end
     end
   end
@@ -42,9 +41,10 @@ defmodule MarginTest do
   describe ".keep_alive_listen_key" do
     test "returns empty indicating the given listen key has been keepalive successfully" do
       use_cassette "margin/keep_alive_listen_key_ok" do
-        assert Binance.Margin.keep_alive_listen_key(
-                 "cqcFKuqCCRv1QNnhiA4gsdMLSRgTz4qyd0l5JWryjaAxjQlr8JAcyksNt1Ct"
-               ) == {:ok, %{}}
+        assert {:ok, %{}, _rate_limit} =
+                 Binance.Margin.keep_alive_listen_key(
+                   "cqcFKuqCCRv1QNnhiA4gsdMLSRgTz4qyd0l5JWryjaAxjQlr8JAcyksNt1Ct"
+                 )
       end
     end
   end
@@ -52,10 +52,11 @@ defmodule MarginTest do
   describe ".keep_alive_isolated_listen_key" do
     test "returns empty indicating the given isolated listen key has been keepalive successfully" do
       use_cassette "margin/keep_alive_isolated_listen_key_ok" do
-        assert Binance.Margin.keep_alive_isolated_listen_key(
-                 "BTCUSDT",
-                 "JkPSgD5Eok8TdqkZeejhMyZDSGoFVuKakbdnCAeJxYO1E5swXs0M2KnKwkZH"
-               ) == {:ok, %{}}
+        assert {:ok, %{}, _rate_limit} =
+                 Binance.Margin.keep_alive_isolated_listen_key(
+                   "BTCUSDT",
+                   "JkPSgD5Eok8TdqkZeejhMyZDSGoFVuKakbdnCAeJxYO1E5swXs0M2KnKwkZH"
+                 )
       end
     end
   end
@@ -63,7 +64,7 @@ defmodule MarginTest do
   describe ".get_account" do
     test "returns current account information" do
       use_cassette "margin/get_account_ok" do
-        assert Binance.Margin.get_account() == {
+        assert {
                  :ok,
                  %Binance.Margin.Account{
                    borrow_enabled: true,
@@ -73,8 +74,9 @@ defmodule MarginTest do
                    total_net_asset_of_btc: "0.08256500",
                    trade_enabled: true,
                    transfer_enabled: true
-                 }
-               }
+                 },
+                 _rate_limit
+               } = Binance.Margin.get_account()
       end
     end
   end
@@ -82,7 +84,7 @@ defmodule MarginTest do
   describe ".create_order limit sell" do
     test "creates a cross margin order with a duration of good til cancel by default" do
       use_cassette "margin/order_limit_buy_good_til_cancel_default_duration_success" do
-        assert {:ok, %Binance.Margin.Order{} = response} =
+        assert {:ok, %Binance.Margin.Order{} = response, _rate_limit} =
                  Binance.Margin.create_order(%{
                    symbol: "BTCUSDT",
                    side: "BUY",
@@ -110,7 +112,7 @@ defmodule MarginTest do
 
     test "creates an isolated margin order with a duration of good til cancel by default" do
       use_cassette "margin/isolated_order_limit_buy_good_til_cancel_default_duration_success" do
-        assert {:ok, %Binance.Margin.Order{} = response} =
+        assert {:ok, %Binance.Margin.Order{} = response, _rate_limit} =
                  Binance.Margin.create_order(%{
                    symbol: "BTCUSDT",
                    side: "BUY",
@@ -140,27 +142,25 @@ defmodule MarginTest do
   describe "get" do
     test "best ticker" do
       use_cassette "margin/get_best_ticker" do
-        assert Binance.Margin.get_best_ticker("BTCUSDT") ==
-                 {:ok,
-                  %{
-                    "askPrice" => "9046.59000000",
-                    "askQty" => "0.49950000",
-                    "bidPrice" => "9046.03000000",
-                    "bidQty" => "0.62312800",
-                    "symbol" => "BTCUSDT"
-                  }}
+        assert {:ok,
+                %{
+                  "askPrice" => "9046.59000000",
+                  "askQty" => "0.49950000",
+                  "bidPrice" => "9046.03000000",
+                  "bidQty" => "0.62312800",
+                  "symbol" => "BTCUSDT"
+                }, _rate_limit} = Binance.Margin.get_best_ticker("BTCUSDT")
       end
     end
 
     test "index price" do
       use_cassette "margin/get_index_price" do
-        assert Binance.Margin.get_index_price("BTCUSDT") ==
-                 {:ok,
-                  %{
-                    "price" => "9180.25954545",
-                    "symbol" => "BTCUSDT",
-                    "calcTime" => 1_595_227_975_000
-                  }}
+        assert {:ok,
+                %{
+                  "price" => "9180.25954545",
+                  "symbol" => "BTCUSDT",
+                  "calcTime" => 1_595_227_975_000
+                }, _rate_limit} = Binance.Margin.get_index_price("BTCUSDT")
       end
     end
   end
@@ -168,7 +168,7 @@ defmodule MarginTest do
   describe ".borrow" do
     test "borrow token (cross margin)" do
       use_cassette "margin/borrow_cross_margin" do
-        assert {:ok, %{"tranId" => _}} =
+        assert {:ok, %{"tranId" => _}, _rate_limit} =
                  Binance.Margin.borrow(%{
                    asset: "USDT",
                    amount: 2
@@ -178,7 +178,7 @@ defmodule MarginTest do
 
     test "borrow token (isolated margin)" do
       use_cassette "margin/borrow_isolated_margin" do
-        assert {:ok, %{"tranId" => _}} =
+        assert {:ok, %{"tranId" => _}, _rate_limit} =
                  Binance.Margin.borrow(%{
                    is_isolated: "TRUE",
                    symbol: "BTCUSDT",
@@ -192,7 +192,7 @@ defmodule MarginTest do
   describe "get cross collateral" do
     test "cross collateral wallet" do
       use_cassette "margin/cross_collateral_wallet_ok" do
-        assert Binance.Margin.get_cross_collateral_wallet() == {
+        assert {
                  :ok,
                  %Binance.Margin.CrossCollateralWallet{
                    interest_free_limit: "0",
@@ -212,29 +212,34 @@ defmodule MarginTest do
                        "principalForInterest" => "0"
                      }
                    ]
-                 }
-               }
+                 },
+                 _rate_limit
+               } = Binance.Margin.get_cross_collateral_wallet()
       end
     end
 
     test "cross collateral info" do
       use_cassette "margin/cross_collateral_info_ok" do
-        assert Binance.Margin.get_cross_collateral_info(%{loanCoin: "USDT", collateralCoin: "BTC"}) ==
-                 {
-                   :ok,
-                   [
-                     %Binance.Margin.CrossCollateralInfo{
-                       collateral_coin: "BTC",
-                       current_collateral_rate: "0.87168984",
-                       interest_grace_period: "0",
-                       interest_rate: "0.0",
-                       liquidation_collateral_rate: "0.98",
-                       loan_coin: "USDT",
-                       margin_call_collateral_rate: "0.95",
-                       rate: "0.9"
-                     }
-                   ]
-                 }
+        assert {
+                 :ok,
+                 [
+                   %Binance.Margin.CrossCollateralInfo{
+                     collateral_coin: "BTC",
+                     current_collateral_rate: "0.87168984",
+                     interest_grace_period: "0",
+                     interest_rate: "0.0",
+                     liquidation_collateral_rate: "0.98",
+                     loan_coin: "USDT",
+                     margin_call_collateral_rate: "0.95",
+                     rate: "0.9"
+                   }
+                 ],
+                 _rate_limit
+               } =
+                 Binance.Margin.get_cross_collateral_info(%{
+                   loanCoin: "USDT",
+                   collateralCoin: "BTC"
+                 })
       end
     end
   end
