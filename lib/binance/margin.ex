@@ -220,7 +220,7 @@ defmodule Binance.Margin do
 
     case HTTPClient.delete_binance("/sapi/v1/margin/openOrders", params, config) do
       {:ok, %{"rejectReason" => _} = err, headers} -> {:error, err, headers}
-      {:ok, data, headers} -> {:ok, Binance.Margin.Order.new(data), headers}
+      {:ok, data, headers} -> {:ok, data, headers}
       err -> err
     end
   end
