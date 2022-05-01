@@ -47,7 +47,6 @@ defmodule Binance.Wallet.Rest.HTTPClient do
                 {:error, {:binance_error, %{code: code, msg: msg}}}
 
               {:error, err} ->
-                IO.inspect(response.body)
                 {:error, {:poison_decode_error, err}}
             end
 

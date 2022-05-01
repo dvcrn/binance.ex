@@ -64,9 +64,7 @@ defmodule Binance.CoinFutures do
           {:ok, map(), any()} | {:error, error()}
   def get_continious_kline_data(instrument, interval, contract_type, limit) do
     case HTTPClient.get_binance(
-           "/dapi/v1/continuousKlines?pair=#{instrument}&interval=#{interval}&limit=#{limit}&contractType=#{
-             contract_type
-           }"
+           "/dapi/v1/continuousKlines?pair=#{instrument}&interval=#{interval}&limit=#{limit}&contractType=#{contract_type}"
          ) do
       {:ok, data, headers} -> {:ok, data, headers}
       err -> err
