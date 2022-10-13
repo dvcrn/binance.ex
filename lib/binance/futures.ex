@@ -473,4 +473,12 @@ defmodule Binance.Futures do
       err -> err
     end
   end
+
+  @spec get_trading_status(map(), map() | nil) :: {:ok, any(), any()} | {:error, any()}
+  def get_trading_status(params, config \\ nil) do
+    case HTTPClient.get_binance("/fapi/v1/apiTradingStatus", params, config) do
+      {:ok, data, headers} -> {:ok, data, headers}
+      err -> err
+    end
+  end
 end

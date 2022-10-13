@@ -308,6 +308,7 @@ defmodule Binance.Margin do
   Query the margin fee data for a specific account. Support 2 mode cross and isolated
   """
   def get_margin_fee(type, params \\ %{}, config \\ nil)
+
   def get_margin_fee(:cross_margin, params, config) do
     case HTTPClient.get_binance("/sapi/v1/margin/crossMarginData", params, config) do
       {:ok, data, headers} ->

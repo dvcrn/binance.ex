@@ -4,8 +4,16 @@ defmodule BinanceTest do
   doctest Binance
 
   setup_all do
-    System.put_env("BINANCE_API_KEY", "fake_api_key")
-    System.put_env("BINANCE_API_SECRET", "fake_secret_key")
+    System.put_env(
+      "BINANCE_API_KEY",
+      "fake_api_key"
+    )
+
+    System.put_env(
+      "BINANCE_API_SECRET",
+      "fake_secret_key"
+    )
+
     HTTPoison.start()
   end
 
@@ -520,6 +528,16 @@ defmodule BinanceTest do
                   "bidQty" => "0.06305200"
                 }, _rate_limit} = Binance.Margin.get_best_ticker("BTCUSDT")
       end
+    end
+  end
+
+  describe "trading_status" do
+    test "get_trading_status single" do
+      assert {:ok,
+              %{
+                "indicators" => %{},
+                "updateTime" => _time
+              }, _rate_limit} = Binance.Futures.get_trading_status(%{symbol: "BTCUSDT"})
     end
   end
 end
