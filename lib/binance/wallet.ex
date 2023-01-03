@@ -35,10 +35,7 @@ defmodule Binance.Wallet do
     end
   end
 
-  def get_api_trading_status(
-        config
-      ) do
-
+  def get_api_trading_status(config) do
     case HTTPClient.get_binance("#{@endpoint}/sapi/v1/account/apiTradingStatus", %{}, config) do
       {:ok, data} ->
         {:ok, data}
