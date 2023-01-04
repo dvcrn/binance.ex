@@ -1,0 +1,43 @@
+[
+    {
+      "request": {
+        "body": "",
+        "headers": [],
+        "method": "get",
+        "options": [],
+        "request_body": "",
+        "url": "https://api.binance.com/sapi/v1/account/apiTradingStatus"
+      },
+      "response": {
+        "binary": false,
+        "body": "{\"data\":{\"isLocked\":false,\"plannedRecoverTime\":0,\"triggerCondition\":{\"GCR\":150,\"IFER\":150,\"UFR\":300},\"updateTime\":0}}",
+        "headers": {
+          "Content-Type": "application/json;charset=utf-8",
+          "Transfer-Encoding": "chunked",
+          "Connection": "keep-alive",
+          "Date": "Fri, 08 Nov 2019 09:27:55 GMT",
+          "Server": "nginx",
+          "Vary": "Accept-Encoding",
+          "X-MBX-UUID": "1984e513-cb7c-4934-bb65-bc130b9941d8",
+          "X-MBX-USED-WEIGHT": "16",
+          "X-MBX-USED-WEIGHT-1M": "16",
+          "Strict-Transport-Security": "max-age=31536000; includeSubdomains",
+          "X-Frame-Options": "SAMEORIGIN",
+          "X-Xss-Protection": "1; mode=block",
+          "X-Content-Type-Options": "nosniff",
+          "Content-Security-Policy": "default-src 'self'",
+          "X-Content-Security-Policy": "default-src 'self'",
+          "X-WebKit-CSP": "default-src 'self'",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          "Pragma": "no-cache",
+          "Expires": "0",
+          "X-Cache": "Miss from cloudfront",
+          "Via": "1.1 f9fe1d14b5af0af813191b1f72368679.cloudfront.net (CloudFront)",
+          "X-Amz-Cf-Pop": "HKG54-C1",
+          "X-Amz-Cf-Id": "LI6-11ed0SeCRmdOdYwmWqS7tCFyIteaZQXeh76EUYYD9AYmW7iq2A=="
+        },
+        "status_code": 200,
+        "type": "ok"
+      }
+    }
+  ]
