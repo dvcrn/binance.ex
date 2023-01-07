@@ -30,7 +30,8 @@ defmodule Binance.MixProject do
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
       {:exvcr, "~> 0.10.1", only: :test},
-      {:dialyxir, "~> 1.0.0-rc.7", only: [:dev], runtime: false}
+      {:dialyxir, "~> 1.0.0-rc.7", only: [:dev], runtime: false},
+      {:ex_crypto, "~> 0.10.0"}
     ]
   end
 
