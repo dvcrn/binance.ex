@@ -97,7 +97,7 @@ defmodule Binance.Futures.Coin.Rest.HTTPClient do
       {:error, _} = error ->
         error
 
-      {:ok, %Config{api_key: api_key, api_secret: api_secret}} ->
+      {:ok, %Config{api_key: api_key, api_secret: api_secret, api_secret_type: api_secret_type}} ->
         cond do
           method in [:get, :delete] ->
             headers = [
@@ -128,7 +128,7 @@ defmodule Binance.Futures.Coin.Rest.HTTPClient do
               )
 
             argument_string = URI.encode_query(params)
-            signature = Util.sign_content(api_secret, argument_string)
+            signature = Util.sign_content(api_secret, argument_string, api_secret_type)
 
             {:ok, "#{url}?#{argument_string}&signature=#{signature}", headers}
 
@@ -143,7 +143,7 @@ defmodule Binance.Futures.Coin.Rest.HTTPClient do
             argument_string =
               case signed? do
                 true ->
-                  signature = Util.sign_content(api_secret, argument_string)
+                  signature = Util.sign_content(api_secret, argument_string, api_secret_type)
                   "#{argument_string}&signature=#{signature}"
 
                 false ->

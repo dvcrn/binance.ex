@@ -44,7 +44,7 @@ defmodule WalletTest do
     end
 
     test "fail" do
-      use_cassette "fail_api_trading_status" do
+      use_cassette "wallet/fail_api_trading_status" do
         config = %{access_keys: ["BINANCE_API_KEY", "BINANCE_API_SECRET"]}
         result = Binance.Wallet.get_api_trading_status(config)
 
