@@ -51,7 +51,7 @@ defmodule Binance.Futures.Rest.HTTPClient do
                 {:error, {:binance_error, %{code: code, msg: msg}}, response.headers}
 
               {:error, err} ->
-                if System.get_env("LOG_DEBUG") === "true" do
+                if System.get_env("DEBUG_LOG") === "true" do
                   Logger.error("poison_decode_error: #{inspect(response.body)}")
                 end
 
@@ -64,7 +64,7 @@ defmodule Binance.Futures.Rest.HTTPClient do
                 {:ok, data, response.headers}
 
               {:error, err} ->
-                if System.get_env("LOG_DEBUG") === "true" do
+                if System.get_env("DEBUG_LOG") === "true" do
                   Logger.error("poison_decode_error: #{inspect(response.body)}")
                 end
 
@@ -90,7 +90,7 @@ defmodule Binance.Futures.Rest.HTTPClient do
                 {:error, {:binance_error, %{code: code, msg: msg}}, response.headers}
 
               {:error, err} ->
-                if System.get_env("LOG_DEBUG") === "true" do
+                if System.get_env("DEBUG_LOG") === "true" do
                   Logger.error("poison_decode_error: #{inspect(response.body)}")
                 end
 
@@ -106,7 +106,7 @@ defmodule Binance.Futures.Rest.HTTPClient do
                 {:ok, data, response.headers}
 
               {:error, err} ->
-                if System.get_env("LOG_DEBUG") === "true" do
+                if System.get_env("DEBUG_LOG") === "true" do
                   Logger.error("poison_decode_error: #{inspect(response.body)}")
                 end
 
@@ -203,7 +203,7 @@ defmodule Binance.Futures.Rest.HTTPClient do
         {:error, {:binance_error, %{code: code, msg: msg}}, response.headers}
 
       {:error, error} ->
-        if System.get_env("LOG_DEBUG") === "true" do
+        if System.get_env("DEBUG_LOG") === "true" do
           Logger.error("poison_decode_error: #{inspect(response.body)}")
         end
 
@@ -219,7 +219,7 @@ defmodule Binance.Futures.Rest.HTTPClient do
         {:ok, data, response.headers}
 
       {:error, error} ->
-        if System.get_env("LOG_DEBUG") === "true" do
+        if System.get_env("DEBUG_LOG") === "true" do
           Logger.error("poison_decode_error: #{inspect(response.body)}")
         end
 
