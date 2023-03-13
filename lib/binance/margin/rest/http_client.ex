@@ -3,6 +3,8 @@ defmodule Binance.Margin.Rest.HTTPClient do
 
   alias Binance.{Config, Util}
 
+  require Logger
+
   def get_binance(url, headers \\ []) when is_list(headers) do
     HTTPoison.get("#{@endpoint}#{url}", headers)
     |> parse_response
@@ -49,13 +51,24 @@ defmodule Binance.Margin.Rest.HTTPClient do
                 {:error, {:binance_error, %{code: code, msg: msg}}, response.headers}
 
               {:error, err} ->
+                if System.get_env("LOG_DEBUG") === "true" do
+                  Logger.error("poison_decode_error: #{inspect(response.body)}")
+                end
+
                 {:error, {:poison_decode_error, err}, response.headers}
             end
 
           {:ok, response} ->
             case Poison.decode(response.body) do
-              {:ok, data} -> {:ok, data, response.headers}
-              {:error, err} -> {:error, {:poison_decode_error, err}, response.headers}
+              {:ok, data} ->
+                {:ok, data, response.headers}
+
+              {:error, err} ->
+                if System.get_env("LOG_DEBUG") === "true" do
+                  Logger.error("poison_decode_error: #{inspect(response.body)}")
+                end
+
+                {:error, {:poison_decode_error, err}, response.headers}
             end
         end
     end
@@ -77,6 +90,10 @@ defmodule Binance.Margin.Rest.HTTPClient do
                 {:error, {:binance_error, %{code: code, msg: msg}}, response.headers}
 
               {:error, err} ->
+                if System.get_env("LOG_DEBUG") === "true" do
+                  Logger.error("poison_decode_error: #{inspect(response.body)}")
+                end
+
                 {:error, {:poison_decode_error, err}, response.headers}
             end
 
@@ -85,8 +102,15 @@ defmodule Binance.Margin.Rest.HTTPClient do
 
           {:ok, response} ->
             case Poison.decode(response.body) do
-              {:ok, data} -> {:ok, data, response.headers}
-              {:error, err} -> {:error, {:poison_decode_error, err}, response.headers}
+              {:ok, data} ->
+                {:ok, data, response.headers}
+
+              {:error, err} ->
+                if System.get_env("LOG_DEBUG") === "true" do
+                  Logger.error("poison_decode_error: #{inspect(response.body)}")
+                end
+
+                {:error, {:poison_decode_error, err}, response.headers}
             end
         end
     end
@@ -161,6 +185,10 @@ defmodule Binance.Margin.Rest.HTTPClient do
         {:error, {:binance_error, %{code: code, msg: msg}}, response.headers}
 
       {:error, error} ->
+        if System.get_env("LOG_DEBUG") === "true" do
+          Logger.error("poison_decode_error: #{inspect(response.body)}")
+        end
+
         {:error, {:poison_decode_error, error}, response.headers}
     end
   end
@@ -169,8 +197,15 @@ defmodule Binance.Margin.Rest.HTTPClient do
     response.body
     |> Poison.decode()
     |> case do
-      {:ok, data} -> {:ok, data, response.headers}
-      {:error, error} -> {:error, {:poison_decode_error, error}, response.headers}
+      {:ok, data} ->
+        {:ok, data, response.headers}
+
+      {:error, error} ->
+        if System.get_env("LOG_DEBUG") === "true" do
+          Logger.error("poison_decode_error: #{inspect(response.body)}")
+        end
+
+        {:error, {:poison_decode_error, error}, response.headers}
     end
   end
 end
