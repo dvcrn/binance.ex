@@ -207,6 +207,35 @@ defmodule Binance.Margin do
     end
   end
 
+  def get_order(params, config \\ nil) do
+    arguments =
+      %{
+        symbol: params[:symbol]
+      }
+      |> Map.merge(
+        unless(is_nil(params[:order_id]), do: %{orderId: params[:order_id]}, else: %{})
+      )
+      |> Map.merge(
+        unless(
+          is_nil(params[:orig_client_order_id]),
+          do: %{origClientOrderId: params[:orig_client_order_id]},
+          else: %{}
+        )
+      )
+      |> Map.merge(
+        unless(
+          is_nil(params[:is_isolated]),
+          do: %{isIsolated: params[:is_isolated]},
+          else: %{}
+        )
+      )
+
+    case HTTPClient.get_binance("/sapi/v1/margin/order", arguments, config) do
+      {:ok, data, headers} -> {:ok, Binance.Margin.Order.new(data), headers}
+      err -> err
+    end
+  end
+
   def cancel_all_orders(params, config \\ nil) do
     params =
       params
