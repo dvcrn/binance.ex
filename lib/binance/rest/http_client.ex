@@ -1,17 +1,15 @@
 defmodule Binance.Rest.HTTPClient do
-  @endpoint "https://api.binance.com"
-
   alias Binance.{Config, Util}
 
   require Logger
 
   def get_binance(url, headers \\ []) when is_list(headers) do
-    HTTPoison.get("#{@endpoint}#{url}", headers)
+    HTTPoison.get(url, headers)
     |> parse_response
   end
 
   def delete_binance(url, headers \\ []) when is_list(headers) do
-    HTTPoison.delete("#{@endpoint}#{url}", headers)
+    HTTPoison.delete(url, headers)
     |> parse_response
   end
 
@@ -35,13 +33,13 @@ defmodule Binance.Rest.HTTPClient do
     end
   end
 
-  def post_binance(url, params, config, signed? \\ true) do
+  def post_binance(url, params, config, signed? \\ true, options \\ []) do
     case prepare_request(:post, url, params, config, signed?) do
       {:error, _} = error ->
         error
 
       {:ok, url, headers, body} ->
-        case HTTPoison.post("#{@endpoint}#{url}", body, headers) do
+        case HTTPoison.post(url, body, headers, options) do
           {:error, err} ->
             {:error, {:http_error, err}, nil}
 
@@ -80,7 +78,7 @@ defmodule Binance.Rest.HTTPClient do
         error
 
       {:ok, url, headers, body} ->
-        case HTTPoison.put("#{@endpoint}#{url}", body, headers) do
+        case HTTPoison.put(url, body, headers) do
           {:error, err} ->
             {:error, {:http_error, err}, nil}
 
@@ -116,7 +114,7 @@ defmodule Binance.Rest.HTTPClient do
     end
   end
 
-  defp prepare_request(method, url, params, config, signed?) do
+  def prepare_request(method, url, params, config, signed?) do
     case validate_credentials(config) do
       {:error, _} = error ->
         error
@@ -129,9 +127,27 @@ defmodule Binance.Rest.HTTPClient do
             ]
 
             params =
-              Map.merge(params, %{
-                timestamp: :os.system_time(:millisecond)
-              })
+              params
+              |> Map.merge(%{timestamp: :os.system_time(:millisecond)})
+              |> Enum.reduce(
+                params,
+                fn x, acc ->
+                  Map.put(
+                    acc,
+                    elem(x, 0),
+                    if is_list(elem(x, 1)) do
+                      ele =
+                        x
+                        |> elem(1)
+                        |> Enum.join(",")
+
+                      "[#{ele}]"
+                    else
+                      elem(x, 1)
+                    end
+                  )
+                end
+              )
 
             argument_string = URI.encode_query(params)
             signature = Util.sign_content(api_secret, argument_string, api_secret_type)

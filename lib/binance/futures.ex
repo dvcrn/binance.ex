@@ -1,5 +1,7 @@
 defmodule Binance.Futures do
-  alias Binance.Futures.Rest.HTTPClient
+  alias Binance.Rest.HTTPClient
+
+  @endpoint "https://fapi.binance.com"
 
   @type error ::
           {:binance_error, %{code: integer(), message: String.t()}}
@@ -14,7 +16,7 @@ defmodule Binance.Futures do
   """
   @spec ping() :: {:ok, %{}, any()} | {:error, error()}
   def ping() do
-    HTTPClient.get_binance("/fapi/v1/ping")
+    HTTPClient.get_binance("#{@endpoint}/fapi/v1/ping")
   end
 
   @doc """
@@ -28,7 +30,7 @@ defmodule Binance.Futures do
   """
   @spec get_server_time() :: {:ok, integer(), any()} | {:error, error()}
   def get_server_time() do
-    case HTTPClient.get_binance("/fapi/v1/time") do
+    case HTTPClient.get_binance("#{@endpoint}/fapi/v1/time") do
       {:ok, %{"serverTime" => time}, headers} -> {:ok, time, headers}
       err -> err
     end
@@ -36,7 +38,7 @@ defmodule Binance.Futures do
 
   @spec get_index_price(String.t()) :: {:ok, map(), any()} | {:error, error()}
   def get_index_price(instrument) do
-    case HTTPClient.get_binance("/fapi/v1/premiumIndex?symbol=#{instrument}") do
+    case HTTPClient.get_binance("#{@endpoint}/fapi/v1/premiumIndex?symbol=#{instrument}") do
       {:ok, data, headers} -> {:ok, data, headers}
       err -> err
     end
@@ -44,7 +46,7 @@ defmodule Binance.Futures do
 
   @spec get_best_ticker(String.t()) :: {:ok, map(), any()} | {:error, error()}
   def get_best_ticker(instrument) do
-    case HTTPClient.get_binance("/fapi/v1/ticker/bookTicker?symbol=#{instrument}") do
+    case HTTPClient.get_binance("#{@endpoint}/fapi/v1/ticker/bookTicker?symbol=#{instrument}") do
       {:ok, data, headers} -> {:ok, data, headers}
       err -> err
     end
@@ -53,7 +55,7 @@ defmodule Binance.Futures do
   @spec get_kline_data(String.t(), String.t(), number) :: {:ok, map(), any()} | {:error, error()}
   def get_kline_data(instrument, interval, limit) do
     case HTTPClient.get_binance(
-           "/fapi/v1/klines?symbol=#{instrument}&interval=#{interval}&limit=#{limit}"
+           "#{@endpoint}/fapi/v1/klines?symbol=#{instrument}&interval=#{interval}&limit=#{limit}"
          ) do
       {:ok, data, headers} -> {:ok, data, headers}
       err -> err
@@ -64,7 +66,7 @@ defmodule Binance.Futures do
           {:ok, map(), any()} | {:error, error()}
   def get_continious_kline_data(instrument, interval, contract_type, limit) do
     case HTTPClient.get_binance(
-           "/fapi/v1/continuousKlines?pair=#{instrument}&interval=#{interval}&limit=#{limit}&contractType=#{contract_type}"
+           "#{@endpoint}/fapi/v1/continuousKlines?pair=#{instrument}&interval=#{interval}&limit=#{limit}&contractType=#{contract_type}"
          ) do
       {:ok, data, headers} -> {:ok, data, headers}
       err -> err
@@ -73,7 +75,7 @@ defmodule Binance.Futures do
 
   @spec get_exchange_info() :: {:ok, %Binance.ExchangeInfo{}, any()} | {:error, error()}
   def get_exchange_info() do
-    case HTTPClient.get_binance("/fapi/v1/exchangeInfo") do
+    case HTTPClient.get_binance("#{@endpoint}/fapi/v1/exchangeInfo") do
       {:ok, data, headers} -> {:ok, Binance.ExchangeInfo.new(data), headers}
       err -> err
     end
@@ -92,7 +94,7 @@ defmodule Binance.Futures do
         unless(is_nil(params[:recv_window]), do: %{recvWindow: params[:recv_window]}, else: %{})
       )
 
-    case HTTPClient.post_binance("/fapi/v1/listenKey", arguments, config) do
+    case HTTPClient.post_binance("#{@endpoint}/fapi/v1/listenKey", arguments, config) do
       {:ok, %{"code" => code, "msg" => msg}, headers} ->
         {:error, {:binance_error, %{code: code, msg: msg}}, headers}
 
@@ -115,7 +117,7 @@ defmodule Binance.Futures do
         unless(is_nil(params[:recv_window]), do: %{recvWindow: params[:recv_window]}, else: %{})
       )
 
-    case HTTPClient.put_binance("/fapi/v1/listenKey", arguments, config) do
+    case HTTPClient.put_binance("#{@endpoint}/fapi/v1/listenKey", arguments, config) do
       {:ok, %{"code" => code, "msg" => msg}, headers} ->
         {:error, {:binance_error, %{code: code, msg: msg}}, headers}
 
@@ -152,7 +154,7 @@ defmodule Binance.Futures do
   """
   @spec get_depth(String.t(), integer) :: {:ok, %Binance.OrderBook{}, any()} | {:error, error()}
   def get_depth(symbol, limit) do
-    case HTTPClient.get_binance("/fapi/v1/depth?symbol=#{symbol}&limit=#{limit}") do
+    case HTTPClient.get_binance("#{@endpoint}/fapi/v1/depth?symbol=#{symbol}&limit=#{limit}") do
       {:ok, data, headers} -> {:ok, Binance.OrderBook.new(data), headers}
       err -> err
     end
@@ -169,7 +171,7 @@ defmodule Binance.Futures do
   """
   @spec get_account(map() | nil) :: {:ok, %Binance.Account{}, any()} | {:error, error()}
   def get_account(config \\ nil) do
-    case HTTPClient.get_binance("/fapi/v1/account", %{}, config) do
+    case HTTPClient.get_binance("#{@endpoint}/fapi/v1/account", %{}, config) do
       {:ok, data, headers} ->
         {:ok, Binance.Futures.Account.new(data), headers}
 
@@ -181,7 +183,7 @@ defmodule Binance.Futures do
   @spec get_position(map() | nil) ::
           {:ok, list(%Binance.Futures.Position{}), any()} | {:error, error()}
   def get_position(config \\ nil) do
-    case HTTPClient.get_binance("/fapi/v1/positionRisk", %{}, config) do
+    case HTTPClient.get_binance("#{@endpoint}/fapi/v1/positionRisk", %{}, config) do
       {:ok, data, headers} ->
         {:ok, Enum.map(data, &Binance.Futures.Position.new(&1)), headers}
 
@@ -202,7 +204,8 @@ defmodule Binance.Futures do
   @spec create_order(map(), map() | nil) :: {:ok, map(), any()} | {:error, error()}
   def create_order(
         %{symbol: symbol, side: side, type: type, quantity: quantity} = params,
-        config \\ nil
+        config \\ nil,
+        options \\ []
       ) do
     arguments = %{
       symbol: symbol,
@@ -236,7 +239,7 @@ defmodule Binance.Futures do
         unless(is_nil(params[:recv_window]), do: %{recvWindow: params[:recv_window]}, else: %{})
       )
 
-    case HTTPClient.post_binance("/fapi/v1/order", arguments, config) do
+    case HTTPClient.post_binance("#{@endpoint}/fapi/v1/order", arguments, config, true, options) do
       {:ok, data, headers} ->
         {:ok, Binance.Futures.Order.new(data), headers}
 
@@ -284,7 +287,7 @@ defmodule Binance.Futures do
     {:ok, url, headers, argument_string} =
       HTTPClient.prepare_request(
         :post,
-        "https://fapi.binance.com/fapi/v1/order",
+        "#{@endpoint}/fapi/v1/order",
         arguments,
         config,
         true
@@ -320,7 +323,7 @@ defmodule Binance.Futures do
   @spec get_open_orders(map(), map() | nil) ::
           {:ok, list(%Binance.Futures.Order{}), any()} | {:error, error()}
   def get_open_orders(params \\ %{}, config \\ nil) do
-    case HTTPClient.get_binance("/fapi/v1/openOrders", params, config) do
+    case HTTPClient.get_binance("#{@endpoint}/fapi/v1/openOrders", params, config) do
       {:ok, data, headers} -> {:ok, Enum.map(data, &Binance.Futures.Order.new(&1)), headers}
       err -> err
     end
@@ -356,7 +359,7 @@ defmodule Binance.Futures do
         )
       )
 
-    case HTTPClient.get_binance("/fapi/v1/order", arguments, config) do
+    case HTTPClient.get_binance("#{@endpoint}/fapi/v1/order", arguments, config) do
       {:ok, data, headers} -> {:ok, Binance.Futures.Order.new(data), headers}
       err -> err
     end
@@ -391,7 +394,7 @@ defmodule Binance.Futures do
         )
       )
 
-    case HTTPClient.delete_binance("/fapi/v1/order", arguments, config) do
+    case HTTPClient.delete_binance("#{@endpoint}/fapi/v1/order", arguments, config) do
       {:ok, %{"rejectReason" => _} = err, headers} -> {:error, err, headers}
       {:ok, data, headers} -> {:ok, Binance.Futures.Order.new(data), headers}
       err -> err
@@ -417,7 +420,7 @@ defmodule Binance.Futures do
     {:ok, url, headers} =
       HTTPClient.prepare_request(
         :delete,
-        "https://fapi.binance.com/fapi/v1/order",
+        "#{@endpoint}/fapi/v1/order",
         arguments,
         config,
         true
@@ -447,7 +450,7 @@ defmodule Binance.Futures do
         )
       )
 
-    case HTTPClient.delete_binance("/fapi/v1/batchOrders", arguments, config) do
+    case HTTPClient.delete_binance("#{@endpoint}/fapi/v1/batchOrders", arguments, config) do
       {:ok, %{"rejectReason" => _} = err, headers} -> {:error, err, headers}
       {:ok, data, headers} -> {:ok, data, headers}
       err -> err
@@ -467,7 +470,7 @@ defmodule Binance.Futures do
   """
   @spec cancel_all_orders(map(), map() | nil) :: {:ok, any(), any()} | {:error, any()}
   def cancel_all_orders(params, config \\ nil) do
-    case HTTPClient.delete_binance("/fapi/v1/allOpenOrders", params, config) do
+    case HTTPClient.delete_binance("#{@endpoint}/fapi/v1/allOpenOrders", params, config) do
       {:ok, %{"rejectReason" => _} = err, headers} -> {:error, err, headers}
       {:ok, data, headers} -> {:ok, data, headers}
       err -> err
@@ -476,7 +479,7 @@ defmodule Binance.Futures do
 
   @spec get_trading_status(map(), map() | nil) :: {:ok, any(), any()} | {:error, any()}
   def get_trading_status(params, config \\ nil) do
-    case HTTPClient.get_binance("/fapi/v1/apiTradingStatus", params, config) do
+    case HTTPClient.get_binance("#{@endpoint}/fapi/v1/apiTradingStatus", params, config) do
       {:ok, data, headers} -> {:ok, data, headers}
       err -> err
     end

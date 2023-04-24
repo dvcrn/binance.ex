@@ -1,0 +1,45 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://fapi.binance.com/fapi/v1/apiTradingStatus?symbol=BTCUSDT&timestamp=1682309616053&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"indicators\":{},\"updateTime\":1682309616415}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "44",
+        "Connection": "keep-alive",
+        "Date": "Mon, 24 Apr 2023 04:13:36 GMT",
+        "Server": "Tengine",
+        "X-MBX-USED-WEIGHT-1M": "2",
+        "x-response-time": "5ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "*,clienttype,Content-Type,lang,x-ui-request-trace,bnc-uuid",
+        "Content-Security-Policy": "default-src 'self'",
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "expires": "0",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000; includeSubdomains",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-xss-protection": "1; mode=block",
+        "X-Cache": "Miss from cloudfront",
+        "Via": "1.1 da6afeed93a127a6067f571f55c6f332.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "SGN50-P1",
+        "X-Amz-Cf-Id": "OBOzORZpV4ASBcJ3NRJrS7FJou7TLCC0yBVcdqbKqTGRoCgbslzXVQ=="
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

@@ -530,14 +530,4 @@ defmodule BinanceTest do
       end
     end
   end
-
-  describe "trading_status" do
-    test "get_trading_status single" do
-      assert {:ok,
-              %{
-                "indicators" => %{},
-                "updateTime" => _time
-              }, _rate_limit} = Binance.Futures.get_trading_status(%{symbol: "BTCUSDT"})
-    end
-  end
 end
