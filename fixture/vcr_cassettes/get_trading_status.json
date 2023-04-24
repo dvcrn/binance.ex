@@ -1,0 +1,35 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://fapi.binance.com/fapi/v1/apiTradingStatus?symbol=BTCUSDT&timestamp=1682309251504&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"code\":-2014,\"msg\":\"API-key format invalid.\"}",
+      "headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "46",
+        "Connection": "keep-alive",
+        "Date": "Mon, 24 Apr 2023 04:07:31 GMT",
+        "Server": "Tengine",
+        "X-MBX-USED-WEIGHT-1M": "1",
+        "x-response-time": "0ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "X-Cache": "Error from cloudfront",
+        "Via": "1.1 3493aa5404a847d5bd7df71c10acbd36.cloudfront.net (CloudFront)",
+        "X-Amz-Cf-Pop": "SGN50-P1",
+        "X-Amz-Cf-Id": "d57NKOOoFqHaXurXq-otde1tDSuUY4-lszrz9C9e6ST302eo394UQA=="
+      },
+      "status_code": 401,
+      "type": "ok"
+    }
+  }
+]

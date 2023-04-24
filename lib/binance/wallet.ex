@@ -1,7 +1,7 @@
 defmodule Binance.Wallet do
   @endpoint "https://api.binance.com"
 
-  alias Binance.Wallet.Rest.HTTPClient
+  alias Binance.Rest.HTTPClient
 
   @type error ::
           {:binance_error, %{code: integer(), message: String.t()}}

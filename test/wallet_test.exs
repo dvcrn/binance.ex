@@ -5,22 +5,25 @@ defmodule WalletTest do
   doctest Binance
 
   setup_all do
+    System.put_env("BINANCE_API_KEY", "fake_api_key")
+    System.put_env("BINANCE_API_SECRET", "fake_secret_key")
     HTTPoison.start()
   end
 
   describe "transfer" do
     test "success" do
       use_cassette "wallet/success_transfer" do
-        assert Binance.Wallet.transfer(%{type: "MAIN_MARGIN", asset: "BTC", amount: 0.0003}) ==
-                 {:ok, %{"tranId" => 64_542_913_129}}
+        assert {:ok, %{"tranId" => 64_542_913_129}, _header} =
+                 Binance.Wallet.transfer(%{type: "MAIN_MARGIN", asset: "BTC", amount: 0.0003})
       end
     end
 
     test "fails" do
       use_cassette "wallet/fail_transfer" do
-        assert Binance.Wallet.transfer(%{type: "MARGIN_MAIN", asset: "BTC", amount: 0.001}) ==
-                 {:error,
-                  {:binance_error, %{code: -3020, msg: "Transfer out amount exceeds max amount."}}}
+        assert {:error,
+                {:binance_error, %{code: -3020, msg: "Transfer out amount exceeds max amount."}},
+                _header} =
+                 Binance.Wallet.transfer(%{type: "MARGIN_MAIN", asset: "BTC", amount: 0.001})
       end
     end
   end
@@ -39,7 +42,7 @@ defmodule WalletTest do
                     "triggerCondition" => %{"GCR" => 150, "IFER" => 150, "UFR" => 300},
                     "updateTime" => 0
                   }
-                }} == result
+                }, _header} = result
       end
     end
 
@@ -50,8 +53,8 @@ defmodule WalletTest do
 
         assert {:error,
                 {:binance_error,
-                 %{code: -2015, msg: "Invalid API-key, IP, or permissions for action."}}} ==
-                 result
+                 %{code: -2015, msg: "Invalid API-key, IP, or permissions for action."}},
+                _header} = result
       end
     end
   end

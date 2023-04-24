@@ -1,5 +1,7 @@
 defmodule Binance.Margin do
-  alias Binance.Margin.Rest.HTTPClient
+  alias Binance.Rest.HTTPClient
+
+  @endpoint "https://api.binance.com"
 
   @type error ::
           {:binance_error, %{code: integer(), message: String.t()}}
@@ -8,7 +10,7 @@ defmodule Binance.Margin do
           | {:config_missing, String.t()}
 
   def create_listen_key(config \\ nil) do
-    case HTTPClient.post_binance("/sapi/v1/userDataStream", %{}, config, false) do
+    case HTTPClient.post_binance("#{@endpoint}/sapi/v1/userDataStream", %{}, config, false) do
       {:ok, %{"code" => code, "msg" => msg}, headers} ->
         {:error, {:binance_error, %{code: code, msg: msg}}, headers}
 
@@ -19,7 +21,7 @@ defmodule Binance.Margin do
 
   def create_isolated_listen_key(symbol, config \\ nil) do
     case HTTPClient.post_binance(
-           "/sapi/v1/userDataStream/isolated",
+           "#{@endpoint}/sapi/v1/userDataStream/isolated",
            %{symbol: symbol},
            config,
            false
@@ -37,7 +39,7 @@ defmodule Binance.Margin do
       listenKey: listen_key
     }
 
-    case HTTPClient.put_binance("/sapi/v1/userDataStream", arguments, config, false) do
+    case HTTPClient.put_binance("#{@endpoint}/sapi/v1/userDataStream", arguments, config, false) do
       {:ok, %{"code" => code, "msg" => msg}, headers} ->
         {:error, {:binance_error, %{code: code, msg: msg}}, headers}
 
@@ -52,7 +54,12 @@ defmodule Binance.Margin do
       listenKey: listen_key
     }
 
-    case HTTPClient.put_binance("/sapi/v1/userDataStream/isolated", arguments, config, false) do
+    case HTTPClient.put_binance(
+           "#{@endpoint}/sapi/v1/userDataStream/isolated",
+           arguments,
+           config,
+           false
+         ) do
       {:ok, %{"code" => code, "msg" => msg}, headers} ->
         {:error, {:binance_error, %{code: code, msg: msg}}, headers}
 
@@ -62,7 +69,7 @@ defmodule Binance.Margin do
   end
 
   def get_account(config \\ nil) do
-    case HTTPClient.get_binance("/sapi/v1/margin/account", %{}, config) do
+    case HTTPClient.get_binance("#{@endpoint}/sapi/v1/margin/account", %{}, config) do
       {:ok, data, headers} ->
         {:ok, Binance.Margin.Account.new(data), headers}
 
@@ -72,7 +79,7 @@ defmodule Binance.Margin do
   end
 
   def get_isolated_account(params \\ %{}, config \\ nil) do
-    case HTTPClient.get_binance("/sapi/v1/margin/isolated/account", params, config) do
+    case HTTPClient.get_binance("#{@endpoint}/sapi/v1/margin/isolated/account", params, config) do
       {:ok, data, headers} ->
         {:ok, Binance.Margin.IsolatedAccount.new(data), headers}
 
@@ -82,7 +89,11 @@ defmodule Binance.Margin do
   end
 
   def get_index_price(instrument, config \\ nil) do
-    case HTTPClient.get_binance("/sapi/v1/margin/priceIndex", %{symbol: instrument}, config) do
+    case HTTPClient.get_binance(
+           "#{@endpoint}/sapi/v1/margin/priceIndex",
+           %{symbol: instrument},
+           config
+         ) do
       {:ok, data, headers} -> {:ok, data, headers}
       err -> err
     end
@@ -90,7 +101,7 @@ defmodule Binance.Margin do
 
   @spec get_best_ticker(String.t()) :: {:ok, map(), any()} | {:error, error()}
   def get_best_ticker(instrument) do
-    case HTTPClient.get_binance("/api/v3/ticker/bookTicker?symbol=#{instrument}") do
+    case HTTPClient.get_binance("#{@endpoint}/api/v3/ticker/bookTicker?symbol=#{instrument}") do
       {:ok, data, headers} -> {:ok, data, headers}
       err -> err
     end
@@ -99,7 +110,7 @@ defmodule Binance.Margin do
   @spec get_kline_data(String.t(), String.t(), number) :: {:ok, map(), any()} | {:error, error()}
   def get_kline_data(instrument, interval, limit) do
     case HTTPClient.get_binance(
-           "/api/v3/klines?symbol=#{instrument}&interval=#{interval}&limit=#{limit}"
+           "#{@endpoint}/api/v3/klines?symbol=#{instrument}&interval=#{interval}&limit=#{limit}"
          ) do
       {:ok, data, headers} -> {:ok, data, headers}
       err -> err
@@ -107,7 +118,7 @@ defmodule Binance.Margin do
   end
 
   def get_account_status(config \\ nil) do
-    case HTTPClient.get_binance("/sapi/v1/account/status", %{}, config) do
+    case HTTPClient.get_binance("#{@endpoint}/sapi/v1/account/status", %{}, config) do
       {:ok, data, headers} -> {:ok, data, headers}
       err -> err
     end
@@ -115,7 +126,8 @@ defmodule Binance.Margin do
 
   def create_order(
         %{symbol: symbol, side: side, type: type, quantity: quantity} = params,
-        config \\ nil
+        config \\ nil,
+        options \\ []
       ) do
     arguments = %{
       symbol: symbol,
@@ -159,7 +171,13 @@ defmodule Binance.Margin do
         unless(is_nil(params[:is_isolated]), do: %{isIsolated: params[:is_isolated]}, else: %{})
       )
 
-    case HTTPClient.post_binance("/sapi/v1/margin/order", arguments, config) do
+    case HTTPClient.post_binance(
+           "#{@endpoint}/sapi/v1/margin/order",
+           arguments,
+           config,
+           true,
+           options
+         ) do
       {:ok, data, headers} ->
         {:ok, Binance.Margin.Order.new(data), headers}
 
@@ -171,7 +189,7 @@ defmodule Binance.Margin do
   @spec get_open_orders(map(), map() | nil) ::
           {:ok, list(), any()} | {:error, error()}
   def get_open_orders(params \\ %{}, config \\ nil) do
-    case HTTPClient.get_binance("/sapi/v1/margin/openOrders", params, config) do
+    case HTTPClient.get_binance("#{@endpoint}/sapi/v1/margin/openOrders", params, config) do
       {:ok, data, headers} -> {:ok, Enum.map(data, &Binance.Margin.Order.new(&1)), headers}
       err -> err
     end
@@ -200,7 +218,7 @@ defmodule Binance.Margin do
         )
       )
 
-    case HTTPClient.delete_binance("/sapi/v1/margin/order", arguments, config) do
+    case HTTPClient.delete_binance("#{@endpoint}/sapi/v1/margin/order", arguments, config) do
       {:ok, %{"rejectReason" => _} = err, headers} -> {:error, err, headers}
       {:ok, data, headers} -> {:ok, Binance.Margin.Order.new(data), headers}
       err -> err
@@ -230,7 +248,7 @@ defmodule Binance.Margin do
         )
       )
 
-    case HTTPClient.get_binance("/sapi/v1/margin/order", arguments, config) do
+    case HTTPClient.get_binance("#{@endpoint}/sapi/v1/margin/order", arguments, config) do
       {:ok, data, headers} -> {:ok, Binance.Margin.Order.new(data), headers}
       err -> err
     end
@@ -247,7 +265,7 @@ defmodule Binance.Margin do
         )
       )
 
-    case HTTPClient.delete_binance("/sapi/v1/margin/openOrders", params, config) do
+    case HTTPClient.delete_binance("#{@endpoint}/sapi/v1/margin/openOrders", params, config) do
       {:ok, %{"rejectReason" => _} = err, headers} -> {:error, err, headers}
       {:ok, data, headers} -> {:ok, data, headers}
       err -> err
@@ -278,7 +296,7 @@ defmodule Binance.Margin do
         unless(is_nil(params[:recv_window]), do: %{recvWindow: params[:recv_window]}, else: %{})
       )
 
-    HTTPClient.post_binance("/sapi/v1/margin/loan", arguments, config)
+    HTTPClient.post_binance("#{@endpoint}/sapi/v1/margin/loan", arguments, config)
   end
 
   @doc """
@@ -288,7 +306,7 @@ defmodule Binance.Margin do
   @spec get_cross_collateral_wallet(map() | nil) ::
           {:ok, Binance.Margin.CrossCollateralWallet, any()} | {:error, error()}
   def get_cross_collateral_wallet(config \\ nil) do
-    case HTTPClient.get_binance("/sapi/v2/futures/loan/wallet", %{}, config) do
+    case HTTPClient.get_binance("#{@endpoint}/sapi/v2/futures/loan/wallet", %{}, config) do
       {:ok, data, headers} ->
         {:ok, Binance.Margin.CrossCollateralWallet.new(data), headers}
 
@@ -323,7 +341,7 @@ defmodule Binance.Margin do
   @spec get_cross_collateral_info(map(), map() | nil) ::
           {:ok, list(Binance.Margin.CrossCollateralInfo), any()} | {:error, error()}
   def get_cross_collateral_info(params \\ %{}, config \\ nil) do
-    case HTTPClient.get_binance("/sapi/v2/futures/loan/configs", params, config) do
+    case HTTPClient.get_binance("#{@endpoint}/sapi/v2/futures/loan/configs", params, config) do
       {:ok, data, headers} ->
         {:ok, Enum.map(data, &Binance.Margin.CrossCollateralInfo.new(&1)), headers}
 
@@ -339,7 +357,7 @@ defmodule Binance.Margin do
   def get_margin_fee(type, params \\ %{}, config \\ nil)
 
   def get_margin_fee(:cross_margin, params, config) do
-    case HTTPClient.get_binance("/sapi/v1/margin/crossMarginData", params, config) do
+    case HTTPClient.get_binance("#{@endpoint}/sapi/v1/margin/crossMarginData", params, config) do
       {:ok, data, headers} ->
         {:ok, Enum.map(data, &Binance.Margin.CrossMarginFee.new(&1)), headers}
 
@@ -349,7 +367,7 @@ defmodule Binance.Margin do
   end
 
   def get_margin_fee(:isolated_margin, params, config) do
-    case HTTPClient.get_binance("/sapi/v1/margin/isolatedMarginData", params, config) do
+    case HTTPClient.get_binance("#{@endpoint}/sapi/v1/margin/isolatedMarginData", params, config) do
       {:ok, data, headers} ->
         {:ok, Enum.map(data, &Binance.Margin.IsoMarginFee.new(&1)), headers}
 
