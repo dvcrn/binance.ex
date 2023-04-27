@@ -11,8 +11,8 @@ jobs:
   test:
     strategy:
       matrix:
-        elixir: [1.12.1]
-        otp: [22.2, 24.0.2]
+        otp: ['24.3.4.9', '25.3']
+        elixir: ['1.14.3']
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
