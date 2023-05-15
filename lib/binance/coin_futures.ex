@@ -247,6 +247,52 @@ defmodule Binance.CoinFutures do
     end
   end
 
+  def update_order(
+        %{symbol: symbol, side: side, type: type, quantity: quantity} = params,
+        config \\ nil,
+        options \\ []
+      ) do
+    arguments = %{
+      symbol: symbol,
+      side: side,
+      type: type,
+      quantity: quantity,
+      timestamp: params[:timestamp] || :os.system_time(:millisecond)
+    }
+
+    arguments =
+      arguments
+      |> Map.merge(
+        unless(
+          is_nil(params[:new_client_order_id]),
+          do: %{newClientOrderId: params[:new_client_order_id]},
+          else: %{}
+        )
+      )
+      |> Map.merge(
+        unless(is_nil(params[:stop_price]), do: %{stopPrice: params[:stop_price]}, else: %{})
+      )
+      |> Map.merge(
+        unless(
+          is_nil(params[:time_in_force]),
+          do: %{timeInForce: params[:time_in_force]},
+          else: %{}
+        )
+      )
+      |> Map.merge(unless(is_nil(params[:price]), do: %{price: params[:price]}, else: %{}))
+      |> Map.merge(
+        unless(is_nil(params[:recv_window]), do: %{recvWindow: params[:recv_window]}, else: %{})
+      )
+
+    case HTTPClient.put_binance("#{@endpoint}/dapi/v1/order", arguments, config, true, options) do
+      {:ok, data, headers} ->
+        {:ok, Binance.Futures.Order.new(data), headers}
+
+      error ->
+        error
+    end
+  end
+
   def prepare_create_order(
         %{symbol: symbol, side: side, type: type, quantity: quantity} = params,
         config \\ nil
