@@ -264,8 +264,8 @@ defmodule Binance.CoinFutures do
       arguments
       |> Map.merge(
         unless(
-          is_nil(params[:new_client_order_id]),
-          do: %{newClientOrderId: params[:new_client_order_id]},
+          is_nil(params[:orig_client_order_id]),
+          do: %{origClientOrderId: params[:orig_client_order_id]},
           else: %{}
         )
       )
