@@ -264,8 +264,8 @@ defmodule Binance.CoinFutures do
       arguments
       |> Map.merge(
         unless(
-          is_nil(params[:new_client_order_id]),
-          do: %{newClientOrderId: params[:new_client_order_id]},
+          is_nil(params[:orig_client_order_id]),
+          do: %{origClientOrderId: params[:orig_client_order_id]},
           else: %{}
         )
       )
@@ -284,7 +284,7 @@ defmodule Binance.CoinFutures do
         unless(is_nil(params[:recv_window]), do: %{recvWindow: params[:recv_window]}, else: %{})
       )
 
-    case HTTPClient.put_binance("#{@endpoint}/dapi/v1/order", arguments, config, true, options) do
+    case HTTPClient.put_binance("#{@endpoint}/dapi/v1/order", arguments, config, true) do
       {:ok, data, headers} ->
         {:ok, Binance.Futures.Order.new(data), headers}
 
