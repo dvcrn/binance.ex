@@ -252,6 +252,7 @@ defmodule Binance do
       side: side,
       type: type,
       quantity: quantity,
+      cancelReplaceMode: "STOP_ON_FAILURE",
       timestamp: params[:timestamp] || :os.system_time(:millisecond)
     }
 
@@ -259,8 +260,15 @@ defmodule Binance do
       arguments
       |> Map.merge(
         unless(
-          is_nil(params[:orig_client_order_id]),
-          do: %{origClientOrderId: params[:orig_client_order_id]},
+          is_nil(params[:cancel_orig_client_order_id]),
+          do: %{cancelOrigClientOrderId: params[:cancel_orig_client_order_id]},
+          else: %{}
+        )
+      )
+      |> Map.merge(
+        unless(
+          is_nil(params[:new_client_order_id]),
+          do: %{newClientOrderId: params[:new_client_order_id]},
           else: %{}
         )
       )
