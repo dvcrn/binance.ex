@@ -290,8 +290,7 @@ defmodule Binance do
            "#{@endpoint}/api/v3/order/cancelReplace",
            arguments,
            config,
-           true,
-           options
+           true
          ) do
       {:ok, data, headers} ->
         {:ok, Binance.OrderResponse.new(data), headers}
