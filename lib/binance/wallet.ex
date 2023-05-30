@@ -35,6 +35,21 @@ defmodule Binance.Wallet do
     end
   end
 
+    def sub_account_transfer(
+        params,
+        config \\ nil
+      ) do
+    arguments = Map.put(params, :timestamp, params[:timestamp] || :os.system_time(:millisecond))
+
+    case HTTPClient.post_binance("#{@endpoint}/sapi/v1/sub-account/universalTransfer", arguments, config) do
+      {:ok, data} ->
+        {:ok, data}
+
+      error ->
+        error
+    end
+  end
+
   def get_api_trading_status(config) do
     case HTTPClient.get_binance("#{@endpoint}/sapi/v1/account/apiTradingStatus", %{}, config) do
       {:ok, data} ->
