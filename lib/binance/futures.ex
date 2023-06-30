@@ -171,7 +171,7 @@ defmodule Binance.Futures do
   """
   @spec get_account(map() | nil) :: {:ok, %Binance.Account{}, any()} | {:error, error()}
   def get_account(config \\ nil) do
-    case HTTPClient.get_binance("#{@endpoint}/fapi/v2/account", %{}, config) do
+    case HTTPClient.get_binance("#{@endpoint}/fapi/v1/account", %{}, config) do
       {:ok, data, headers} ->
         {:ok, Binance.Futures.Account.new(data), headers}
 
@@ -183,7 +183,7 @@ defmodule Binance.Futures do
   @spec get_position(map() | nil) ::
           {:ok, list(%Binance.Futures.Position{}), any()} | {:error, error()}
   def get_position(config \\ nil) do
-    case HTTPClient.get_binance("#{@endpoint}/fapi/v2/positionRisk", %{}, config) do
+    case HTTPClient.get_binance("#{@endpoint}/fapi/v1/positionRisk", %{}, config) do
       {:ok, data, headers} ->
         {:ok, Enum.map(data, &Binance.Futures.Position.new(&1)), headers}
 
