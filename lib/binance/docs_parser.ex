@@ -1,4 +1,6 @@
 defmodule Binance.DocsParser do
+  @moduledoc false
+
   defp gen_fx_name(path, method) do
     # find everything in the path after v1/v2/v3
     path_name =
@@ -103,7 +105,7 @@ defmodule Binance.DocsParser do
     |> String.replace("/", "")
     |> String.capitalize()
     |> String.to_atom()
-    |> (&Module.concat(Binance2, &1)).()
+    |> (&Module.concat(Binance, &1)).()
   end
 
   def functionize_name(%{method: method, path: path}) do
