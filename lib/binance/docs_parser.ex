@@ -1,4 +1,23 @@
 defmodule Binance.DocsParser do
+  defp gen_fx_name(path, method) do
+    # find everything in the path after v1/v2/v3
+    path_name =
+      path
+      |> Enum.reverse()
+      |> Enum.take_while(fn item ->
+        !(String.length(item) == 2 && String.starts_with?(item, "v"))
+      end)
+      |> Enum.reverse()
+      |> Enum.join("_")
+      |> Macro.underscore()
+      |> String.replace("-", "_")
+
+    method = method |> String.downcase()
+
+    "#{method}_#{path_name}"
+    |> String.to_atom()
+  end
+
   defp normalize_entry_item(
          %{
            "name" => name,
@@ -17,7 +36,8 @@ defmodule Binance.DocsParser do
       path: path,
       needs_auth?: Enum.find(params, nil, &(&1.name == "signature")) != nil,
       unique_key: "#{String.downcase(method)}_#{Enum.join(path, "_")}",
-      description: Map.get(args["request"], "description", "")
+      description: Map.get(args["request"], "description", ""),
+      fx_name: gen_fx_name(path, method)
     }
   end
 
@@ -54,8 +74,8 @@ defmodule Binance.DocsParser do
         |> List.flatten()
         # remove duplicates
         |> Enum.reduce(%{}, fn item, acc ->
-          IO.puts(item.unique_key)
-          Map.put(acc, item.unique_key, item)
+          IO.puts(item.fx_name)
+          Map.put(acc, item.fx_name, item)
         end)
         |> Map.values(),
       group: name

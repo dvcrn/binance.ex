@@ -19,6 +19,9 @@ docs
       url = "/" <> Path.join(path)
       needs_auth = item.needs_auth?
       description = item.description
+      fx_name = item.fx_name
+
+      IO.puts("generating #{fx_name} (#{url})")
 
       mandatory_params =
         Enum.filter(params, fn param ->
@@ -47,7 +50,7 @@ docs
 
       spec =
         mandatory_params
-        |> Enum.map(fn item -> quote do: any() end)
+        |> Enum.map(fn _item -> quote do: any() end)
 
       optional_args =
         optional_params
@@ -89,17 +92,17 @@ docs
       """
 
       # fx without opts
-      @spec unquote(Binance.DocsParser.functionize_name(item))(unquote_splicing(spec)) ::
+      @spec unquote(fx_name)(unquote_splicing(spec)) ::
               {:ok, any()} | {:error, any()}
 
       # fx with opts
-      @spec unquote(Binance.DocsParser.functionize_name(item))(
+      @spec unquote(fx_name)(
               unquote_splicing(spec),
               unquote(optional_args)
             ) ::
               {:ok, any()} | {:error, any()}
 
-      def unquote(Binance.DocsParser.functionize_name(item))(
+      def unquote(fx_name)(
             unquote_splicing(arg_names),
             opts \\ []
           ) do
