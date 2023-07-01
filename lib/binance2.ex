@@ -18,10 +18,11 @@ docs
       name = item.name
       url = "/" <> Path.join(path)
       needs_auth = item.needs_auth?
+      needs_timestamp = item.needs_timestamp?
       description = item.description
       fx_name = item.fx_name
 
-      IO.puts("generating #{fx_name} (#{url})")
+      IO.puts("  generating #{fx_name} (#{url})")
 
       mandatory_params =
         Enum.filter(params, fn param ->
@@ -117,13 +118,20 @@ docs
         IO.puts("passed args:")
         IO.inspect(all_passed_args)
 
+        # if the call requires a timestamp, we add it
         adjusted_args =
-          case Keyword.has_key?(all_passed_args, :timestamp) do
+          case unquote(needs_timestamp) do
             false ->
-              Keyword.put_new(all_passed_args, :timestamp, :os.system_time(:millisecond))
+              all_passed_args
 
             true ->
-              all_passed_args
+              case Keyword.has_key?(all_passed_args, :timestamp) do
+                false ->
+                  Keyword.put_new(all_passed_args, :timestamp, :os.system_time(:millisecond))
+
+                true ->
+                  all_passed_args
+              end
           end
           |> Enum.into(%{})
 

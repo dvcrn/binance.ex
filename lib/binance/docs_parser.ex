@@ -35,6 +35,7 @@ defmodule Binance.DocsParser do
       query: params,
       path: path,
       needs_auth?: Enum.find(params, nil, &(&1.name == "signature")) != nil,
+      needs_timestamp?: Enum.find(params, nil, &(&1.name == "timestamp")) != nil,
       unique_key: "#{String.downcase(method)}_#{Enum.join(path, "_")}",
       description: Map.get(args["request"], "description", ""),
       fx_name: gen_fx_name(path, method)
@@ -74,7 +75,10 @@ defmodule Binance.DocsParser do
         |> List.flatten()
         # remove duplicates
         |> Enum.reduce(%{}, fn item, acc ->
-          IO.puts(item.fx_name)
+          if Map.has_key?(acc, item.fx_name) do
+            IO.puts("overwriting: #{item.fx_name}")
+          end
+
           Map.put(acc, item.fx_name, item)
         end)
         |> Map.values(),
