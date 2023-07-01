@@ -18,6 +18,7 @@ docs
       name = item.name
       url = "/" <> Path.join(path)
       needs_auth = item.needs_auth?
+      description = item.description
 
       mandatory_params =
         Enum.filter(params, fn param ->
@@ -44,32 +45,90 @@ docs
         mandatory_params
         |> Enum.map(&(Map.get(&1, :name) |> String.to_atom() |> Macro.var(nil)))
 
+      spec =
+        mandatory_params
+        |> Enum.map(fn item -> quote do: any() end)
+
+      optional_args =
+        optional_params
+        |> Enum.reduce([], fn item, acc ->
+          name = item.name
+
+          case acc do
+            [] ->
+              quote do: {unquote(String.to_atom(name)), any()}
+
+            val ->
+              quote do:
+                      {unquote(String.to_atom(name)), any()}
+                      | unquote(val)
+          end
+        end)
+        |> case do
+          [] -> []
+          e -> [e]
+        end
+
       @doc """
-      METHOD: #{method}
+      #{name}
 
-      PATH: #{inspect(path)}
+      #{description}
 
-      URL: #{url}
+      Details:
 
-      needs auth: #{inspect(needs_auth)}
+      - METHOD: #{method}
+      - URL: #{url}
 
-      Mandatory params: #{inspect(mandatory_params)}
+      Mandatory params:
 
-      Optional params: #{inspect(optional_params)}
+      #{Enum.map(mandatory_params, fn item -> "- #{item.name} - #{item.description}" end) |> Enum.join("\n")}
+
+      Optional params:
+
+      #{Enum.map(optional_params, fn item -> "- #{item.name} - #{item.description}" end) |> Enum.join("\n")}
       """
-      def unquote(Binance.DocsParser.functionize_name(item))(unquote_splicing(arg_names)) do
+
+      # fx without opts
+      @spec unquote(Binance.DocsParser.functionize_name(item))(unquote_splicing(spec)) ::
+              {:ok, any()} | {:error, any()}
+
+      # fx with opts
+      @spec unquote(Binance.DocsParser.functionize_name(item))(
+              unquote_splicing(spec),
+              unquote(optional_args)
+            ) ::
+              {:ok, any()} | {:error, any()}
+
+      def unquote(Binance.DocsParser.functionize_name(item))(
+            unquote_splicing(arg_names),
+            opts \\ []
+          ) do
         binding = binding()
+
+        # merge all passed args together, so opts + passed
+        all_passed_args = Keyword.merge(binding, opts) |> Keyword.drop([:opts])
 
         IO.puts("API call: #{unquote(method)} " <> unquote(url))
         IO.puts("binding:")
         IO.inspect(binding)
+        IO.puts("passed args:")
+        IO.inspect(all_passed_args)
 
-        args = %{
-          timestamp: :os.system_time(:millisecond)
-        }
+        adjusted_args =
+          case Keyword.has_key?(all_passed_args, :timestamp) do
+            false ->
+              Keyword.put_new(all_passed_args, :timestamp, :os.system_time(:millisecond))
+
+            true ->
+              all_passed_args
+          end
+          |> Enum.into(%{})
+
+        IO.puts("adjusted args:")
+        IO.inspect(all_passed_args)
 
         if unquote(needs_auth) do
-          case HTTPClient.signed_request_binance(unquote(url), args, unquote(method)) do
+          case HTTPClient.signed_request_binance(unquote(url), adjusted_args, unquote(method)) do
             {:ok, %{"code" => code, "msg" => msg}} ->
               {:error, {:binance_error, %{code: code, msg: msg}}}
 
@@ -77,7 +136,7 @@ docs
               data
           end
         else
-          case HTTPClient.unsigned_request_binance(unquote(url), args, unquote(method)) do
+          case HTTPClient.unsigned_request_binance(unquote(url), adjusted_args, unquote(method)) do
             {:ok, %{"code" => code, "msg" => msg}} ->
               {:error, {:binance_error, %{code: code, msg: msg}}}
 

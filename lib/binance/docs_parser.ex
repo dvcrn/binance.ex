@@ -1,11 +1,13 @@
 defmodule Binance.DocsParser do
-  defp normalize_entry_item(%{
-         "name" => name,
-         "request" => %{
-           "method" => method,
-           "url" => %{"path" => path, "query" => query}
-         }
-       }) do
+  defp normalize_entry_item(
+         %{
+           "name" => name,
+           "request" => %{
+             "method" => method,
+             "url" => %{"path" => path, "query" => query}
+           }
+         } = args
+       ) do
     params = query |> Enum.map(&parse_params/1)
 
     %{
@@ -13,7 +15,9 @@ defmodule Binance.DocsParser do
       name: name,
       query: params,
       path: path,
-      needs_auth?: Enum.find(params, nil, &(&1.name == "signature")) != nil
+      needs_auth?: Enum.find(params, nil, &(&1.name == "signature")) != nil,
+      unique_key: "#{String.downcase(method)}_#{Enum.join(path, "_")}",
+      description: Map.get(args["request"], "description", "")
     }
   end
 
@@ -42,18 +46,18 @@ defmodule Binance.DocsParser do
     |> Enum.map(&normalize_entry_item/1)
   end
 
-  defp normalize_entry(%{"name" => name, "item" => %{"item" => item}}) do
-    IO.inspect(item)
-
-    %{
-      items: item |> Enum.map(&normalize_entry_item/1) |> List.flatten(),
-      group: name
-    }
-  end
-
   defp normalize_entry(%{"name" => name, "item" => item}) do
     %{
-      items: item |> Enum.map(&normalize_entry_item/1) |> List.flatten(),
+      items:
+        item
+        |> Enum.map(&normalize_entry_item/1)
+        |> List.flatten()
+        # remove duplicates
+        |> Enum.reduce(%{}, fn item, acc ->
+          IO.puts(item.unique_key)
+          Map.put(acc, item.unique_key, item)
+        end)
+        |> Map.values(),
       group: name
     }
   end
@@ -79,7 +83,7 @@ defmodule Binance.DocsParser do
   end
 
   def functionize_name(%{method: method, path: path}) do
-    api_path = Enum.take(path, -2) |> Enum.join("_") |> String.downcase() |> String.to_atom()
+    api_path = path |> Enum.join("_") |> String.downcase() |> String.to_atom()
 
     "#{String.downcase(Atom.to_string(method))}_#{api_path}"
     |> String.to_atom()
