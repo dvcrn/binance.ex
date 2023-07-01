@@ -80,7 +80,11 @@ defmodule Binance.Rest.HTTPClient do
     url =
       case method do
         :get ->
-          "#{@endpoint}#{url}?#{body}"
+          if body != "" do
+            "#{@endpoint}#{url}?#{body}"
+          else
+            "#{@endpoint}#{url}"
+          end
 
         _ ->
           "#{@endpoint}#{url}"
@@ -158,8 +162,15 @@ defmodule Binance.Rest.HTTPClient do
       data
       |> prepare_query_params()
 
+    url =
+      if argument_string != "" do
+        "#{@endpoint}#{url}" <> "?#{argument_string}"
+      else
+        "#{@endpoint}#{url}"
+      end
+
     apply(HTTPoison, :get, [
-      "#{@endpoint}#{url}" <> "?#{argument_string}",
+      url,
       headers
     ])
   end

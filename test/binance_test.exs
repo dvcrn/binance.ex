@@ -9,20 +9,20 @@ defmodule BinanceTest do
 
   test "ping returns an empty map" do
     use_cassette "ping_ok" do
-      assert Binance.ping() == {:ok, %{}}
+      assert Binance.Market.get_ping() == {:ok, %{}}
     end
   end
 
   test "get_server_time success return an ok, time tuple" do
     use_cassette "get_server_time_ok" do
-      assert Binance.get_server_time() == {:ok, 1_616_592_268_319}
+      assert Binance.Market.get_server_time() == {:ok, 1_616_592_268_319}
     end
   end
 
   test "get_historical_trades success returns the latest trades" do
     use_cassette "get_historical_trades_ok" do
-      assert {:ok, response} = Binance.get_historical_trades("XRPUSDT", 1, nil)
-      assert [%Binance.HistoricalTrade{} | _tail] = response
+      assert {:ok, response} = Binance.Market.get_historical_trades("XRPUSDT", 1, nil)
+      assert [%Binance.Structs.HistoricalTrade{} | _tail] = response
     end
 
     use_cassette "get_historical_trades_from_id_ok" do
@@ -170,7 +170,7 @@ defmodule BinanceTest do
                  {
                    :ok,
                    [
-                     %Binance.Kline{
+                     %Binance.Structs.Kline{
                        close: "0.00349500",
                        close_time: 1_616_029_199_999,
                        high: "0.00350000",
@@ -184,7 +184,7 @@ defmodule BinanceTest do
                        taker_buy_quote_asset_volume: "16.87297134",
                        volume: "10438.37000000"
                      },
-                     %Binance.Kline{
+                     %Binance.Structs.Kline{
                        close: "0.00347900",
                        close_time: 1_616_032_799_999,
                        high: "0.00349700",

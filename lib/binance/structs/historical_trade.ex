@@ -1,4 +1,4 @@
-defmodule Binance.HistoricalTrade do
+defmodule Binance.Structs.HistoricalTrade do
   @moduledoc """
   Struct for representing the result returned by /api/v3/historicalTrades
   """
