@@ -42,8 +42,15 @@ docs
         |> Enum.map(fn param ->
           %{name: param.name, description: param.description}
         end)
-        |> Enum.filter(&(&1.name != "timestamp"))
-        |> Enum.filter(&(&1.name != "signature"))
+
+      optional_params =
+        case needs_timestamp do
+          true ->
+            [%{name: "timestamp", description: "timestamp"} | optional_params]
+
+          _ ->
+            optional_params
+        end
 
       # generate mandatory params
       arg_names =

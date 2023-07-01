@@ -3,13 +3,10 @@ defmodule Binance.ResponseMapping do
 
   def lookup(path_key) do
     mappings = %{
-      "get:/api/v3/klines" => Binance.Structs.Kline
+      "get:/api/v3/klines" => Binance.Structs.Kline,
+      "get:/api/v3/account" => Binance.Structs.Account
     }
 
-    found = Map.get(mappings, path_key, nil)
-
-    IO.puts("lookup for #{path_key} -- #{inspect(found)}")
-
-    found
+    Map.get(mappings, path_key, nil)
   end
 end

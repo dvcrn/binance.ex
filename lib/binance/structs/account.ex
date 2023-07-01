@@ -1,4 +1,4 @@
-defmodule Binance.Account do
+defmodule Binance.Structs.Account do
   @moduledoc """
   Struct for representing a result row as returned by /api/v3/account
 
