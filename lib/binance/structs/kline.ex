@@ -1,4 +1,4 @@
-defmodule Binance.Kline do
+defmodule Binance.Structs.Kline do
   @moduledoc """
   Struct for representing a result row as returned by /api/v3/kline
 
@@ -36,7 +36,7 @@ defmodule Binance.Kline do
   ]
 
   def new(list) do
-    %Binance.Kline{
+    %Binance.Structs.Kline{
       open_time: Enum.at(list, 0),
       open: Enum.at(list, 1),
       high: Enum.at(list, 2),

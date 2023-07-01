@@ -21,8 +21,9 @@ docs
       needs_timestamp = item.needs_timestamp?
       description = item.description
       fx_name = item.fx_name
+      path_key = item.path_key
 
-      IO.puts("  generating #{fx_name} (#{url})")
+      IO.puts("  generating #{fx_name} (#{path_key})")
 
       mandatory_params =
         Enum.filter(params, fn param ->
@@ -113,6 +114,7 @@ docs
         all_passed_args = Keyword.merge(binding, opts) |> Keyword.drop([:opts])
 
         IO.puts("API call: #{unquote(method)} " <> unquote(url))
+        IO.puts("resp struct for pathkey #{unquote(path_key)}")
         IO.puts("binding:")
         IO.inspect(binding)
         IO.puts("passed args:")
@@ -138,22 +140,42 @@ docs
         IO.puts("adjusted args:")
         IO.inspect(all_passed_args)
 
-        if unquote(needs_auth) do
-          case HTTPClient.signed_request_binance(unquote(url), adjusted_args, unquote(method)) do
-            {:ok, %{"code" => code, "msg" => msg}} ->
-              {:error, {:binance_error, %{code: code, msg: msg}}}
+        case unquote(needs_auth) do
+          true ->
+            case HTTPClient.signed_request_binance(unquote(url), adjusted_args, unquote(method)) do
+              {:ok, %{"code" => code, "msg" => msg}} ->
+                {:error, {:binance_error, %{code: code, msg: msg}}}
 
-            data ->
-              data
-          end
-        else
-          case HTTPClient.unsigned_request_binance(unquote(url), adjusted_args, unquote(method)) do
-            {:ok, %{"code" => code, "msg" => msg}} ->
-              {:error, {:binance_error, %{code: code, msg: msg}}}
+              data ->
+                data
+            end
 
-            data ->
-              data
-          end
+          false ->
+            case HTTPClient.unsigned_request_binance(
+                   unquote(url),
+                   adjusted_args,
+                   unquote(method)
+                 ) do
+              {:ok, %{"code" => code, "msg" => msg}} ->
+                {:error, {:binance_error, %{code: code, msg: msg}}}
+
+              data ->
+                data
+            end
+        end
+        |> case do
+          {:ok, data} ->
+            # try to find a response mapped struct
+            case Binance.ResponseMapping.lookup(unquote(path_key)) do
+              nil ->
+                {:ok, data}
+
+              struct_name ->
+                {:ok, struct_name.new(data)}
+            end
+
+          e ->
+            e
         end
       end
     end)

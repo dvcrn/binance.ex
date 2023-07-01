@@ -38,8 +38,8 @@ defmodule Binance.DocsParser do
       path: path,
       needs_auth?: Enum.find(params, nil, &(&1.name == "signature")) != nil,
       needs_timestamp?: Enum.find(params, nil, &(&1.name == "timestamp")) != nil,
-      unique_key: "#{String.downcase(method)}_#{Enum.join(path, "_")}",
       description: Map.get(args["request"], "description", ""),
+      path_key: "#{String.downcase(method)}:/#{Enum.join(path, "/")}",
       fx_name: gen_fx_name(path, method)
     }
   end
