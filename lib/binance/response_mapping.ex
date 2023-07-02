@@ -1,6 +1,10 @@
 defmodule Binance.ResponseMapping do
   @moduledoc false
 
+  # Maps APIs to specific structs
+  # The struct needs to have a .new() method that takes the data returned on successful API call by Binance. .new() was chosen as this is used by ExConstructor by default
+  # Some APIs return a list of things and not a single struct, the initializers for those are in Binance.Responses.X which then returns a list of Binance.Structs.X
+
   def lookup(path_key) do
     mappings = %{
       "get:/api/v3/klines" => Binance.Responses.Klines,

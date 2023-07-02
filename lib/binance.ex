@@ -13,6 +13,23 @@ defmodule Binance do
     def format_error(%{"code" => code, "msg" => msg}) do
       {:binance_error, %{code: code, msg: msg}}
     end
+
+    @doc """
+    Converts a map with string keys into a map with atoms
+
+    This is considered unsafe since atoms are never garbage collected and can cause a memory leak
+    """
+    def keys_to_atoms(string_key_map) when is_map(string_key_map) do
+      for {key, val} <- string_key_map,
+          into: %{},
+          do: {
+            String.to_atom(key),
+            keys_to_atoms(val)
+          }
+    end
+
+    def keys_to_atoms(value) when is_list(value), do: Enum.map(value, &keys_to_atoms/1)
+    def keys_to_atoms(value), do: value
   end
 end
 
@@ -190,7 +207,7 @@ docs
             # try to find a response mapped struct
             case Binance.ResponseMapping.lookup(unquote(path_key)) do
               nil ->
-                {:ok, data}
+                {:ok, Binance.Helper.keys_to_atoms(data)}
 
               struct_name ->
                 {:ok, struct_name.new(data)}
