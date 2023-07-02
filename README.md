@@ -2,7 +2,7 @@
 
 Elixir wrapper for interacting with the [Binance API](https://github.com/binance/binance-spot-api-docs).
 
-**NOTE: v2 is a full rewrite that's now fully auto-generated from the Binance docs. There are breaking changes. If you don't need any of the new endpoints, stick to v1.**
+**NOTE: v2 is a full rewrite that's now fully auto-generated from the Binance docs. There are breaking changes, and it's not as battle-tested as v1 yet. If you don't need any of the new endpoints, stick to v1.**
 
 ## Installation
 
