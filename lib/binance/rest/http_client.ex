@@ -32,30 +32,19 @@ defmodule Binance.Rest.HTTPClient do
   end
 
   defp request_binance(url, body, method) do
+    url = URI.parse("#{@endpoint}#{url}")
+
     url =
-      case method do
-        :get ->
-          if body != "" do
-            "#{@endpoint}#{url}?#{body}"
-          else
-            "#{@endpoint}#{url}"
-          end
-
-        :delete ->
-          if body != "" do
-            "#{@endpoint}#{url}?#{body}"
-          else
-            "#{@endpoint}#{url}"
-          end
-
-        _ ->
-          "#{@endpoint}#{url}"
+      if body != "" do
+        URI.append_query(url, body)
+      else
+        url
       end
 
     case method do
       :get ->
         HTTPoison.get(
-          url,
+          URI.to_string(url),
           [
             {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
           ]
@@ -63,7 +52,7 @@ defmodule Binance.Rest.HTTPClient do
 
       :delete ->
         HTTPoison.delete(
-          url,
+          URI.to_string(url),
           [
             {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
           ]
@@ -71,7 +60,7 @@ defmodule Binance.Rest.HTTPClient do
 
       _ ->
         apply(HTTPoison, method, [
-          url,
+          URI.to_string(url),
           body,
           [
             {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
