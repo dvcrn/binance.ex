@@ -3,6 +3,13 @@ defmodule Binance do
     def format_price(num) when is_float(num), do: :erlang.float_to_binary(num, [{:decimals, 8}])
     def format_price(num) when is_integer(num), do: inspect(num)
     def format_price(num) when is_binary(num), do: num
+
+    def format_error(%{"code" => -2010, "msg" => msg}),
+      do: {:binance_error, %Binance.Errors.InsufficientBalanceError{code: -2010, msg: msg}}
+
+    def format_error(%{"code" => code, "msg" => msg}) do
+      {:binance_error, %{code: code, msg: msg}}
+    end
   end
 end
 
@@ -157,8 +164,8 @@ docs
         case unquote(needs_auth) do
           true ->
             case HTTPClient.signed_request_binance(unquote(url), adjusted_args, unquote(method)) do
-              {:ok, %{"code" => code, "msg" => msg}} ->
-                {:error, {:binance_error, %{code: code, msg: msg}}}
+              {:ok, %{"code" => _code, "msg" => _msg} = err} ->
+                {:error, Binance.Helper.format_error(err)}
 
               data ->
                 data
@@ -170,8 +177,8 @@ docs
                    adjusted_args,
                    unquote(method)
                  ) do
-              {:ok, %{"code" => code, "msg" => msg}} ->
-                {:error, {:binance_error, %{code: code, msg: msg}}}
+              {:ok, %{"code" => _code, "msg" => _msg} = err} ->
+                {:error, Binance.Helper.format_error(err)}
 
               data ->
                 data

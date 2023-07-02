@@ -346,12 +346,12 @@ defmodule BinanceTest do
                    timeInForce: "FOK"
                  )
 
-        assert reason == %Binance.InsufficientBalanceError{
-                 reason: %{
-                   code: -2010,
-                   msg: "Account has insufficient balance for requested action."
-                 }
-               }
+        assert reason ==
+                 {:binance_error,
+                  %Binance.Errors.InsufficientBalanceError{
+                    code: -2010,
+                    msg: "Account has insufficient balance for requested action."
+                  }}
       end
     end
 
