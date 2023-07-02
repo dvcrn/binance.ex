@@ -154,7 +154,7 @@ defmodule BinanceTest do
                    close_time: 1_616_593_123_159,
                    count: 65580
                  }
-               } = Binance.Market.get_ticker(symbol: "LTCBTC")
+               } = Binance.Market.get_ticker_24hr(symbol: "LTCBTC")
       end
     end
 
