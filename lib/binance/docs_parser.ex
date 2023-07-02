@@ -69,7 +69,7 @@ defmodule Binance.DocsParser do
     |> Enum.map(&normalize_entry_item/1)
   end
 
-  defp normalize_entry(%{"name" => name, "item" => item}) do
+  defp normalize_entry(%{"name" => name, "item" => item} = args) do
     %{
       items:
         item
@@ -84,7 +84,8 @@ defmodule Binance.DocsParser do
           Map.put(acc, item.fx_name, item)
         end)
         |> Map.values(),
-      group: name
+      group: name,
+      description: Map.get(args, "description", "")
     }
   end
 

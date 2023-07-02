@@ -42,6 +42,10 @@ docs
   defmodule Binance.DocsParser.modularize_name(api_group.group) do
     alias Binance.Rest.HTTPClient
 
+    @moduledoc """
+    #{api_group.description}
+    """
+
     api_group.items
     |> Enum.each(fn item ->
       method = item.method
