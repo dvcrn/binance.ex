@@ -86,21 +86,28 @@ defmodule Binance.Rest.HTTPClient do
             "#{@endpoint}#{url}"
           end
 
+        :delete ->
+          if body != "" do
+            "#{@endpoint}#{url}?#{body}"
+          else
+            "#{@endpoint}#{url}"
+          end
+
         _ ->
           "#{@endpoint}#{url}"
       end
 
-    IO.puts(body)
-    IO.puts(method)
-    IO.puts("#{url}")
-
-    IO.inspect([
-      {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
-    ])
-
     case method do
       :get ->
         HTTPoison.get(
+          url,
+          [
+            {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
+          ]
+        )
+
+      :delete ->
+        HTTPoison.delete(
           url,
           [
             {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}

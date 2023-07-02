@@ -1,4 +1,9 @@
 defmodule Binance do
+  defmodule Helper do
+    def format_price(num) when is_float(num), do: :erlang.float_to_binary(num, [{:decimals, 8}])
+    def format_price(num) when is_integer(num), do: inspect(num)
+    def format_price(num) when is_binary(num), do: num
+  end
 end
 
 docs = Binance.DocsParser.get_documentation()
@@ -121,11 +126,6 @@ docs
         all_passed_args = Keyword.merge(binding, opts) |> Keyword.drop([:opts])
 
         IO.puts("API call: #{unquote(method)} " <> unquote(url))
-        IO.puts("resp struct for pathkey #{unquote(path_key)}")
-        IO.puts("binding:")
-        IO.inspect(binding)
-        IO.puts("passed args:")
-        IO.inspect(all_passed_args)
 
         # if the call requires a timestamp, we add it
         adjusted_args =
@@ -142,10 +142,17 @@ docs
                   all_passed_args
               end
           end
-          |> Enum.into(%{})
+          # special handling for certain parameters like price:
+          |> Enum.map(fn {k, v} ->
+            case k do
+              :price ->
+                {k, Binance.Helper.format_price(v)}
 
-        IO.puts("adjusted args:")
-        IO.inspect(all_passed_args)
+              _ ->
+                {k, v}
+            end
+          end)
+          |> Enum.into(%{})
 
         case unquote(needs_auth) do
           true ->

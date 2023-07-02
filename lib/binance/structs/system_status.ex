@@ -1,4 +1,4 @@
-defmodule Binance.SystemStatus do
+defmodule Binance.Structs.SystemStatus do
   @moduledoc """
   Struct for representing the result returned by /wapi/v3/systemStatus.html
 

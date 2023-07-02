@@ -1,4 +1,4 @@
-defmodule Binance.Order do
+defmodule Binance.Structs.Order do
   @moduledoc """
   Struct for representing the result returned by /api/v3/openOrders
   """

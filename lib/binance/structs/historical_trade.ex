@@ -14,4 +14,8 @@ defmodule Binance.Structs.HistoricalTrade do
   ]
 
   use ExConstructor
+
+  def from_response(data) do
+    Enum.map(data, &new(&1))
+  end
 end
