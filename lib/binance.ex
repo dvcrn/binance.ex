@@ -4,6 +4,9 @@ defmodule Binance do
     def format_price(num) when is_integer(num), do: inspect(num)
     def format_price(num) when is_binary(num), do: num
 
+    @doc """
+    Either returns a specific error (if we have one), or formats as generic {:binance_error, xxx}
+    """
     def format_error(%{"code" => -2010, "msg" => msg}),
       do: {:binance_error, %Binance.Errors.InsufficientBalanceError{code: -2010, msg: msg}}
 
@@ -17,7 +20,7 @@ docs = Binance.DocsParser.get_documentation()
 
 docs
 |> Enum.each(fn api_group ->
-  IO.puts("parsing group: #{api_group.group}")
+  # IO.puts("### Group: #{api_group.group}")
 
   defmodule Binance.DocsParser.modularize_name(api_group.group) do
     alias Binance.Rest.HTTPClient
@@ -35,7 +38,7 @@ docs
       fx_name = item.fx_name
       path_key = item.path_key
 
-      IO.puts("  generating #{fx_name} (#{path_key})")
+      # IO.puts("- #{fx_name} (#{path_key})")
 
       mandatory_params =
         Enum.filter(params, fn param ->
@@ -131,8 +134,6 @@ docs
 
         # merge all passed args together, so opts + passed
         all_passed_args = Keyword.merge(binding, opts) |> Keyword.drop([:opts])
-
-        IO.puts("API call: #{unquote(method)} " <> unquote(url))
 
         # if the call requires a timestamp, we add it
         adjusted_args =
