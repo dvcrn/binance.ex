@@ -161,6 +161,11 @@ docs
             end
           end)
           |> Enum.into(%{})
+          # if no parameters set, set body to ""
+          |> case do
+            %{} -> ""
+            a -> a
+          end
 
         case unquote(needs_auth) do
           true ->

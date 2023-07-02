@@ -77,9 +77,9 @@ defmodule Binance.DocsParser do
         |> List.flatten()
         # remove duplicates
         |> Enum.reduce(%{}, fn item, acc ->
-          if Map.has_key?(acc, item.fx_name) do
-            IO.puts("overwriting: #{item.fx_name}")
-          end
+          # if Map.has_key?(acc, item.fx_name) do
+          #   IO.puts("overwriting: #{item.fx_name}")
+          # end
 
           Map.put(acc, item.fx_name, item)
         end)
@@ -104,6 +104,7 @@ defmodule Binance.DocsParser do
     |> String.replace(")", "")
     |> String.replace("/", "")
     |> String.capitalize()
+    |> Macro.camelize()
     |> String.to_atom()
     |> (&Module.concat(Binance, &1)).()
   end

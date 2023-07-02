@@ -15,7 +15,8 @@ defmodule Binance.ResponseMapping do
       "get:/api/v3/ticker" => Binance.Structs.Ticker,
       "get:/api/v3/ticker/24hr" => Binance.Structs.Ticker,
       "get:/api/v3/ticker/price" => Binance.Responses.TickerPrice,
-      "get:/api/v3/exchangeInfo" => Binance.Structs.ExchangeInfo
+      "get:/api/v3/exchangeInfo" => Binance.Structs.ExchangeInfo,
+      "post:/api/v3/userDataStream" => Binance.Structs.DataStream
     }
 
     Map.get(mappings, path_key, nil)
