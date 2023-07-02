@@ -157,11 +157,23 @@ defmodule Binance.Rest.HTTPClient do
     end
   end
 
+  defp do_unsigned_request(url, nil, :post, headers) do
+    apply(HTTPoison, :post, [
+      "#{@endpoint}#{url}",
+      "",
+      headers
+    ])
+  end
+
   defp do_unsigned_request(url, nil, method, headers) do
     apply(HTTPoison, method, [
       "#{@endpoint}#{url}",
       headers
     ])
+  end
+
+  defp do_unsigned_request(url, %{}, method, headers) do
+    do_unsigned_request(url, nil, method, headers)
   end
 
   defp do_unsigned_request(url, data, :get, headers) do
