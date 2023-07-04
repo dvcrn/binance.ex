@@ -2,7 +2,7 @@
 
 Elixir wrapper for interacting with the [Binance API](https://github.com/binance/binance-spot-api-docs).
 
-**NOTE: v2 is a full rewrite that's now fully auto-generated from the Binance docs. There are breaking changes, and it's not as battle-tested as v1 yet. If you don't need any of the new endpoints, stick to v1.**
+**NOTE: v2 is a full rewrite that's now fully auto-generated from the Binance docs. There are breaking changes, and it's not as battle-tested as v1 yet. If you don't need any of the new endpoints, [stick to v1](https://github.com/dvcrn/binance.ex/tree/master).**
 
 ## Installation
 
@@ -431,7 +431,7 @@ iex> Binance.Market.get_ticker_price
 iex> Binance.Trade.post_order "BNBUSDT", "BUY", "MARKET", quantity: 0.01
 ```
 
-### Earn 
+### Earn
 
 #### Get all earn positions
 ```elixir
@@ -441,6 +441,18 @@ iex> Binance.Staking.get_staking_position "STAKING"
 #### Get all earn products
 ```elixir
 iex> Binance.Staking.get_staking_product_list "STAKING"
+```
+
+#### Redeem all flexible staked assets
+
+```elixir
+with {:ok, positions} <- Binance.Savings.get_lending_daily_token_position("") do 
+  positions
+  |> Enum.map(
+    &Binance.Savings.post_lending_daily_redeem(&1.productId, &1.totalAmount, "FAST"
+    )
+  )
+end
 ```
 
 ## License
