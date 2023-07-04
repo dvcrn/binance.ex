@@ -1,6 +1,11 @@
 # binance.ex
 
-Elixir wrapper for interacting with the [Binance API](https://github.com/binance/binance-spot-api-docs).
+[![Hex.pm Version](https://img.shields.io/hexpm/v/binance)](https://hex.pm/packages/binance)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/binance)
+[![Hex.pm Download Total](https://img.shields.io/hexpm/dt/binance)](https://hex.pm/packages/binance)
+
+
+Unofficial Elixir wrapper for interacting with the [Binance API](https://github.com/binance/binance-spot-api-docs).
 
 **NOTE: v2 is a full rewrite that's now fully auto-generated from the Binance docs. There are breaking changes, and it's not as battle-tested as v1 yet. If you don't need any of the new endpoints, [stick to v1](https://github.com/dvcrn/binance.ex/tree/master).**
 
@@ -11,7 +16,7 @@ Elixir wrapper for interacting with the [Binance API](https://github.com/binance
 ```elixir
 def deps do
   [
-    {:binance, "~> 1.0"}
+    {:binance, "~> 2.0.0-beta.1"}
   ]
 end
 ```
