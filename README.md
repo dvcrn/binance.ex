@@ -404,7 +404,7 @@ Optional params:
 
 ## Usage
 
-Documentation available at [https://hexdocs.pm/binance](https://hexdocs.pm/binance).
+Documentation available at [https://hexdocs.pm/binance](https://hexdocs.pm/binance) (make sure you have 2.0.0 selected)
 
 ### Get all prices
 
