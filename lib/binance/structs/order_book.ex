@@ -1,4 +1,4 @@
-defmodule Binance.OrderBook do
+defmodule Binance.Structs.OrderBook do
   @moduledoc """
   Struct for representing the result returned by /api/v1/depth
   """

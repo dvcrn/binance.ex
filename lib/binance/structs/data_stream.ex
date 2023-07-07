@@ -1,4 +1,4 @@
-defmodule Binance.DataStream do
+defmodule Binance.Structs.DataStream do
   @moduledoc """
   Struct for representing a user data stream.
 

@@ -1,4 +1,4 @@
-defmodule Binance.ExchangeInfo do
+defmodule Binance.Structs.ExchangeInfo do
   @moduledoc """
   Struct for representing the result returned by /api/v1/exchangeInfo
   """

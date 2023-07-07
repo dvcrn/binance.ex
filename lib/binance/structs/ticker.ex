@@ -1,4 +1,4 @@
-defmodule Binance.Ticker do
+defmodule Binance.Structs.Ticker do
   @moduledoc """
   Struct for representing a result row as returned by /api/v1/ticker/24hr
 

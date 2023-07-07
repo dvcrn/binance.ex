@@ -1,4 +1,4 @@
-defmodule Binance.OrderResponse do
+defmodule Binance.Structs.OrderResponse do
   @moduledoc """
   Response tructure for POST /api/v3/order endpoint.
   All prices and quantities are string representation of floats with 8 decimals (eg: "orig_qty": "10.00000000")
