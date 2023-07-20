@@ -1,0 +1,32 @@
+[
+    {
+      "request": {
+        "body": "",
+        "headers": {
+          "X-MBX-APIKEY": "***",
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "method": "get",
+        "options": [],
+        "request_body": "",
+        "url": "https://papi.binance.com/papi/v1/um/openOrders?timestamp=1689813451671&signature=BB12E059764554C0DA547582007BCB5E16A5AE456A3F8CD69A67EA97D8D6AADE"
+      },
+      "response": {
+        "binary": false,
+        "body": "[{\"orderId\":2634617095,\"symbol\":\"BTCUSDT\",\"status\":\"NEW\",\"clientOrderId\":\"web_argH9snTII2DpZQ1lkzD\",\"price\":\"9000\",\"avgPrice\":\"0.00000\",\"origQty\":\"0.001\",\"executedQty\":\"0\",\"cumQty\":\"0\",\"cumQuote\":\"0\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"reduceOnly\":false,\"side\":\"SELL\",\"positionSide\":\"BOTH\",\"stopPrice\":\"0\",\"time\":1586855389188,\"updateTime\":1586855589773},{\"orderId\":2634612040,\"symbol\":\"BTCUSDT\",\"status\":\"NEW\",\"clientOrderId\":\"web_zyRe8mQWmV2GOoLxdSYr\",\"price\":\"8786.98\",\"avgPrice\":\"0.00000\",\"origQty\":\"0.001\",\"executedQty\":\"0\",\"cumQuote\":\"0\",\"cumQty\":\"0\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"reduceOnly\":false,\"side\":\"SELL\",\"positionSide\":\"BOTH\",\"stopPrice\":\"0\",\"time\":1586855377085,\"updateTime\":1586855589773}]",
+        "headers": {
+          "Date": "Wed, 19 Jul 2023 15:21:13 GMT",
+          "Content-Type": "application/json",
+          "Content-Length": "46",
+          "Connection": "keep-alive",
+          "Server": "Tengine",
+          "X-MBX-USED-WEIGHT-1M": "0",
+          "x-response-time": "0ms",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        "status_code": 200,
+        "type": "ok"
+      }
+    }
+  ]

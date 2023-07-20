@@ -1,0 +1,31 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://papi.binance.com/papi/v1/um/openOrders?symbol=BTCUSDT&timestamp=1689813871231&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "[{\"orderId\":11333637,\"symbol\":\"BTCUSDT\",\"accountId\":1000,\"status\":\"NEW\",\"clientOrderId\":\"kFVoo0nClhOku6KbcB8B1X\",\"price\":\"11000\",\"origQty\":\"0.001\",\"executedQty\":\"0\",\"cumQty\":\"0\",\"cumQuote\":\"0\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"reduceOnly\":false,\"side\":\"SELL\",\"positionSide\":\"BOTH\",\"updateTime\":1568995541781}]",
+      "headers": {
+        "Date": "Thu, 20 Jul 2023 00:44:31 GMT",
+        "Content-Type": "application/json",
+        "Content-Length": "46",
+        "Connection": "keep-alive",
+        "Server": "Tengine",
+        "X-MBX-USED-WEIGHT-1M": "1",
+        "x-response-time": "1ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

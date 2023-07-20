@@ -1,0 +1,32 @@
+[
+  {
+    "request": {
+      "body": "price=8000&quantity=0.001&side=BUY&symbol=BTCUSDT&timeInForce=GTC&timestamp=1689779685573&type=LIMIT&signature=***",
+      "headers": {
+        "X-MBX-APIKEY": "***",
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://papi.binance.com/papi/v1/um/order"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"orderId\":2634722102,\"symbol\":\"BTCUSDT\",\"status\":\"NEW\",\"clientOrderId\":\"e7BFySSxfObXahpsHJirjC\",\"avg_price\":\"8000\",\"price\":\"8000\",\"origQty\":\"0.001\",\"executedQty\":\"0\",\"cumQty\":\"0\",\"cumQuote\":\"0\",\"timeInForce\":\"GTC\",\"type\":\"LIMIT\",\"reduceOnly\":false,\"side\":\"BUY\",\"positionSide\":\"BOTH\",\"updateTime\":1586855766315}",
+      "headers": {
+        "Date": "Wed, 19 Jul 2023 15:14:46 GMT",
+        "Content-Type": "application/json",
+        "Content-Length": "46",
+        "Connection": "keep-alive",
+        "Server": "Tengine",
+        "X-MBX-USED-WEIGHT-1M": "0",
+        "x-response-time": "1ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
