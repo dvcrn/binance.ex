@@ -23,6 +23,15 @@ defmodule Binance.Util do
   def sign_content(key, content, key_type) when key_type == "rsa" do
     {:ok, rsa_priv_key} = ExPublicKey.loads(key)
     {:ok, signature} = ExPublicKey.sign(content, rsa_priv_key)
+
+    "#{Base.encode64(signature)}" |> URI.encode_www_form()
+  end
+
+  def sign_content(pem_key, content, key_type) when key_type == "ed25519" do
+    [pem_entry] = :public_key.pem_decode(pem_key)
+    {_, _, priv, _, _, _} = :public_key.pem_entry_decode(pem_entry)
+    signature = :crypto.sign(:eddsa, :none, content, [priv, :ed25519])
+
     "#{Base.encode64(signature)}" |> URI.encode_www_form()
   end
 
