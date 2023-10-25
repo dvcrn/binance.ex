@@ -1,0 +1,38 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": [],
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://papi.binance.com/papi/v1/ping"
+    },
+    "response": {
+      "binary": false,
+      "body": "{}",
+      "headers": {
+        "Date": "Wed, 19 Jul 2023 10:39:55 GMT",
+        "Content-Type": "application/json",
+        "Content-Length": "2",
+        "Connection": "keep-alive",
+        "Server": "Tengine",
+        "x-response-time": "0ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Headers": "*,clienttype,Content-Type,lang,x-ui-request-trace,bnc-uuid",
+        "Content-Security-Policy": "default-src 'self'",
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "expires": "0",
+        "pragma": "no-cache",
+        "strict-transport-security": "max-age=31536000; includeSubdomains",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-xss-protection": "1; mode=block"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

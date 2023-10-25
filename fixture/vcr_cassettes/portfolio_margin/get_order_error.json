@@ -1,0 +1,31 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://papi.binance.com/papi/v1/um/order?orderId=123456789&symbol=BTCUSDT&timestamp=1689814675591&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"code\":-2013,\"msg\":\"Order does not exist.\"}",
+      "headers": {
+        "Date": "Thu, 20 Jul 2023 00:57:56 GMT",
+        "Content-Type": "application/json",
+        "Content-Length": "46",
+        "Connection": "keep-alive",
+        "Server": "Tengine",
+        "X-MBX-USED-WEIGHT-1M": "1",
+        "x-response-time": "1ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"
+      },
+      "status_code": 401,
+      "type": "ok"
+    }
+  }
+]

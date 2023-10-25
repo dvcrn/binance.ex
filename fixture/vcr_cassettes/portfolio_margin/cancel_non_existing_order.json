@@ -1,0 +1,31 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "X-MBX-APIKEY": "***"
+      },
+      "method": "delete",
+      "options": [],
+      "request_body": "",
+      "url": "https://papi.binance.com/papi/v1/um/order?orderId=123456&symbol=BTCUSDT&timestamp=1689815410366&signature=***"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"code\":-2011,\"msg\":\"CANCEL_REJECTED\"}",
+      "headers": {
+        "Date": "Thu, 20 Jul 2023 01:10:11 GMT",
+        "Content-Type": "application/json",
+        "Content-Length": "46",
+        "Connection": "keep-alive",
+        "Server": "Tengine",
+        "X-MBX-USED-WEIGHT-1M": "1",
+        "x-response-time": "0ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"
+      },
+      "status_code": 401,
+      "type": "ok"
+    }
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "request": {
+      "body": "price=9000&quantity=0.05&side=BUY&symbol=BTCUSDT&timeInForce=GTC&timestamp=1689780073150&type=LIMIT&signature=***",
+      "headers": {
+        "X-MBX-APIKEY": "***",
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://papi.binance.com/papi/v1/um/order"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"code\":-2018,\"msg\":\"Balance is insufficient\"}",
+      "headers": {
+        "Date": "Wed, 19 Jul 2023 15:21:13 GMT",
+        "Content-Type": "application/json",
+        "Content-Length": "46",
+        "Connection": "keep-alive",
+        "Server": "Tengine",
+        "X-MBX-USED-WEIGHT-1M": "0",
+        "x-response-time": "0ms",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"
+      },
+      "status_code": 401,
+      "type": "ok"
+    }
+  }
+]
