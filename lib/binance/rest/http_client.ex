@@ -34,7 +34,7 @@ defmodule Binance.Rest.HTTPClient do
   defp request_binance(url, body, method) do
     url = URI.parse("#{@endpoint}#{url}")
 
-    url =
+    encoded_url =
       if body != "" do
         URI.append_query(url, body)
       else
@@ -44,7 +44,7 @@ defmodule Binance.Rest.HTTPClient do
     case method do
       :get ->
         HTTPoison.get(
-          URI.to_string(url),
+          URI.to_string(encoded_url),
           [
             {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
           ]
@@ -52,7 +52,7 @@ defmodule Binance.Rest.HTTPClient do
 
       :delete ->
         HTTPoison.delete(
-          URI.to_string(url),
+          URI.to_string(encoded_url),
           [
             {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
           ]
@@ -60,8 +60,8 @@ defmodule Binance.Rest.HTTPClient do
 
       _ ->
         apply(HTTPoison, method, [
-          URI.to_string(url),
-          body,
+          URI.to_string(encoded_url),
+          "",
           [
             {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
           ]
@@ -151,12 +151,6 @@ defmodule Binance.Rest.HTTPClient do
     |> Enum.join("&")
   end
 
-  # TODO: remove when we require OTP 22.1
-  if Code.ensure_loaded?(:crypto) and function_exported?(:crypto, :mac, 4) do
-    defp generate_signature(digest, key, argument_string),
-      do: :crypto.mac(:hmac, digest, key, argument_string)
-  else
-    defp generate_signature(digest, key, argument_string),
-      do: :crypto.hmac(digest, key, argument_string)
-  end
+  defp generate_signature(digest, key, argument_string),
+    do: :crypto.mac(:hmac, digest, key, argument_string)
 end
