@@ -356,16 +356,13 @@ defmodule BinanceTest do
     end
 
     test "properly formats orders with very low prices" do
-      matches_price = fn response, keys, _recorder_options ->
-        [expected_price] = Regex.run(~r/price=[^&]+/, response.request.body)
-        String.starts_with?(keys[:request_body], expected_price)
-      end
-
-      use_cassette "order_limit_buy_very_low_price", custom_matchers: [matches_price] do
+      use_cassette "order_limit_buy_very_low_price" do
         assert {:ok, %Binance.Structs.OrderResponse{} = response} =
                  Binance.Trade.post_order("DOGEBTC", "BUY", "LIMIT",
                    quantity: 100,
-                   price: 0.000001
+                   price: 0.000001,
+                   timeInForce: "GTC",
+                   timestamp: 1_698_551_516_035
                  )
 
         assert response.client_order_id == "cyNmMk8rcgunB0REmUlbyv"
