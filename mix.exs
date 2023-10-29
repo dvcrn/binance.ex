@@ -5,7 +5,7 @@ defmodule Binance.MixProject do
     [
       app: :binance,
       version: "2.0.0",
-      elixir: "~> 1.11",
+      elixir: "~> 1.14.5",
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
@@ -30,12 +30,12 @@ defmodule Binance.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:httpoison, "~> 1.4"},
-      {:poison, "~> 4.0.0"},
-      {:exconstructor, "~> 1.2.3"},
+      {:httpoison, "~> 2.0"},
+      {:poison, "~> 5.0"},
+      {:exconstructor, "~> 1.2.10"},
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
-      {:exvcr, "~> 0.13.0", only: [:dev, :test]}
+      {:exvcr, "~> 0.14.4", only: [:dev, :test]}
     ]
   end
 
