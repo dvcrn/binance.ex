@@ -11,7 +11,7 @@ jobs:
   test:
     strategy:
       matrix:
-        otp: ["23.3", "24.3", "25.3"]
+        otp: ["24.3", "25.3", "26.1"]
         elixir: ["1.14.5", "1.15.7"]
     runs-on: ubuntu-20.04
     steps:
