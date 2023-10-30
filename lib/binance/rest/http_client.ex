@@ -1,5 +1,7 @@
 defmodule Binance.Rest.HTTPClient do
-  @endpoint Application.get_env(:binance, :end_point, "https://api.binance.com")
+  defp endpoint() do
+    Application.get_env(:binance, :end_point, "https://api.binance.com")
+  end
 
   defp prepare_request(url, params, secret_key, api_key) do
     case validate_credentials(secret_key, api_key) do
@@ -32,7 +34,7 @@ defmodule Binance.Rest.HTTPClient do
   end
 
   defp request_binance(url, body, method) do
-    url = URI.parse("#{@endpoint}#{url}")
+    url = URI.parse("#{endpoint()}#{url}")
 
     encoded_url =
       if body != "" do
