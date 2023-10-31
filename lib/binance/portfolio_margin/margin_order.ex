@@ -3,6 +3,7 @@ defmodule Binance.PortfolioMargin.MarginOrder do
     :symbol,
     :order_id,
     :transact_time,
+    :update_time,
     :price,
     :orig_qty,
     :executed_qty,

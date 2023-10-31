@@ -19,14 +19,14 @@ defmodule PortfolioMarginTest do
     test "creates an order with a duration of good til cancel by default" do
       use_cassette "portfolio_margin/order_limit_buy_good_til_cancel_default_duration_success" do
         assert {:ok, %Binance.PortfolioMargin.UMOrder{} = response, _rate_limit} =
-                 Binance.PortfolioMargin.create_order(%{
+                 Binance.PortfolioMargin.create_order("um", %{
                    symbol: "BTCUSDT",
                    side: "BUY",
                    type: "LIMIT",
                    quantity: 0.001,
                    price: 8000,
                    time_in_force: "GTC"
-                 }, "um")
+                 })
 
         assert response.client_order_id == "e7BFySSxfObXahpsHJirjC"
         assert response.cum_qty == "0"
@@ -50,14 +50,14 @@ defmodule PortfolioMarginTest do
     test "returns an insufficient margin error tuple" do
       use_cassette "portfolio_margin/order_limit_buy_error_insufficient_balance" do
         assert {:error, reason, _rate_limit} =
-                 Binance.PortfolioMargin.create_order(%{
+                 Binance.PortfolioMargin.create_order("um", %{
                    symbol: "BTCUSDT",
                    side: "BUY",
                    type: "LIMIT",
                    quantity: 0.05,
                    price: 9000,
                    time_in_force: "GTC"
-                 }, "um")
+                 })
 
         assert reason ==
                  {:binance_error,
@@ -73,14 +73,14 @@ defmodule PortfolioMarginTest do
     test "creates an order with a duration of good til cancel by default" do
       use_cassette "portfolio_margin/order_limit_sell_good_til_cancel_default_duration_success" do
         assert {:ok, %Binance.PortfolioMargin.UMOrder{} = response, _rate_limit} =
-                 Binance.PortfolioMargin.create_order(%{
+                 Binance.PortfolioMargin.create_order("um", %{
                    symbol: "BTCUSDT",
                    side: "SELL",
                    type: "LIMIT",
                    quantity: 0.001,
                    price: 11_000,
                    time_in_force: "GTC"
-                 }, "um")
+                 })
 
         assert response.client_order_id == "VV0vLLVnABzLXwYxvDkYqF"
         assert response.cum_qty == "0"
@@ -104,14 +104,14 @@ defmodule PortfolioMarginTest do
     test "returns an insufficient margin error tuple" do
       use_cassette "portfolio_margin/order_limit_buy_error_insufficient_balance" do
         assert {:error, reason, _rate_limit} =
-                 Binance.PortfolioMargin.create_order(%{
+                 Binance.PortfolioMargin.create_order("um", %{
                    symbol: "BTCUSDT",
                    side: "SELL",
                    type: "LIMIT",
                    quantity: 0.05,
                    price: 11000,
                    time_in_force: "GTC"
-                 }, "um")
+                 })
 
         assert reason ==
                  {:binance_error,
