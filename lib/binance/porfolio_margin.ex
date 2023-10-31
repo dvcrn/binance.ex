@@ -42,8 +42,8 @@ defmodule Binance.PortfolioMargin do
   end
 
   def create_order(
-        %{symbol: symbol, side: side, type: type, quantity: quantity} = params,
         order_type,
+        %{symbol: symbol, side: side, type: type, quantity: quantity} = params,
         config \\ nil,
         options \\ []
       ) do
@@ -108,12 +108,7 @@ defmodule Binance.PortfolioMargin do
 
   def get_open_orders(order_type, params \\ %{}, config \\ nil) do
     case HTTPClient.get_binance("#{@endpoint}/papi/v1/#{order_type}/openOrders", params, config) do
-      {:ok, data, headers} when order_type == "um" ->
-        {:ok, Enum.map(data, &Binance.PortfolioMargin.UMOrder.new(&1)), headers}
-      {:ok, data, headers} when order_type == "cm" ->
-        {:ok, Enum.map(data, &Binance.PortfolioMargin.CMOrder.new(&1)), headers}
-      {:ok, data, headers} when order_type == "margin" ->
-        {:ok, Enum.map(data, &Binance.PortfolioMargin.MarginOrder.new(&1)), headers}
+      {:ok, _data, _headers} = res -> res
       err -> err
     end
   end
@@ -174,12 +169,11 @@ defmodule Binance.PortfolioMargin do
     end
   end
 
-  def cancel_all_orders(params, order_type, config \\ nil) do
+  def cancel_all_orders(order_type, params, config \\ nil) do
     case HTTPClient.delete_binance("#{@endpoint}/papi/v1/#{order_type}/allOpenOrders", params, config) do
       {:ok, %{"rejectReason" => _} = err, headers} -> {:error, err, headers}
       {:ok, data, headers} -> {:ok, data, headers}
       err -> err
     end
   end
-
 end
