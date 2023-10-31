@@ -154,7 +154,9 @@ docs
         binding = binding()
 
         # merge all passed args together, so opts + passed
-        all_passed_args = Keyword.merge(binding, opts) |> Keyword.drop([:opts])
+        all_passed_args = Keyword.merge(binding, opts) |> Keyword.drop([:opts, :api_key, :secret_key])
+        api_key = Keyword.get(opts, :api_key) || Application.get_env(:binance, :api_key, "")
+        secret_key = Keyword.get(opts, :secret_key) || Application.get_env(:binance, :secret_key, "")
 
         # if the call requires a timestamp, we add it
         adjusted_args =
@@ -185,7 +187,7 @@ docs
 
         case unquote(needs_auth) do
           true ->
-            case HTTPClient.signed_request_binance(unquote(url), adjusted_args, unquote(method)) do
+            case HTTPClient.signed_request_binance(api_key, secret_key, unquote(url), adjusted_args, unquote(method)) do
               {:ok, %{"code" => _code, "msg" => _msg} = err} ->
                 {:error, Binance.Helper.format_error(err)}
 
