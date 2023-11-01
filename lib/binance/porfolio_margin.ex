@@ -71,16 +71,25 @@ defmodule Binance.PortfolioMargin do
         unless(is_nil(params[:stop_price]), do: %{stopPrice: params[:stop_price]}, else: %{})
       )
       |> Map.merge(
-        unless(is_nil(params[:quote_order_qty]), do: %{quoteOrderQty: params[:quote_order_qty]}, else: %{})
+        unless(is_nil(params[:quote_order_qty]),
+          do: %{quoteOrderQty: params[:quote_order_qty]},
+          else: %{}
+        )
       )
       |> Map.merge(
         unless(is_nil(params[:iceberg_qty]), do: %{icebergQty: params[:iceberg_qty]}, else: %{})
       )
       |> Map.merge(
-        unless(is_nil(params[:side_effect_type]), do: %{sideEffectType: params[:side_effect_type]}, else: %{})
+        unless(is_nil(params[:side_effect_type]),
+          do: %{sideEffectType: params[:side_effect_type]},
+          else: %{}
+        )
       )
       |> Map.merge(
-        unless(is_nil(params[:new_order_resp_type]), do: %{newOrderRespType: params[:new_order_resp_type]}, else: %{})
+        unless(is_nil(params[:new_order_resp_type]),
+          do: %{newOrderRespType: params[:new_order_resp_type]},
+          else: %{}
+        )
       )
       |> Map.merge(
         unless(
@@ -94,13 +103,22 @@ defmodule Binance.PortfolioMargin do
         unless(is_nil(params[:recv_window]), do: %{recvWindow: params[:recv_window]}, else: %{})
       )
 
-    case HTTPClient.post_binance("#{@endpoint}/papi/v1/#{order_type}/order", arguments, config, true, options) do
+    case HTTPClient.post_binance(
+           "#{@endpoint}/papi/v1/#{order_type}/order",
+           arguments,
+           config,
+           true,
+           options
+         ) do
       {:ok, data, headers} when order_type == "um" ->
         {:ok, Binance.PortfolioMargin.UMOrder.new(data), headers}
+
       {:ok, data, headers} when order_type == "cm" ->
         {:ok, Binance.PortfolioMargin.CMOrder.new(data), headers}
+
       {:ok, data, headers} when order_type == "margin" ->
         {:ok, Binance.PortfolioMargin.MarginOrder.new(data), headers}
+
       error ->
         error
     end
@@ -131,12 +149,7 @@ defmodule Binance.PortfolioMargin do
       )
 
     case HTTPClient.get_binance("#{@endpoint}/papi/v1/#{order_type}/order", arguments, config) do
-      {:ok, data, headers} when order_type == "um" ->
-        {:ok, Binance.PortfolioMargin.UMOrder.new(data), headers}
-      {:ok, data, headers} when order_type == "cm" ->
-        {:ok, Binance.PortfolioMargin.CMOrder.new(data), headers}
-      {:ok, data, headers} when order_type == "margin" ->
-        {:ok, Binance.PortfolioMargin.MarginOrder.new(data), headers}
+      {:ok, _data, _headers} = res -> res
       err -> err
     end
   end
@@ -158,19 +171,29 @@ defmodule Binance.PortfolioMargin do
       )
 
     case HTTPClient.delete_binance("#{@endpoint}/papi/v1/#{order_type}/order", arguments, config) do
-      {:ok, %{"rejectReason" => _} = err, headers} -> {:error, err, headers}
+      {:ok, %{"rejectReason" => _} = err, headers} ->
+        {:error, err, headers}
+
       {:ok, data, headers} when order_type == "um" ->
         {:ok, Binance.PortfolioMargin.UMOrder.new(data), headers}
+
       {:ok, data, headers} when order_type == "cm" ->
         {:ok, Binance.PortfolioMargin.CMOrder.new(data), headers}
+
       {:ok, data, headers} when order_type == "margin" ->
         {:ok, Binance.PortfolioMargin.MarginOrder.new(data), headers}
-      err -> err
+
+      err ->
+        err
     end
   end
 
   def cancel_all_orders(order_type, params, config \\ nil) do
-    case HTTPClient.delete_binance("#{@endpoint}/papi/v1/#{order_type}/allOpenOrders", params, config) do
+    case HTTPClient.delete_binance(
+           "#{@endpoint}/papi/v1/#{order_type}/allOpenOrders",
+           params,
+           config
+         ) do
       {:ok, %{"rejectReason" => _} = err, headers} -> {:error, err, headers}
       {:ok, data, headers} -> {:ok, data, headers}
       err -> err
