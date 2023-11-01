@@ -128,64 +128,55 @@ defmodule PortfolioMarginTest do
       use_cassette "portfolio_margin/get_open_orders_without_symbol_success" do
         assert {:ok,
                 [
-                  %Binance.PortfolioMargin.UMOrder{} = order_1,
-                  %Binance.PortfolioMargin.UMOrder{} = order_2
+                  order_1,
+                  order_2
                 ], _rate_limit} = Binance.PortfolioMargin.get_open_orders("um")
 
-        assert order_1.client_order_id == "web_argH9snTII2DpZQ1lkzD"
-        assert order_1.cum_qty == "0"
-        assert order_1.cum_quote == "0"
-        assert order_1.executed_qty == "0"
-        assert order_1.order_id == 2_634_617_095
-        assert order_1.orig_qty == "0.001"
-        assert order_1.price == "9000"
-        assert order_1.reduce_only == false
-        assert order_1.side == "SELL"
-        assert order_1.status == "NEW"
-        assert order_1.position_side == "BOTH"
-        assert order_1.symbol == "BTCUSDT"
-        assert order_1.time_in_force == "GTC"
-        assert order_1.type == "LIMIT"
-        assert order_1.update_time == 1_586_855_589_773
+        assert order_1["clientOrderId"] == "web_argH9snTII2DpZQ1lkzD"
+        assert order_1["cumQty"] == "0"
+        assert order_1["executedQty"] == "0"
+        assert order_1["orderId"] == 2_634_617_095
+        assert order_1["origQty"] == "0.001"
+        assert order_1["price"] == "9000"
+        assert order_1["side"] == "SELL"
+        assert order_1["status"] == "NEW"
+        assert order_1["symbol"] == "BTCUSDT"
+        assert order_1["timeInForce"] == "GTC"
+        assert order_1["type"] == "LIMIT"
+        assert order_1["updateTime"] == 1_586_855_589_773
 
-        assert order_2.client_order_id == "web_zyRe8mQWmV2GOoLxdSYr"
-        assert order_2.cum_qty == "0"
-        assert order_2.cum_quote == "0"
-        assert order_2.executed_qty == "0"
-        assert order_2.order_id == 2_634_612_040
-        assert order_2.orig_qty == "0.001"
-        assert order_2.price == "8786.98"
-        assert order_2.reduce_only == false
-        assert order_2.side == "SELL"
-        assert order_2.status == "NEW"
-        assert order_2.position_side == "BOTH"
-        assert order_2.symbol == "BTCUSDT"
-        assert order_2.time_in_force == "GTC"
-        assert order_2.type == "LIMIT"
-        assert order_2.update_time == 1_586_855_589_773
+        assert order_2["clientOrderId"] == "web_zyRe8mQWmV2GOoLxdSYr"
+        assert order_2["cumQty"] == "0"
+        assert order_2["executedQty"] == "0"
+        assert order_2["orderId"] == 2_634_612_040
+        assert order_2["origQty"] == "0.001"
+        assert order_2["price"] == "8786.98"
+        assert order_2["side"] == "SELL"
+        assert order_2["status"] == "NEW"
+        assert order_2["symbol"] == "BTCUSDT"
+        assert order_2["timeInForce"] == "GTC"
+        assert order_2["type"] == "LIMIT"
+        assert order_2["updateTime"] == 1_586_855_589_773
       end
     end
 
     test "when called with symbol returns all open orders for that symbols(string)" do
       use_cassette "portfolio_margin/get_open_orders_with_symbol_string_success" do
-        assert {:ok, [%Binance.PortfolioMargin.UMOrder{} = order_1], _rate_limit} =
+        assert {:ok, [order_1], _rate_limit} =
                  Binance.PortfolioMargin.get_open_orders("um", %{symbol: "BTCUSDT"})
 
-        assert order_1.client_order_id == "kFVoo0nClhOku6KbcB8B1X"
-        assert order_1.cum_qty == "0"
-        assert order_1.cum_quote == "0"
-        assert order_1.executed_qty == "0"
-        assert order_1.order_id == 11_333_637
-        assert order_1.orig_qty == "0.001"
-        assert order_1.price == "11000"
-        assert order_1.reduce_only == false
-        assert order_1.side == "SELL"
-        assert order_1.status == "NEW"
-        assert order_1.position_side == "BOTH"
-        assert order_1.symbol == "BTCUSDT"
-        assert order_1.time_in_force == "GTC"
-        assert order_1.type == "LIMIT"
-        assert order_1.update_time == 1_568_995_541_781
+        assert order_1["clientOrderId"] == "kFVoo0nClhOku6KbcB8B1X"
+        assert order_1["cumQty"] == "0"
+        assert order_1["executedQty"] == "0"
+        assert order_1["orderId"] == 11_333_637
+        assert order_1["origQty"] == "0.001"
+        assert order_1["price"] == "11000"
+        assert order_1["side"] == "SELL"
+        assert order_1["status"] == "NEW"
+        assert order_1["symbol"] == "BTCUSDT"
+        assert order_1["timeInForce"] == "GTC"
+        assert order_1["type"] == "LIMIT"
+        assert order_1["updateTime"] == 1_568_995_541_781
       end
     end
   end
@@ -193,50 +184,47 @@ defmodule PortfolioMarginTest do
   describe ".get_order" do
     test "gets an order information by exchange order id" do
       use_cassette "portfolio_margin/get_order_by_exchange_order_id_ok" do
-        assert {:ok, %Binance.PortfolioMargin.UMOrder{} = response, _rate_limit} =
-                 Binance.PortfolioMargin.get_order("um", %{symbol: "BTCUSDT", order_id: 10_926_974})
+        assert {:ok, response, _rate_limit} =
+                 Binance.PortfolioMargin.get_order("um", %{
+                   symbol: "BTCUSDT",
+                   order_id: 10_926_974
+                 })
 
-        assert response.client_order_id == "F1YDd19xJvGWNiBbt7JCrr"
-        assert response.cum_qty == "0"
-        assert response.cum_quote == "0"
-        assert response.executed_qty == "0"
-        assert response.order_id == 10_926_974
-        assert response.orig_qty == "0.001"
-        assert response.price == "11000"
-        assert response.reduce_only == false
-        assert response.side == "SELL"
-        assert response.status == "NEW"
-        assert response.symbol == "BTCUSDT"
-        assert response.position_side == "BOTH"
-        assert response.time_in_force == "GTC"
-        assert response.type == "LIMIT"
-        assert response.update_time == 1_568_988_806_336
+        assert response["clientOrderId"] == "F1YDd19xJvGWNiBbt7JCrr"
+        assert response["cumQty"] == "0"
+        assert response["executedQty"] == "0"
+        assert response["orderId"] == 10_926_974
+        assert response["origQty"] == "0.001"
+        assert response["price"] == "11000"
+        assert response["side"] == "SELL"
+        assert response["status"] == "NEW"
+        assert response["symbol"] == "BTCUSDT"
+        assert response["timeInForce"] == "GTC"
+        assert response["type"] == "LIMIT"
+        assert response["updateTime"] == 1_568_988_806_336
       end
     end
 
     test "gets an order information by client order id" do
       use_cassette "portfolio_margin/get_order_by_client_order_id_ok" do
-        assert {:ok, %Binance.PortfolioMargin.UMOrder{} = response, _rate_limit} =
+        assert {:ok, response, _rate_limit} =
                  Binance.PortfolioMargin.get_order("um", %{
                    symbol: "BTCUSDT",
                    orig_client_order_id: "Slo0A5UDDOWK7cdUNVUsfO"
                  })
 
-        assert response.client_order_id == "Slo0A5UDDOWK7cdUNVUsfO"
-        assert response.cum_qty == "0"
-        assert response.cum_quote == "0"
-        assert response.executed_qty == "0"
-        assert response.order_id == 11_277_192
-        assert response.orig_qty == "0.001"
-        assert response.price == "11000"
-        assert response.reduce_only == false
-        assert response.side == "SELL"
-        assert response.status == "CANCELED"
-        assert response.position_side == "BOTH"
-        assert response.symbol == "BTCUSDT"
-        assert response.time_in_force == "GTC"
-        assert response.type == "LIMIT"
-        assert response.update_time == 1_568_996_656_841
+        assert response["clientOrderId"] == "Slo0A5UDDOWK7cdUNVUsfO"
+        assert response["cumQty"] == "0"
+        assert response["executedQty"] == "0"
+        assert response["orderId"] == 11_277_192
+        assert response["origQty"] == "0.001"
+        assert response["price"] == "11000"
+        assert response["side"] == "SELL"
+        assert response["status"] == "CANCELED"
+        assert response["symbol"] == "BTCUSDT"
+        assert response["timeInForce"] == "GTC"
+        assert response["type"] == "LIMIT"
+        assert response["updateTime"] == 1_568_996_656_841
       end
     end
 
@@ -244,7 +232,10 @@ defmodule PortfolioMarginTest do
       use_cassette "portfolio_margin/get_order_error" do
         assert {:error, {:binance_error, %{code: -2013, msg: "Order does not exist."}},
                 _rate_limit} =
-                 Binance.PortfolioMargin.get_order("um", %{symbol: "BTCUSDT", order_id: 123_456_789})
+                 Binance.PortfolioMargin.get_order("um", %{
+                   symbol: "BTCUSDT",
+                   order_id: 123_456_789
+                 })
       end
     end
   end
@@ -253,7 +244,10 @@ defmodule PortfolioMarginTest do
     test "cancel an order by exchange order id" do
       use_cassette "portfolio_margin/cancel_order_by_exchange_order_id_ok" do
         assert {:ok, %Binance.PortfolioMargin.UMOrder{} = response, _rate_limit} =
-                 Binance.PortfolioMargin.cancel_order("um", %{symbol: "BTCUSDT", order_id: 11_257_530})
+                 Binance.PortfolioMargin.cancel_order("um", %{
+                   symbol: "BTCUSDT",
+                   order_id: 11_257_530
+                 })
 
         assert response.client_order_id == "wgQyWAlBFCCWinOy7yPFDu"
         assert response.cum_qty == "0"
@@ -301,10 +295,11 @@ defmodule PortfolioMarginTest do
 
     test "return errors when cancel an non-existing order" do
       use_cassette "portfolio_margin/cancel_non_existing_order" do
-        assert {:error,
-          {:binance_error, %{code: -2011, msg: "CANCEL_REJECTED"}},
-                _rate_limit} =
-                 Binance.PortfolioMargin.cancel_order("um", %{symbol: "BTCUSDT", order_id: 123_456})
+        assert {:error, {:binance_error, %{code: -2011, msg: "CANCEL_REJECTED"}}, _rate_limit} =
+                 Binance.PortfolioMargin.cancel_order("um", %{
+                   symbol: "BTCUSDT",
+                   order_id: 123_456
+                 })
       end
     end
   end
