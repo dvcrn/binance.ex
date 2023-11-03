@@ -7,9 +7,35 @@ defmodule BinanceTest do
     HTTPoison.start()
   end
 
+  setup do
+    Application.put_env(:binance, :api_key, "api_key")
+    Application.put_env(:binance, :secret_key, "api_key")
+  end
+
   test "ping returns an empty map" do
     use_cassette "ping_ok" do
       assert Binance.Market.get_ping() == {:ok, %{}}
+    end
+  end
+
+  test "return err when no key or secret" do
+    use_cassette "api_key_missing" do
+      Application.put_env(:binance, :api_key, "")
+      Application.put_env(:binance, :secret_key, "")
+
+      assert Binance.Trade.post_order("LTCBTC", "BUY", "LIMIT", quantity: 0.1, price: 0.01) ==
+               {:error, {:config_missing, "Secret and API key missing"}}
+
+      Application.put_env(:binance, :secret_key, "secret")
+
+      assert Binance.Trade.post_order("LTCBTC", "BUY", "LIMIT", quantity: 0.1, price: 0.01) ==
+               {:error, {:config_missing, "API key missing"}}
+
+      Application.put_env(:binance, :secret_key, "")
+      Application.put_env(:binance, :api_key, "apikey")
+
+      assert Binance.Trade.post_order("LTCBTC", "BUY", "LIMIT", quantity: 0.1, price: 0.01) ==
+               {:error, {:config_missing, "Secret key missing"}}
     end
   end
 
@@ -31,6 +57,24 @@ defmodule BinanceTest do
 
       assert [%Binance.Structs.HistoricalTrade{} | _tail] = response
     end
+  end
+
+  test "api_key and secret_key are correctly passed to request" do
+    existing_setting = ExVCR.Setting.get(:filter_request_headers)
+    ExVCR.Config.filter_request_headers(nil)
+
+    use_cassette "get_open_orders_for_api_key_and_secret_key",
+      match_requests_on: [:headers, :request_body] do
+      assert {:error, {:binance_error, %{code: -2014, msg: "API-key format invalid."}}} =
+               Binance.Trade.get_open_orders(api_key: "dummy_api_key", secret_key: "hoge")
+
+      Application.put_env(:binance, :api_key, "dummy_api_key")
+
+      assert {:error, {:binance_error, %{code: -2014, msg: "API-key format invalid."}}} =
+               Binance.Trade.get_open_orders()
+    end
+
+    ExVCR.Setting.set(:filter_request_headers, existing_setting)
   end
 
   test "get_exchange_info success returns the trading rules and symbol information" do
