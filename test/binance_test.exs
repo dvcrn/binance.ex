@@ -7,9 +7,35 @@ defmodule BinanceTest do
     HTTPoison.start()
   end
 
+  setup do
+    Application.put_env(:binance, :api_key, "api_key")
+    Application.put_env(:binance, :secret_key, "api_key")
+  end
+
   test "ping returns an empty map" do
     use_cassette "ping_ok" do
       assert Binance.Market.get_ping() == {:ok, %{}}
+    end
+  end
+
+  test "return err when no key or secret" do
+    use_cassette "api_key_missing" do
+      Application.put_env(:binance, :api_key, "")
+      Application.put_env(:binance, :secret_key, "")
+
+      assert Binance.Trade.post_order("LTCBTC", "BUY", "LIMIT", quantity: 0.1, price: 0.01) ==
+               {:error, {:config_missing, "Secret and API key missing"}}
+
+      Application.put_env(:binance, :secret_key, "secret")
+
+      assert Binance.Trade.post_order("LTCBTC", "BUY", "LIMIT", quantity: 0.1, price: 0.01) ==
+               {:error, {:config_missing, "API key missing"}}
+
+      Application.put_env(:binance, :secret_key, "")
+      Application.put_env(:binance, :api_key, "apikey")
+
+      assert Binance.Trade.post_order("LTCBTC", "BUY", "LIMIT", quantity: 0.1, price: 0.01) ==
+               {:error, {:config_missing, "Secret key missing"}}
     end
   end
 
