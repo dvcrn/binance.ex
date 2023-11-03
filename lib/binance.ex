@@ -80,7 +80,7 @@ docs
         end)
         |> Kernel.++([
           %{name: "api_key", description: "Binance API key, will overwrite env key"},
-          %{name: "api_secret", description: "Binance API secret, will overwrite env secret"}
+          %{name: "secret_key", description: "Binance API secret, will overwrite env secret"}
         ])
 
       optional_params =

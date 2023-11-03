@@ -66,7 +66,7 @@ defmodule BinanceTest do
     use_cassette "get_open_orders_for_api_key_and_secret_key",
       match_requests_on: [:headers, :request_body] do
       assert {:error, {:binance_error, %{code: -2014, msg: "API-key format invalid."}}} =
-               Binance.Trade.get_open_orders(api_key: "dummy_api_key", api_secret: "hoge")
+               Binance.Trade.get_open_orders(api_key: "dummy_api_key", secret_key: "hoge")
 
       Application.put_env(:binance, :api_key, "dummy_api_key")
 
