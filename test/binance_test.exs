@@ -67,6 +67,11 @@ defmodule BinanceTest do
       match_requests_on: [:headers, :request_body] do
       assert {:error, {:binance_error, %{code: -2014, msg: "API-key format invalid."}}} =
                Binance.Trade.get_open_orders(api_key: "dummy_api_key", api_secret: "hoge")
+
+      Application.put_env(:binance, :api_key, "dummy_api_key")
+
+      assert {:error, {:binance_error, %{code: -2014, msg: "API-key format invalid."}}} =
+               Binance.Trade.get_open_orders()
     end
 
     ExVCR.Setting.set(:filter_request_headers, existing_setting)
