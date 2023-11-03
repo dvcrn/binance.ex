@@ -59,6 +59,19 @@ defmodule BinanceTest do
     end
   end
 
+  test "api_key and secret_key are correctly passed to request" do
+    existing_setting = ExVCR.Setting.get(:filter_request_headers)
+    ExVCR.Config.filter_request_headers(nil)
+
+    use_cassette "get_open_orders_for_api_key_and_secret_key",
+      match_requests_on: [:headers, :request_body] do
+      assert {:error, {:binance_error, %{code: -2014, msg: "API-key format invalid."}}} =
+               Binance.Trade.get_open_orders(api_key: "dummy_api_key", api_secret: "hoge")
+    end
+
+    ExVCR.Setting.set(:filter_request_headers, existing_setting)
+  end
+
   test "get_exchange_info success returns the trading rules and symbol information" do
     use_cassette "get_exchange_info_ok" do
       assert {:ok, %Binance.Structs.ExchangeInfo{} = info} = Binance.Market.get_exchange_info()
