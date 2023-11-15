@@ -39,36 +39,9 @@ defmodule Binance.Rest.HTTPClient do
         error
 
       {:ok, url, headers, body} ->
-        case HTTPoison.post(url, body, headers, options) do
-          {:error, err} ->
-            {:error, {:http_error, err}, nil}
-
-          {:ok, %{status_code: status_code} = response} when status_code not in 200..299 ->
-            case Poison.decode(response.body) do
-              {:ok, %{"code" => code, "msg" => msg}} ->
-                {:error, {:binance_error, %{code: code, msg: msg}}, response.headers}
-
-              {:error, err} ->
-                if System.get_env("DEBUG_LOG") === "true" do
-                  Logger.error("poison_decode_error: #{inspect(response.body)}")
-                end
-
-                {:error, {:poison_decode_error, err}, response.headers}
-            end
-
-          {:ok, response} ->
-            case Poison.decode(response.body) do
-              {:ok, data} ->
-                {:ok, data, response.headers}
-
-              {:error, err} ->
-                if System.get_env("DEBUG_LOG") === "true" do
-                  Logger.error("poison_decode_error: #{inspect(response.body)}")
-                end
-
-                {:error, {:poison_decode_error, err}, response.headers}
-            end
-        end
+        url
+        |> HTTPoison.post(body, headers, options)
+        |> parse_response()
     end
   end
 
@@ -78,39 +51,9 @@ defmodule Binance.Rest.HTTPClient do
         error
 
       {:ok, url, headers, body} ->
-        case HTTPoison.put(url, body, headers) do
-          {:error, err} ->
-            {:error, {:http_error, err}, nil}
-
-          {:ok, %{status_code: status_code} = response} when status_code not in 200..299 ->
-            case Poison.decode(response.body) do
-              {:ok, %{"code" => code, "msg" => msg}} ->
-                {:error, {:binance_error, %{code: code, msg: msg}}, response.headers}
-
-              {:error, err} ->
-                if System.get_env("DEBUG_LOG") === "true" do
-                  Logger.error("poison_decode_error: #{inspect(response.body)}")
-                end
-
-                {:error, {:poison_decode_error, err}, response.headers}
-            end
-
-          {:ok, %{body: "", headers: headers}} ->
-            {:ok, "", headers}
-
-          {:ok, response} ->
-            case Poison.decode(response.body) do
-              {:ok, data} ->
-                {:ok, data, response.headers}
-
-              {:error, err} ->
-                if System.get_env("DEBUG_LOG") === "true" do
-                  Logger.error("poison_decode_error: #{inspect(response.body)}")
-                end
-
-                {:error, {:poison_decode_error, err}, response.headers}
-            end
-        end
+        url
+        |> HTTPoison.put(body, headers)
+        |> parse_response()
     end
   end
 
@@ -190,6 +133,10 @@ defmodule Binance.Rest.HTTPClient do
 
   defp parse_response({:error, err}) do
     {:error, {:http_error, err}, nil}
+  end
+
+  defp parse_response({:ok, %{body: "", headers: headers}}) do
+    {:ok, "", headers}
   end
 
   defp parse_response({:ok, %{status_code: status_code} = response})
