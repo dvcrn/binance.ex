@@ -33,7 +33,7 @@ defmodule Binance.Rest.HTTPClient do
     end
   end
 
-  defp request_binance(url, body, method) do
+  defp request_binance(url, api_key, body, method) do
     url = URI.parse("#{endpoint()}#{url}")
 
     encoded_url =
@@ -48,7 +48,7 @@ defmodule Binance.Rest.HTTPClient do
         HTTPoison.get(
           URI.to_string(encoded_url),
           [
-            {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
+            {"X-MBX-APIKEY", api_key}
           ]
         )
 
@@ -56,7 +56,7 @@ defmodule Binance.Rest.HTTPClient do
         HTTPoison.delete(
           URI.to_string(encoded_url),
           [
-            {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
+            {"X-MBX-APIKEY", api_key}
           ]
         )
 
@@ -65,7 +65,7 @@ defmodule Binance.Rest.HTTPClient do
           URI.to_string(encoded_url),
           "",
           [
-            {"X-MBX-APIKEY", Application.get_env(:binance, :api_key)}
+            {"X-MBX-APIKEY", api_key}
           ]
         ])
     end
@@ -81,23 +81,29 @@ defmodule Binance.Rest.HTTPClient do
     end
   end
 
-  def signed_request_binance(url, params, method) do
-    argument_string =
-      params
-      |> prepare_query_params()
+  def signed_request_binance(url, api_key, secret_key, params, method) do
+    case validate_credentials(secret_key, api_key) do
+      :ok ->
+        argument_string =
+          params
+          |> prepare_query_params()
 
     # generate signature
     signature =
       generate_signature(
         :sha256,
-        Application.get_env(:binance, :secret_key),
+        secret_key,
         argument_string
       )
       |> Base.encode16()
 
-    body = "#{argument_string}&signature=#{signature}"
+        body = "#{argument_string}&signature=#{signature}"
 
-    request_binance(url, body, method)
+        request_binance(url, api_key, body, method)
+
+      e ->
+        e
+    end
   end
 
   @doc """
@@ -110,16 +116,25 @@ defmodule Binance.Rest.HTTPClient do
       data
       |> prepare_query_params()
 
-    request_binance(url, argument_string, method)
+    request_binance(url, "", argument_string, method)
   end
 
   defp validate_credentials(nil, nil),
     do: {:error, {:config_missing, "Secret and API key missing"}}
 
+  defp validate_credentials("", ""),
+    do: {:error, {:config_missing, "Secret and API key missing"}}
+
   defp validate_credentials(nil, _api_key),
     do: {:error, {:config_missing, "Secret key missing"}}
 
+  defp validate_credentials("", _api_key),
+    do: {:error, {:config_missing, "Secret key missing"}}
+
   defp validate_credentials(_secret_key, nil),
+    do: {:error, {:config_missing, "API key missing"}}
+
+  defp validate_credentials(_secret_key, ""),
     do: {:error, {:config_missing, "API key missing"}}
 
   defp validate_credentials(_secret_key, _api_key),
